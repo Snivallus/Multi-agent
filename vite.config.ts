@@ -21,4 +21,6 @@ export default defineConfig(({ mode }) => ({
   css: {
     postcss: './postcss.config.js', // 显式指定 postcss 配置文件路径
   },
+  // Add base path for GitHub Pages deployment
+  base: '/Multi-agent/', // 使用你的仓库名称替换 'Multi-agent'
 }));
