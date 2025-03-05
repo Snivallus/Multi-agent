@@ -3,8 +3,6 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MedicalCase } from '@/data/medicalCases';
 import DialogueBubble from './DialogueBubble';
 import { ArrowLeft, Play, Pause, FastForward, RotateCcw } from 'lucide-react';
-import { useLanguage } from '@/context/LanguageContext';
-import { translations } from '@/data/translations';
 
 interface DialogueSimulationProps {
   caseData: MedicalCase;
@@ -16,9 +14,6 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
   const [isPlaying, setIsPlaying] = useState(true);
   const timerRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-  const dialogueRefs = useRef<(HTMLDivElement | null)[]>([]);
-  const { language } = useLanguage();
-  const t = translations[language];
 
   const advanceDialogue = () => {
     if (currentDialogueIndex < caseData.dialogue.length - 1) {
@@ -34,16 +29,12 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
     setIsPlaying(true);
   };
 
-  // Auto-scroll when a new dialogue appears
   useEffect(() => {
-    const currentDialogueElement = dialogueRefs.current[currentDialogueIndex];
-    if (currentDialogueElement) {
-      currentDialogueElement.scrollIntoView({ behavior: 'smooth', block: 'end' });
+    // Auto-scroll to the bottom of the container when new dialogue appears
+    if (containerRef.current) {
+      containerRef.current.scrollTop = containerRef.current.scrollHeight;
     }
-  }, [currentDialogueIndex]);
 
-  // Handle auto-advance timer
-  useEffect(() => {
     // Set up or clear the timer based on isPlaying state
     if (isPlaying) {
       timerRef.current = window.setTimeout(advanceDialogue, 5000);
@@ -73,8 +64,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
               <ArrowLeft className="h-5 w-5 text-gray-600" />
             </button>
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">{caseData.title[language]}</h2>
-              <p className="text-sm text-gray-500">{caseData.category[language]}</p>
+              <h2 className="text-xl font-semibold text-gray-800">{caseData.title}</h2>
+              <p className="text-sm text-gray-500">{caseData.category}</p>
             </div>
           </div>
           
@@ -83,7 +74,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
               onClick={resetDialogue}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
               aria-label="Reset dialogue"
-              title={t.resetDialogue}
+              title="Reset dialogue"
             >
               <RotateCcw className="h-5 w-5 text-gray-600" />
             </button>
@@ -91,8 +82,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
             <button
               onClick={() => setIsPlaying(!isPlaying)}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-              aria-label={isPlaying ? t.pause : t.play}
-              title={isPlaying ? t.pause : t.play}
+              aria-label={isPlaying ? "Pause" : "Play"}
+              title={isPlaying ? "Pause" : "Play"}
             >
               {isPlaying ? (
                 <Pause className="h-5 w-5 text-gray-600" />
@@ -105,8 +96,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
               onClick={advanceDialogue}
               disabled={currentDialogueIndex >= caseData.dialogue.length - 1}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label={t.nextDialogue}
-              title={t.nextDialogue}
+              aria-label="Next dialogue"
+              title="Next dialogue"
             >
               <FastForward className="h-5 w-5 text-gray-600" />
             </button>
@@ -121,16 +112,12 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
       >
         <div className="max-w-3xl mx-auto space-y-2 pb-20">
           {caseData.dialogue.map((line, index) => (
-            <div 
+            <DialogueBubble
               key={index}
-              ref={el => (dialogueRefs.current[index] = el)}
-            >
-              <DialogueBubble
-                role={line.role}
-                text={line.text[language]}
-                isActive={index <= currentDialogueIndex}
-              />
-            </div>
+              role={line.role}
+              text={line.text}
+              isActive={index <= currentDialogueIndex}
+            />
           ))}
         </div>
       </div>
@@ -147,8 +134,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
             />
           </div>
           <div className="flex justify-between mt-2 text-xs text-gray-500">
-            <span>{t.progress}</span>
-            <span>{`${currentDialogueIndex + 1} ${t.of} ${caseData.dialogue.length}`}</span>
+            <span>Progress</span>
+            <span>{`${currentDialogueIndex + 1} of ${caseData.dialogue.length}`}</span>
           </div>
         </div>
       </div>

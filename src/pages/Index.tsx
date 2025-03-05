@@ -3,9 +3,7 @@ import React, { useState } from 'react';
 import { MedicalCase } from '@/data/medicalCases';
 import CaseSelection from '@/components/CaseSelection';
 import DialogueSimulation from '@/components/DialogueSimulation';
-import { ArrowRight, Globe } from 'lucide-react';
-import { LanguageProvider, useLanguage } from '@/context/LanguageContext';
-import { translations } from '@/data/translations';
+import { ArrowRight } from 'lucide-react';
 
 enum AppState {
   LANDING,
@@ -13,11 +11,9 @@ enum AppState {
   DIALOGUE_SIMULATION,
 }
 
-const IndexContent: React.FC = () => {
+const Index: React.FC = () => {
   const [appState, setAppState] = useState<AppState>(AppState.LANDING);
   const [selectedCase, setSelectedCase] = useState<MedicalCase | null>(null);
-  const { language, toggleLanguage } = useLanguage();
-  const t = translations[language];
 
   const handleStartClick = () => {
     setAppState(AppState.CASE_SELECTION);
@@ -38,30 +34,19 @@ const IndexContent: React.FC = () => {
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      {/* Language toggle button - shown on all pages */}
-      <button 
-        onClick={toggleLanguage}
-        className="fixed top-4 right-4 p-2 bg-white rounded-full shadow-md z-50 hover:bg-gray-50 transition-colors"
-        aria-label={t.toggleLanguage}
-        title={t.toggleLanguage}
-      >
-        <Globe className="h-5 w-5 text-gray-600" />
-        <span className="sr-only">{t.toggleLanguage}</span>
-      </button>
-
       {appState === AppState.LANDING && (
         <div className="min-h-screen flex flex-col justify-center items-center px-4 py-20 text-center animate-fade-in">
           <div className="max-w-3xl mx-auto">
             <span className="inline-block mb-4 px-4 py-1 bg-medical-light-blue text-medical-blue rounded-full text-sm font-medium animate-fade-in">
-              {t.interactiveMedicalLearning}
+              Interactive Medical Learning
             </span>
             
             <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-medical-blue to-medical-dark-blue animate-fade-in" style={{ animationDelay: '100ms' }}>
-              {t.appTitle}
+              Medical Dialogue Diagnostics
             </h1>
             
             <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
-              {t.appDescription}
+              Experience realistic doctor-patient interactions through simulated clinical cases. Learn diagnostic approaches and improve clinical reasoning skills.
             </p>
             
             <div className="space-y-4 animate-fade-in" style={{ animationDelay: '300ms' }}>
@@ -69,12 +54,12 @@ const IndexContent: React.FC = () => {
                 onClick={handleStartClick}
                 className="btn-primary group inline-flex items-center"
               >
-                {t.selectCaseButton}
+                Select a Case Study
                 <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
               </button>
               
               <p className="text-sm text-gray-500 mt-4">
-                {t.clickToStartHint}
+                Double-click on a case to start the simulation
               </p>
             </div>
           </div>
@@ -82,20 +67,20 @@ const IndexContent: React.FC = () => {
           <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: '400ms' }}>
             <FeatureCard 
               icon="🔍"
-              title={t.featureClinicalCasesTitle}
-              description={t.featureClinicalCasesDesc}
+              title="Clinical Cases"
+              description="Explore a variety of medical scenarios across different specialties, from common presentations to complex diagnoses."
             />
             
             <FeatureCard 
               icon="💬"
-              title={t.featureInteractiveTitle}
-              description={t.featureInteractiveDesc}
+              title="Interactive Dialogue"
+              description="Experience the natural flow of doctor-patient conversations with realistic clinical discussions."
             />
             
             <FeatureCard 
               icon="📊"
-              title={t.featureLearningTitle}
-              description={t.featureLearningDesc}
+              title="Learning Experience"
+              description="Observe diagnostic reasoning and medical decision-making in action through detailed clinical conversations."
             />
           </div>
         </div>
@@ -115,14 +100,6 @@ const IndexContent: React.FC = () => {
         />
       )}
     </div>
-  );
-};
-
-const Index: React.FC = () => {
-  return (
-    <LanguageProvider>
-      <IndexContent />
-    </LanguageProvider>
   );
 };
 

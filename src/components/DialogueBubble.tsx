@@ -2,8 +2,6 @@
 import { cn } from '@/lib/utils';
 import { DialogueRole } from '@/data/medicalCases';
 import React from 'react';
-import { useLanguage } from '@/context/LanguageContext';
-import { translations } from '@/data/translations';
 
 interface DialogueBubbleProps {
   role: DialogueRole;
@@ -12,9 +10,6 @@ interface DialogueBubbleProps {
 }
 
 const DialogueBubble: React.FC<DialogueBubbleProps> = ({ role, text, isActive }) => {
-  const { language } = useLanguage();
-  const t = translations[language];
-  
   return (
     <div
       className={cn(
@@ -41,7 +36,7 @@ const DialogueBubble: React.FC<DialogueBubbleProps> = ({ role, text, isActive })
               role === 'doctor' ? 'text-medical-blue' : 'text-medical-dark-blue'
             )}
           >
-            {role === 'doctor' ? (language === 'en' ? 'Doctor' : '医生') : (language === 'en' ? 'Patient' : '患者')}
+            {role === 'doctor' ? 'Doctor' : 'Patient'}
           </div>
           <p className="text-gray-800">{text}</p>
         </div>

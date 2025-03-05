@@ -6,9 +6,10 @@ import React from 'react';
 interface CaseCardProps {
   caseData: MedicalCase;
   onClick: () => void;
+  onDoubleClick: () => void;
 }
 
-const CaseCard: React.FC<CaseCardProps> = ({ caseData, onClick }) => {
+const CaseCard: React.FC<CaseCardProps> = ({ caseData, onClick, onDoubleClick }) => {
   // Map difficulty to appropriate badge color
   const difficultyColor = {
     easy: 'badge-green',
@@ -20,6 +21,7 @@ const CaseCard: React.FC<CaseCardProps> = ({ caseData, onClick }) => {
     <div
       className="case-card group hover-scale animate-fade-in"
       onClick={onClick}
+      onDoubleClick={onDoubleClick}
     >
       <div className="flex justify-between items-start mb-3">
         <span className={cn('badge', difficultyColor)}>
@@ -44,7 +46,7 @@ const CaseCard: React.FC<CaseCardProps> = ({ caseData, onClick }) => {
       
       <div className="mt-4 text-sm text-gray-500 flex items-center justify-end">
         <span className="opacity-0 group-hover:opacity-100 transition-opacity duration-300">
-          Click to view case
+          Double-click to view case
         </span>
       </div>
     </div>
