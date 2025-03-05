@@ -21,6 +21,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
   const [isPlaying, setIsPlaying] = useState(true);
   const timerRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
+  const lastBubbleRef = useRef<HTMLDivElement>(null);
   
   /**
    * Advance to the next dialogue line
@@ -42,12 +43,14 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
     setIsPlaying(true);
   };
 
+  // Auto-scroll to the latest dialogue bubble when it appears
   useEffect(() => {
-    // Auto-scroll to the bottom of the container when new dialogue appears
-    if (containerRef.current) {
-      containerRef.current.scrollTop = containerRef.current.scrollHeight;
+    if (lastBubbleRef.current) {
+      lastBubbleRef.current.scrollIntoView({ behavior: 'smooth', block: 'end' });
     }
+  }, [currentDialogueIndex]);
 
+  useEffect(() => {
     // Set up or clear the timer based on isPlaying state
     if (isPlaying) {
       timerRef.current = window.setTimeout(advanceDialogue, 5000);
@@ -126,13 +129,17 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
       >
         <div className="max-w-3xl mx-auto space-y-2 pb-20">
           {caseData.dialogue.map((line, index) => (
-            <DialogueBubble
+            <div 
               key={index}
-              role={line.role}
-              text={line.text}
-              isActive={index <= currentDialogueIndex}
-              language={language}
-            />
+              ref={index === currentDialogueIndex ? lastBubbleRef : null}
+            >
+              <DialogueBubble
+                role={line.role}
+                text={line.text}
+                isActive={index <= currentDialogueIndex}
+                language={language}
+              />
+            </div>
           ))}
         </div>
       </div>

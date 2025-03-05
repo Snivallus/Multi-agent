@@ -19,8 +19,13 @@ interface CaseSelectionProps {
 const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack, language }) => {
   const [searchQuery, setSearchQuery] = useState('');
 
+  // Filter cases based on language first, then filter by search query
+  const languageFilteredCases = medicalCases.filter(caseItem => 
+    caseItem.dialogueLanguage ? caseItem.dialogueLanguage === language : true
+  );
+
   // Filter cases based on search query matching title, description, category or tags
-  const filteredCases = medicalCases.filter(
+  const filteredCases = languageFilteredCases.filter(
     (caseItem) =>
       getText(caseItem.title, language).toLowerCase().includes(searchQuery.toLowerCase()) ||
       getText(caseItem.description, language).toLowerCase().includes(searchQuery.toLowerCase()) ||
@@ -28,7 +33,7 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack, languag
       caseItem.tags[language].some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  // Handle single click case selection
+  // Handle case selection
   const handleCaseClick = (caseData: MedicalCase) => {
     onSelect(caseData);
   };

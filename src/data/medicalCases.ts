@@ -1,5 +1,5 @@
 
-import { MultilingualText, createMultilingualText } from '@/types/language';
+import { MultilingualText, createMultilingualText, Language } from '@/types/language';
 
 // Define the structure of a dialogue line
 export interface DialogueLine {
@@ -24,6 +24,7 @@ export interface MedicalCase {
     en: string[];
     zh: string[];
   };
+  dialogueLanguage?: Language; // Optional property to specify which language the dialogue is in
   dialogue: DialogueLine[];
 }
 
@@ -45,6 +46,7 @@ export const medicalCases: MedicalCase[] = [
       en: ['Chest Pain', 'Cardiology', 'Emergency'],
       zh: ['胸痛', '心脏病学', '急诊']
     },
+    dialogueLanguage: 'en',
     dialogue: [
       {
         role: 'doctor',
@@ -104,6 +106,7 @@ export const medicalCases: MedicalCase[] = [
       en: ['Headache', 'Neurology', 'Chronic Pain'],
       zh: ['头痛', '神经病学', '慢性疼痛']
     },
+    dialogueLanguage: 'en',
     dialogue: [
       {
         role: 'doctor',
@@ -171,6 +174,7 @@ export const medicalCases: MedicalCase[] = [
       en: ['Diabetes', 'Wound Care', 'Chronic Disease Management'],
       zh: ['糖尿病', '伤口护理', '慢性疾病管理']
     },
+    dialogueLanguage: 'en',
     dialogue: [
       {
         role: 'doctor',
@@ -227,6 +231,211 @@ export const medicalCases: MedicalCase[] = [
       {
         role: 'patient',
         text: 'I did feel feverish last night, and I\'ve been more tired than usual.'
+      }
+    ]
+  },
+  // Add Chinese dialogue cases
+  {
+    id: 'case-1-zh',
+    title: createMultilingualText(
+      'Chest Pain Evaluation',
+      '胸痛评估'
+    ),
+    description: createMultilingualText(
+      'A 55-year-old male presents with acute chest pain radiating to the left arm.',
+      '一名55岁男性患者出现急性胸痛，疼痛向左臂放射。'
+    ),
+    category: createMultilingualText('Cardiology', '心脏病学'),
+    difficulty: 'medium',
+    tags: {
+      en: ['Chest Pain', 'Cardiology', 'Emergency'],
+      zh: ['胸痛', '心脏病学', '急诊']
+    },
+    dialogueLanguage: 'zh',
+    dialogue: [
+      {
+        role: 'doctor',
+        text: '早上好，我是张医生。今天有什么可以帮您的？'
+      },
+      {
+        role: 'patient',
+        text: '我胸口疼了大约两个小时了，疼得很厉害。'
+      },
+      {
+        role: 'doctor',
+        text: '很抱歉听到这个。您能描述一下这种疼痛吗？是尖锐的、钝痛的、压迫性的还是灼烧感？'
+      },
+      {
+        role: 'patient',
+        text: '感觉像是有重压，有点像被挤压一样。而且疼痛还延伸到我的左臂。'
+      },
+      {
+        role: 'doctor',
+        text: '这种疼痛是什么时候开始的？当时您在做什么？'
+      },
+      {
+        role: 'patient',
+        text: '是在我爬楼梯回公寓的时候开始的。我当时提着杂货，突然感到胸口有压力。'
+      },
+      {
+        role: 'doctor',
+        text: '疼痛的同时，您有没有出现呼吸急促、出汗、恶心或头晕的症状？'
+      },
+      {
+        role: 'patient',
+        text: '是的，我出汗很多，也感觉有点呼吸困难。但没有恶心。'
+      },
+      {
+        role: 'doctor',
+        text: '您有心脏问题的病史吗？或者您的家族中有人患有心脏病吗？'
+      },
+      {
+        role: 'patient',
+        text: '我父亲在60岁时曾心脏病发作。我自己有高血压大约10年了。'
+      }
+    ]
+  },
+  {
+    id: 'case-2-zh',
+    title: createMultilingualText(
+      'Persistent Headache',
+      '持续性头痛'
+    ),
+    description: createMultilingualText(
+      'A 35-year-old female with recurring headaches for the past three weeks.',
+      '一名35岁女性患者在过去三周内反复出现头痛。'
+    ),
+    category: createMultilingualText('Neurology', '神经病学'),
+    difficulty: 'easy',
+    tags: {
+      en: ['Headache', 'Neurology', 'Chronic Pain'],
+      zh: ['头痛', '神经病学', '慢性疼痛']
+    },
+    dialogueLanguage: 'zh',
+    dialogue: [
+      {
+        role: 'doctor',
+        text: '您好，我是李医生。今天怎么了？'
+      },
+      {
+        role: 'patient',
+        text: '我这三周来几乎每天都有头痛。'
+      },
+      {
+        role: 'doctor',
+        text: '很遗憾听到这个。您能描述一下这些头痛吗？疼痛主要在哪个位置？'
+      },
+      {
+        role: 'patient',
+        text: '通常在头的两侧，像是一个紧箍。有时右侧更严重。'
+      },
+      {
+        role: 'doctor',
+        text: '如果以1到10分来评估，10分代表您能想象的最严重的疼痛，您会给这些头痛打几分？'
+      },
+      {
+        role: 'patient',
+        text: '通常大约6分，但有时会达到8分，尤其是工作日结束时。'
+      },
+      {
+        role: 'doctor',
+        text: '您注意到有什么会引发头痛或使头痛加重的因素吗？'
+      },
+      {
+        role: 'patient',
+        text: '当我压力大或长时间盯着电脑屏幕时肯定会更严重。如果睡眠不足也会很糟糕。'
+      },
+      {
+        role: 'doctor',
+        text: '您头痛时有没有其他症状，比如视觉变化、恶心或对光声敏感？'
+      },
+      {
+        role: 'patient',
+        text: '头痛时强光确实会让我不舒服。有时候我会感到轻微恶心，但没有呕吐。'
+      },
+      {
+        role: 'doctor',
+        text: '您尝试过任何药物或治疗方法吗？'
+      },
+      {
+        role: 'patient',
+        text: '我一直在服用非处方止痛药，如布洛芬。它们有一点帮助，但头痛仍然会反复发作。'
+      }
+    ]
+  },
+  {
+    id: 'case-3-zh',
+    title: createMultilingualText(
+      'Diabetic Foot Ulcer',
+      '糖尿病足溃疡'
+    ),
+    description: createMultilingualText(
+      'A 68-year-old with type 2 diabetes presents with a non-healing wound on the foot.',
+      '一名68岁的2型糖尿病患者出现足部不愈合的伤口。'
+    ),
+    category: createMultilingualText('Endocrinology', '内分泌学'),
+    difficulty: 'hard',
+    tags: {
+      en: ['Diabetes', 'Wound Care', 'Chronic Disease Management'],
+      zh: ['糖尿病', '伤口护理', '慢性疾病管理']
+    },
+    dialogueLanguage: 'zh',
+    dialogue: [
+      {
+        role: 'doctor',
+        text: '下午好，王先生。我了解到您是因为足部伤口来就诊？'
+      },
+      {
+        role: 'patient',
+        text: '是的，医生。我右脚底有个溃疡，一直不愈合。已经有将近一个月了。'
+      },
+      {
+        role: 'doctor',
+        text: '让我看一下。您是怎么发现这个伤口的？'
+      },
+      {
+        role: 'patient',
+        text: '我女儿注意到我有点跛行。当她检查我的脚时，发现了这个溃疡。我自己感觉不到。'
+      },
+      {
+        role: 'doctor',
+        text: '您感觉不到吗？您的脚经常有麻木或刺痛感吗？'
+      },
+      {
+        role: 'patient',
+        text: '是的，已经有几年了。我的医生说这是因为我的糖尿病。'
+      },
+      {
+        role: 'doctor',
+        text: '没错，这是一种叫做糖尿病神经病变的症状。作为糖尿病护理的一部分，您有定期检查脚部吗？'
+      },
+      {
+        role: 'patient',
+        text: '我尽量做到，但我很难看到自己的脚底，而且我大部分时间是独自生活。'
+      },
+      {
+        role: 'doctor',
+        text: '我理解。最近您的糖尿病控制得如何？您知道最近一次的糖化血红蛋白水平是多少吗？'
+      },
+      {
+        role: 'patient',
+        text: '在上次检查时是9.2%。我的医生对此不太满意。'
+      },
+      {
+        role: 'doctor',
+        text: '您有没有注意到伤口有渗出液、周围温度升高或发红？'
+      },
+      {
+        role: 'patient',
+        text: '这几天有一些黄色的液体从伤口流出，周围区域看起来有点发红。'
+      },
+      {
+        role: 'doctor',
+        text: '有发烧或寒战吗？'
+      },
+      {
+        role: 'patient',
+        text: '昨晚我确实感到发热，而且比平时更疲倦。'
       }
     ]
   }
