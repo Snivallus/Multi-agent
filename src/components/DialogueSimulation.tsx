@@ -22,7 +22,6 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
   const timerRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const lastBubbleRef = useRef<HTMLDivElement>(null);
-  const progressBarRef = useRef<HTMLDivElement>(null);
   
   /**
    * Advance to the next dialogue line
@@ -42,27 +41,6 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
   const resetDialogue = () => {
     setCurrentDialogueIndex(0);
     setIsPlaying(true);
-  };
-
-  /**
-   * Jump to a specific dialogue index based on progress bar click
-   * @param e Click event on the progress bar
-   */
-  const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (progressBarRef.current) {
-      // Calculate click position relative to progress bar width
-      const rect = progressBarRef.current.getBoundingClientRect();
-      const clickPositionX = e.clientX - rect.left;
-      const clickPercentage = clickPositionX / rect.width;
-      
-      // Calculate and set the new dialogue index based on click position
-      const newIndex = Math.min(
-        Math.max(0, Math.floor(clickPercentage * caseData.dialogue.length)),
-        caseData.dialogue.length - 1
-      );
-      
-      setCurrentDialogueIndex(newIndex);
-    }
   };
 
   // Auto-scroll to the latest dialogue bubble when it appears
@@ -166,34 +144,16 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
         </div>
       </div>
       
-      {/* Interactive progress indicator */}
+      {/* Progress indicator */}
       <div className="bg-white border-t p-4">
         <div className="max-w-7xl mx-auto">
-          <div 
-            ref={progressBarRef}
-            onClick={handleProgressBarClick}
-            className="h-3 bg-gray-200 rounded-full overflow-hidden cursor-pointer relative"
-            title={getText(translations.clickToJump, language)}
-          >
+          <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
             <div 
               className="h-full bg-medical-blue transition-all duration-500 ease-out"
               style={{ 
                 width: `${(currentDialogueIndex + 1) / caseData.dialogue.length * 100}%` 
               }}
             />
-            {/* Render clickable dialogue markers */}
-            <div className="absolute inset-0 flex items-center">
-              {caseData.dialogue.map((_, index) => (
-                <div 
-                  key={index}
-                  className={`w-1 h-3 ${index <= currentDialogueIndex ? 'bg-white opacity-50' : 'bg-transparent'}`}
-                  style={{ 
-                    marginLeft: `${index === 0 ? 0 : (100 / caseData.dialogue.length)}%`,
-                    transform: 'translateX(-50%)'
-                  }}
-                />
-              ))}
-            </div>
           </div>
           <div className="flex justify-between mt-2 text-xs text-gray-500">
             <span>{getText(translations.progress, language)}</span>
