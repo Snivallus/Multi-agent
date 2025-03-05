@@ -5,199 +5,104 @@
 
 @layer base {
   :root {
-    --background: 210 40% 98%;
-    --foreground: 222.2 84% 4.9%;
-
+    --medical-blue: #4b87b5;
+    --medical-light-blue: #e5f3fa;
+    --medical-dark-blue: #2a5e84;
+    --medical-gray: #6b7280;
+    
+    --background: 0 0% 100%;
+    --foreground: 224 71.4% 4.1%;
     --card: 0 0% 100%;
-    --card-foreground: 222.2 84% 4.9%;
-
+    --card-foreground: 224 71.4% 4.1%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222.2 84% 4.9%;
-
-    --primary: 210 100% 50%;
-    --primary-foreground: 210 40% 98%;
-
-    --secondary: 210 40% 96.1%;
-    --secondary-foreground: 222.2 47.4% 11.2%;
-
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
-
-    --accent: 210 40% 96.1%;
-    --accent-foreground: 222.2 47.4% 11.2%;
-
+    --popover-foreground: 224 71.4% 4.1%;
+    --primary: 220.9 39.3% 11%;
+    --primary-foreground: 210 20% 98%;
+    --secondary: 220 14.3% 95.9%;
+    --secondary-foreground: 220.9 39.3% 11%;
+    --muted: 220 14.3% 95.9%;
+    --muted-foreground: 220 8.9% 46.1%;
+    --accent: 220 14.3% 95.9%;
+    --accent-foreground: 220.9 39.3% 11%;
     --destructive: 0 84.2% 60.2%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 222.2 84% 4.9%;
-
+    --destructive-foreground: 210 20% 98%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 224 71.4% 4.1%;
     --radius: 0.75rem;
-
-    --sidebar-background: 0 0% 98%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 240 5.9% 10%;
-    --sidebar-primary-foreground: 0 0% 98%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
   }
-
+ 
   .dark {
-    --background: 222.2 84% 4.9%;
-    --foreground: 210 40% 98%;
-
-    --card: 222.2 84% 4.9%;
-    --card-foreground: 210 40% 98%;
-
-    --popover: 222.2 84% 4.9%;
-    --popover-foreground: 210 40% 98%;
-
-    --primary: 210 40% 98%;
-    --primary-foreground: 222.2 47.4% 11.2%;
-
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
-
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
-
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
-
+    --background: 224 71.4% 4.1%;
+    --foreground: 210 20% 98%;
+    --card: 224 71.4% 4.1%;
+    --card-foreground: 210 20% 98%;
+    --popover: 224 71.4% 4.1%;
+    --popover-foreground: 210 20% 98%;
+    --primary: 210 20% 98%;
+    --primary-foreground: 220.9 39.3% 11%;
+    --secondary: 215 27.9% 16.9%;
+    --secondary-foreground: 210 20% 98%;
+    --muted: 215 27.9% 16.9%;
+    --muted-foreground: 217.9 10.6% 64.9%;
+    --accent: 215 27.9% 16.9%;
+    --accent-foreground: 210 20% 98%;
     --destructive: 0 62.8% 30.6%;
-    --destructive-foreground: 210 40% 98%;
-
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 212.7 26.8% 83.9%;
-    --sidebar-background: 240 5.9% 10%;
-    --sidebar-foreground: 240 4.8% 95.9%;
-    --sidebar-primary: 224.3 76.3% 48%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 3.7% 15.9%;
-    --sidebar-accent-foreground: 240 4.8% 95.9%;
-    --sidebar-border: 240 3.7% 15.9%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
-  }
-}
-
-@layer base {
-  * {
-    @apply border-border;
-  }
-
-  body {
-    @apply bg-background text-foreground font-sans;
-    font-feature-settings: "rlig" 1, "calt" 1;
-  }
-  
-  h1, h2, h3, h4, h5, h6 {
-    @apply font-semibold tracking-tight;
-  }
-  
-  h1 {
-    @apply text-4xl sm:text-5xl lg:text-6xl;
-  }
-  
-  h2 {
-    @apply text-3xl sm:text-4xl;
-  }
-  
-  h3 {
-    @apply text-2xl sm:text-3xl;
+    --destructive-foreground: 210 20% 98%;
+    --border: 215 27.9% 16.9%;
+    --input: 215 27.9% 16.9%;
+    --ring: 216 12.2% 83.9%;
   }
 }
 
 @layer components {
-  .glass-panel {
-    @apply bg-white/70 backdrop-blur-md border border-white/20 shadow-lg;
-  }
-  
-  .doctor-bubble {
-    @apply bg-medical-doctor rounded-2xl p-4 shadow-sm;
-  }
-  
-  .patient-bubble {
-    @apply bg-medical-patient rounded-2xl p-4 shadow-sm;
-  }
-  
+  /* Button styles */
   .btn-primary {
-    @apply bg-medical-blue hover:bg-opacity-90 text-white py-3 px-6 rounded-xl shadow-md transition-all duration-300 transform hover:translate-y-[-2px] focus:outline-none focus:ring-2 focus:ring-medical-blue focus:ring-opacity-50;
+    @apply bg-medical-blue px-6 py-3 text-white font-medium rounded-lg 
+           hover:bg-medical-dark-blue transition-colors duration-200 
+           shadow-md hover:shadow-lg active:shadow-sm;
   }
   
-  .btn-secondary {
-    @apply bg-white text-medical-blue border border-medical-blue py-3 px-6 rounded-xl shadow-sm transition-all duration-300 hover:bg-medical-light-blue focus:outline-none focus:ring-2 focus:ring-medical-blue focus:ring-opacity-50;
-  }
-  
-  .case-card {
-    @apply bg-white p-6 rounded-2xl shadow-md border border-gray-100 transition-all duration-300 hover:shadow-lg cursor-pointer;
-  }
-  
+  /* Badge styles */
   .badge {
-    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
-  }
-  
-  .badge-blue {
-    @apply bg-blue-100 text-blue-800;
+    @apply px-3 py-1 text-xs font-medium rounded-full;
   }
   
   .badge-green {
     @apply bg-green-100 text-green-800;
   }
   
+  .badge-blue {
+    @apply bg-blue-100 text-blue-800;
+  }
+  
   .badge-red {
     @apply bg-red-100 text-red-800;
   }
-}
-
-/* Custom scrollbar */
-::-webkit-scrollbar {
-  width: 6px;
-  height: 6px;
-}
-
-::-webkit-scrollbar-track {
-  background: transparent;
-}
-
-::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.1);
-  border-radius: 3px;
-}
-
-::-webkit-scrollbar-thumb:hover {
-  background: rgba(0, 0, 0, 0.2);
-}
-
-/* Custom animations */
-.hover-scale {
-  @apply transition-transform duration-300;
-}
-
-.hover-scale:hover {
-  @apply transform scale-105;
-}
-
-/* Speech bubble animations */
-.bubble-animation-enter {
-  opacity: 0;
-  transform: translateY(20px);
-}
-
-.bubble-animation-enter-active {
-  opacity: 1;
-  transform: translateY(0);
-  transition: opacity 500ms, transform 500ms;
-}
-
-.bubble-animation-exit {
-  opacity: 1;
-}
-
-.bubble-animation-exit-active {
-  opacity: 0;
-  transition: opacity 300ms;
+  
+  /* Card styles */
+  .case-card {
+    @apply bg-white p-5 rounded-xl shadow-sm border border-gray-100 
+           hover:shadow-md transition-all duration-300;
+  }
+  
+  .hover-scale {
+    @apply hover:scale-[1.02] transition-transform duration-300;
+  }
+  
+  /* Animation utilities */
+  .animate-fade-in {
+    animation: fadeIn 0.8s ease-out forwards;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
 }

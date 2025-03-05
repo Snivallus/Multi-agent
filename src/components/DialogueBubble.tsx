@@ -2,14 +2,21 @@
 import { cn } from '@/lib/utils';
 import { DialogueRole } from '@/data/medicalCases';
 import React from 'react';
+import { Language, getText } from '@/types/language';
+import { translations } from '@/data/translations';
 
 interface DialogueBubbleProps {
   role: DialogueRole;
   text: string;
   isActive: boolean;
+  language: Language;
 }
 
-const DialogueBubble: React.FC<DialogueBubbleProps> = ({ role, text, isActive }) => {
+/**
+ * Component for displaying individual dialogue messages in the conversation
+ * Styles differ based on the speaker role (doctor/patient)
+ */
+const DialogueBubble: React.FC<DialogueBubbleProps> = ({ role, text, isActive, language }) => {
   return (
     <div
       className={cn(
@@ -21,6 +28,7 @@ const DialogueBubble: React.FC<DialogueBubbleProps> = ({ role, text, isActive })
       )}
     >
       <div className="flex items-start gap-3">
+        {/* Avatar for the speaker */}
         <div
           className={cn(
             'flex-shrink-0 h-10 w-10 rounded-full flex items-center justify-center text-white',
@@ -30,14 +38,16 @@ const DialogueBubble: React.FC<DialogueBubbleProps> = ({ role, text, isActive })
           {role === 'doctor' ? 'D' : 'P'}
         </div>
         <div>
+          {/* Speaker label (Doctor/Patient) */}
           <div
             className={cn(
               'text-sm font-medium mb-1',
               role === 'doctor' ? 'text-medical-blue' : 'text-medical-dark-blue'
             )}
           >
-            {role === 'doctor' ? 'Doctor' : 'Patient'}
+            {getText(translations[role], language)}
           </div>
+          {/* Dialogue text */}
           <p className="text-gray-800">{text}</p>
         </div>
       </div>

@@ -3,18 +3,28 @@ import React, { useState, useEffect, useRef } from 'react';
 import { MedicalCase } from '@/data/medicalCases';
 import DialogueBubble from './DialogueBubble';
 import { ArrowLeft, Play, Pause, FastForward, RotateCcw } from 'lucide-react';
+import { Language, getText } from '@/types/language';
+import { translations } from '@/data/translations';
 
 interface DialogueSimulationProps {
   caseData: MedicalCase;
   onBack: () => void;
+  language: Language;
 }
 
-const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBack }) => {
+/**
+ * Component for displaying the interactive dialogue simulation
+ * Handles auto-advancing dialogue, controls, and displaying dialogue bubbles
+ */
+const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBack, language }) => {
   const [currentDialogueIndex, setCurrentDialogueIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(true);
   const timerRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
-
+  
+  /**
+   * Advance to the next dialogue line
+   */
   const advanceDialogue = () => {
     if (currentDialogueIndex < caseData.dialogue.length - 1) {
       setCurrentDialogueIndex((prev) => prev + 1);
@@ -24,6 +34,9 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
     }
   };
 
+  /**
+   * Reset dialogue to beginning
+   */
   const resetDialogue = () => {
     setCurrentDialogueIndex(0);
     setIsPlaying(true);
@@ -64,17 +77,18 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
               <ArrowLeft className="h-5 w-5 text-gray-600" />
             </button>
             <div>
-              <h2 className="text-xl font-semibold text-gray-800">{caseData.title}</h2>
-              <p className="text-sm text-gray-500">{caseData.category}</p>
+              <h2 className="text-xl font-semibold text-gray-800">{getText(caseData.title, language)}</h2>
+              <p className="text-sm text-gray-500">{getText(caseData.category, language)}</p>
             </div>
           </div>
           
+          {/* Playback controls */}
           <div className="flex items-center gap-3">
             <button
               onClick={resetDialogue}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-              aria-label="Reset dialogue"
-              title="Reset dialogue"
+              aria-label={getText(translations.resetDialogue, language)}
+              title={getText(translations.resetDialogue, language)}
             >
               <RotateCcw className="h-5 w-5 text-gray-600" />
             </button>
@@ -82,8 +96,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
             <button
               onClick={() => setIsPlaying(!isPlaying)}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-              aria-label={isPlaying ? "Pause" : "Play"}
-              title={isPlaying ? "Pause" : "Play"}
+              aria-label={isPlaying ? getText(translations.pause, language) : getText(translations.play, language)}
+              title={isPlaying ? getText(translations.pause, language) : getText(translations.play, language)}
             >
               {isPlaying ? (
                 <Pause className="h-5 w-5 text-gray-600" />
@@ -96,8 +110,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
               onClick={advanceDialogue}
               disabled={currentDialogueIndex >= caseData.dialogue.length - 1}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-              aria-label="Next dialogue"
-              title="Next dialogue"
+              aria-label={getText(translations.nextDialogue, language)}
+              title={getText(translations.nextDialogue, language)}
             >
               <FastForward className="h-5 w-5 text-gray-600" />
             </button>
@@ -105,7 +119,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
         </div>
       </div>
       
-      {/* Dialogue content area */}
+      {/* Dialogue content area with auto-scroll */}
       <div 
         ref={containerRef}
         className="flex-grow overflow-y-auto p-4 bg-gradient-to-b from-gray-50 to-white"
@@ -117,6 +131,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
               role={line.role}
               text={line.text}
               isActive={index <= currentDialogueIndex}
+              language={language}
             />
           ))}
         </div>
@@ -134,8 +149,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
             />
           </div>
           <div className="flex justify-between mt-2 text-xs text-gray-500">
-            <span>Progress</span>
-            <span>{`${currentDialogueIndex + 1} of ${caseData.dialogue.length}`}</span>
+            <span>{getText(translations.progress, language)}</span>
+            <span>{`${currentDialogueIndex + 1} ${getText(translations.of, language)} ${caseData.dialogue.length}`}</span>
           </div>
         </div>
       </div>
