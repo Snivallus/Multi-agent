@@ -3,6 +3,8 @@ import React, { useState } from 'react';
 import { medicalCases, MedicalCase } from '@/data/medicalCases';
 import CaseCard from './CaseCard';
 import { ArrowLeft } from 'lucide-react';
+import { useLanguage } from '@/context/LanguageContext';
+import { translations } from '@/data/translations';
 
 interface CaseSelectionProps {
   onSelect: (caseData: MedicalCase) => void;
@@ -10,22 +12,19 @@ interface CaseSelectionProps {
 }
 
 const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack }) => {
-  const [selectedCase, setSelectedCase] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState('');
+  const { language } = useLanguage();
+  const t = translations[language];
 
   const filteredCases = medicalCases.filter(
     (caseItem) =>
-      caseItem.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      caseItem.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      caseItem.category.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      caseItem.tags.some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
+      caseItem.title[language].toLowerCase().includes(searchQuery.toLowerCase()) ||
+      caseItem.description[language].toLowerCase().includes(searchQuery.toLowerCase()) ||
+      caseItem.category[language].toLowerCase().includes(searchQuery.toLowerCase()) ||
+      caseItem.tags[language].some((tag) => tag.toLowerCase().includes(searchQuery.toLowerCase()))
   );
 
-  const handleCaseClick = (caseId: string) => {
-    setSelectedCase(caseId);
-  };
-
-  const handleCaseDoubleClick = (caseData: MedicalCase) => {
+  const handleCaseClick = (caseData: MedicalCase) => {
     onSelect(caseData);
   };
 
@@ -39,13 +38,13 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack }) => {
         >
           <ArrowLeft className="h-6 w-6 text-gray-600" />
         </button>
-        <h2 className="text-3xl font-semibold text-gray-800">Select a Case Study</h2>
+        <h2 className="text-3xl font-semibold text-gray-800">{t.selectCase}</h2>
       </div>
 
       <div className="mb-6">
         <input
           type="text"
-          placeholder="Search cases by title, description, category, or tags..."
+          placeholder={t.searchCasesPlaceholder}
           className="w-full p-4 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-medical-blue"
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
@@ -57,15 +56,14 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack }) => {
           <CaseCard
             key={caseItem.id}
             caseData={caseItem}
-            onClick={() => handleCaseClick(caseItem.id)}
-            onDoubleClick={() => handleCaseDoubleClick(caseItem)}
+            onClick={() => handleCaseClick(caseItem)}
           />
         ))}
       </div>
 
       {filteredCases.length === 0 && (
         <div className="text-center py-12">
-          <p className="text-gray-500 text-lg">No cases found matching your search criteria</p>
+          <p className="text-gray-500 text-lg">{t.noCasesFound}</p>
         </div>
       )}
     </div>
