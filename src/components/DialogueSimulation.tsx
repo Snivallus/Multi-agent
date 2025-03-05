@@ -43,6 +43,17 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
     setIsPlaying(true);
   };
 
+  /**
+   * Handle click on progress bar to jump to a specific dialogue line
+   */
+  const handleProgressClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
+    const rect = event.currentTarget.getBoundingClientRect();
+    const clickX = event.clientX - rect.left;
+    const newProgress = clickX / rect.width;
+    const newIndex = Math.floor(newProgress * caseData.dialogue.length);
+    setCurrentDialogueIndex(newIndex);
+  };
+
   // Auto-scroll to the latest dialogue bubble when it appears
   useEffect(() => {
     if (lastBubbleRef.current) {
@@ -74,7 +85,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
           <div className="flex items-center gap-4">
             <button
               onClick={onBack}
-              className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+              className="p-3 rounded-full hover:bg-gray-100 transition-colors duration-200"
               aria-label="Go back"
             >
               <ArrowLeft className="h-5 w-5 text-gray-600" />
@@ -147,7 +158,10 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
       {/* Progress indicator */}
       <div className="bg-white border-t p-4">
         <div className="max-w-7xl mx-auto">
-          <div className="h-1 bg-gray-200 rounded-full overflow-hidden">
+          <div
+              className="h-2 bg-gray-200 rounded-full overflow-hidden cursor-pointer"
+              onClick={handleProgressClick}
+            >
             <div 
               className="h-full bg-medical-blue transition-all duration-500 ease-out"
               style={{ 

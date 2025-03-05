@@ -6,17 +6,19 @@ import { componentTagger } from "lovable-tagger";
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
   server: {
-    host: "::",
-    port: 8080,
+    host: 'localhost', // 或 '0.0.0.0'
+    port: 5173,        // 确保端口是 5173（或任何未被占用的端口）
   },
   plugins: [
     react(),
-    mode === 'development' &&
-    componentTagger(),
-  ].filter(Boolean),
+    ...(mode === 'development' ? [componentTagger()] : [])  // 仅在开发模式下使用 componentTagger 插件
+  ],
   resolve: {
     alias: {
       "@": path.resolve(__dirname, "./src"),
     },
+  },
+  css: {
+    postcss: './postcss.config.js', // 显式指定 postcss 配置文件路径
   },
 }));

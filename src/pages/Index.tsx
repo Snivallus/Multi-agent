@@ -49,7 +49,7 @@ const Index: React.FC = () => {
   return (
     <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
       {/* Language toggle - appears on all screens */}
-      <div className="absolute top-4 right-4 z-10">
+      <div className="absolute top-20 right-4 z-10">
         <button
           onClick={toggleLanguage}
           className="px-4 py-2 bg-white shadow-md rounded-full hover:bg-gray-50 transition-colors duration-200 font-medium text-medical-blue border border-medical-light-blue"
@@ -61,15 +61,12 @@ const Index: React.FC = () => {
       {appState === AppState.LANDING && (
         <div className="min-h-screen flex flex-col justify-center items-center px-4 py-20 text-center animate-fade-in">
           <div className="max-w-3xl mx-auto">
-            <span className="inline-block mb-4 px-4 py-1 bg-medical-light-blue text-medical-blue rounded-full text-sm font-medium animate-fade-in">
-              {getText(translations.interactiveMedicalLearning, language)}
-            </span>
             
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-medical-blue to-medical-dark-blue animate-fade-in" style={{ animationDelay: '100ms' }}>
+            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-medical-blue to-medical-dark-blue animate-fade-in" style={{ animationDelay: '100ms', lineHeight: '1.25'}}>
               {getText(translations.appTitle, language)}
             </h1>
             
-            <p className="text-xl text-gray-600 mb-10 max-w-2xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
+            <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
               {getText(translations.appDescription, language)}
             </p>
             
@@ -88,7 +85,7 @@ const Index: React.FC = () => {
             </div>
           </div>
           
-          <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: '400ms' }}>
+          {/* <div className="mt-20 grid grid-cols-1 md:grid-cols-3 gap-6 max-w-4xl mx-auto animate-fade-in" style={{ animationDelay: '400ms' }}>
             <FeatureCard 
               icon="🔍"
               title={getText(translations.featureClinicalCasesTitle, language)}
@@ -106,7 +103,7 @@ const Index: React.FC = () => {
               title={getText(translations.featureLearningTitle, language)}
               description={getText(translations.featureLearningDesc, language)}
             />
-          </div>
+          </div> */}
         </div>
       )}
 
