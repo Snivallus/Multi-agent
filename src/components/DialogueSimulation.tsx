@@ -1,8 +1,7 @@
-
 import React, { useState, useEffect, useRef } from 'react';
 import { MedicalCase } from '@/data/medicalCases';
 import DialogueBubble from './DialogueBubble';
-import { ArrowLeft, ArrowRight, Play, Pause, FastForward, RotateCcw } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Play, Pause, FastForward, RotateCcw, Rewind } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 
@@ -160,7 +159,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
               aria-label={getText(translations.previousDialogue, language)}
               title={getText(translations.previousDialogue, language)}
             >
-              <ArrowLeft className="h-5 w-5 text-gray-600" />
+              <Rewind className="h-5 w-5 text-gray-600" />
             </button>
             
             <button
