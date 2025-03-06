@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MedicalCase } from '@/data/medicalCases';
 import DialogueBubble from './DialogueBubble';
-import { ArrowLeft, Play, Pause, FastForward, RotateCcw } from 'lucide-react';
+import { ArrowLeft, Play, Pause, FastForward, RotateCcw, Rewind } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 
@@ -36,11 +36,27 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
   };
 
   /**
+   * Go back to the previous dialogue line
+   */
+  const previousDialogue = () => {
+    if (currentDialogueIndex > 0) {
+      setCurrentDialogueIndex((prev) => prev - 1);
+    }
+  };
+
+  /**
    * Reset dialogue to beginning
    */
   const resetDialogue = () => {
     setCurrentDialogueIndex(0);
     setIsPlaying(true);
+  };
+
+  /**
+   * Toggle play/pause state
+   */
+  const togglePlayPause = () => {
+    setIsPlaying((prev) => !prev);
   };
 
   /**
@@ -52,6 +68,30 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
     const newProgress = clickX / rect.width;
     const newIndex = Math.floor(newProgress * caseData.dialogue.length);
     setCurrentDialogueIndex(newIndex);
+  };
+
+  /**
+   * Handle keyboard shortcuts
+   */
+  const handleKeyDown = (event: KeyboardEvent) => {
+    // Prevent default behavior for these keys to avoid scrolling
+    if (event.key === ' ' || event.key === 'ArrowLeft' || event.key === 'ArrowRight') {
+      event.preventDefault();
+    }
+
+    switch (event.key) {
+      case ' ': // Spacebar
+        togglePlayPause();
+        break;
+      case 'ArrowRight': // Right arrow
+        advanceDialogue();
+        break;
+      case 'ArrowLeft': // Left arrow
+        previousDialogue();
+        break;
+      default:
+        break;
+    }
   };
 
   // Auto-scroll to the latest dialogue bubble when it appears
@@ -76,6 +116,17 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
       }
     };
   }, [currentDialogueIndex, isPlaying, caseData.dialogue.length]);
+
+  // Add keyboard event listeners
+  useEffect(() => {
+    // Add event listener when component mounts
+    window.addEventListener('keydown', handleKeyDown);
+    
+    // Remove event listener when component unmounts
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [currentDialogueIndex, isPlaying]); // Re-add when these dependencies change
 
   return (
     <div className="flex flex-col h-screen animate-fade-in">
@@ -108,7 +159,17 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
             </button>
             
             <button
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={previousDialogue}
+              disabled={currentDialogueIndex <= 0}
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={getText(translations.previousDialogue, language)}
+              title={getText(translations.previousDialogue, language)}
+            >
+              <Rewind className="h-5 w-5 text-gray-600" />
+            </button>
+            
+            <button
+              onClick={togglePlayPause}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
               aria-label={isPlaying ? getText(translations.pause, language) : getText(translations.play, language)}
               title={isPlaying ? getText(translations.pause, language) : getText(translations.play, language)}
@@ -175,6 +236,19 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
             <span>{`${currentDialogueIndex + 1} ${getText(translations.of, language)} ${caseData.dialogue.length}`}</span>
           </div>
         </div>
+      </div>
+      
+      {/* Keyboard shortcuts hint */}
+      <div className="bg-white border-t p-2 text-xs text-center text-gray-500">
+        <p>
+          {getText(translations.keyboardShortcuts, language)}: 
+          <span className="mx-1 px-1 bg-gray-100 rounded">Space</span> 
+          {getText(translations.playPause, language)}, 
+          <span className="mx-1 px-1 bg-gray-100 rounded">←</span> 
+          {getText(translations.previousLine, language)}, 
+          <span className="mx-1 px-1 bg-gray-100 rounded">→</span> 
+          {getText(translations.nextLine, language)}
+        </p>
       </div>
     </div>
   );
