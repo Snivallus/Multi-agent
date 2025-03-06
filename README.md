@@ -4,7 +4,7 @@ Local usage:
 npm run dev
 ```
 
-Deployment usage:
+Deployment usage: (But sadly it never works)
 
 ```powershell
 npm run build
