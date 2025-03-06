@@ -40,8 +40,13 @@ export const translations = {
   pause: createMultilingualText('Pause', '暂停'),
   play: createMultilingualText('Play', '播放'),
   nextDialogue: createMultilingualText('Next dialogue', '下一段对话'),
+  previousDialogue: createMultilingualText('Previous dialogue', '上一段对话'),
   progress: createMultilingualText('Progress', '进度'),
   of: createMultilingualText('of', '共'),
+  keyboardShortcuts: createMultilingualText('Keyboard shortcuts', '键盘快捷键'),
+  playPause: createMultilingualText('Space: Play/Pause', '空格键: 播放/暂停'),
+  previousLine: createMultilingualText('←: Previous', '←: 上一句'),
+  nextLine: createMultilingualText('→: Next', '→: 下一句'),
   
   // Difficulty levels
   easy: createMultilingualText('Easy', '简单'),

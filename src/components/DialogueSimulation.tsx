@@ -2,7 +2,7 @@
 import React, { useState, useEffect, useRef } from 'react';
 import { MedicalCase } from '@/data/medicalCases';
 import DialogueBubble from './DialogueBubble';
-import { ArrowLeft, Play, Pause, FastForward, RotateCcw } from 'lucide-react';
+import { ArrowLeft, ArrowRight, Play, Pause, FastForward, RotateCcw } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 
@@ -36,11 +36,27 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
   };
 
   /**
+   * Go back to the previous dialogue line
+   */
+  const previousDialogue = () => {
+    if (currentDialogueIndex > 0) {
+      setCurrentDialogueIndex((prev) => prev - 1);
+    }
+  };
+
+  /**
    * Reset dialogue to beginning
    */
   const resetDialogue = () => {
     setCurrentDialogueIndex(0);
     setIsPlaying(true);
+  };
+
+  /**
+   * Toggle play/pause state
+   */
+  const togglePlayPause = () => {
+    setIsPlaying((prev) => !prev);
   };
 
   /**
@@ -53,6 +69,36 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
     const newIndex = Math.floor(newProgress * caseData.dialogue.length);
     setCurrentDialogueIndex(newIndex);
   };
+
+  // Handle keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      // Prevent default behavior for these keys
+      if (e.key === ' ' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
+        e.preventDefault();
+      }
+      
+      switch (e.key) {
+        case ' ': // Space bar
+          togglePlayPause();
+          break;
+        case 'ArrowRight':
+          advanceDialogue();
+          break;
+        case 'ArrowLeft':
+          previousDialogue();
+          break;
+      }
+    };
+
+    // Add event listener
+    window.addEventListener('keydown', handleKeyDown);
+
+    // Cleanup function
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [currentDialogueIndex, isPlaying]); // Re-attach when these state values change
 
   // Auto-scroll to the latest dialogue bubble when it appears
   useEffect(() => {
@@ -108,7 +154,17 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
             </button>
             
             <button
-              onClick={() => setIsPlaying(!isPlaying)}
+              onClick={previousDialogue}
+              disabled={currentDialogueIndex <= 0}
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label={getText(translations.previousDialogue, language)}
+              title={getText(translations.previousDialogue, language)}
+            >
+              <ArrowLeft className="h-5 w-5 text-gray-600" />
+            </button>
+            
+            <button
+              onClick={togglePlayPause}
               className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
               aria-label={isPlaying ? getText(translations.pause, language) : getText(translations.play, language)}
               title={isPlaying ? getText(translations.pause, language) : getText(translations.play, language)}
@@ -173,6 +229,18 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
           <div className="flex justify-between mt-2 text-xs text-gray-500">
             <span>{getText(translations.progress, language)}</span>
             <span>{`${currentDialogueIndex + 1} ${getText(translations.of, language)} ${caseData.dialogue.length}`}</span>
+          </div>
+          
+          {/* Keyboard shortcuts help */}
+          <div className="mt-3 text-xs text-gray-500 flex flex-wrap gap-4 justify-center">
+            <span className="text-center">{getText(translations.keyboardShortcuts, language)}</span>
+            <div className="flex gap-3">
+              <span>{getText(translations.playPause, language)}</span>
+              <span>|</span>
+              <span>{getText(translations.previousLine, language)}</span>
+              <span>|</span>
+              <span>{getText(translations.nextLine, language)}</span>
+            </div>
           </div>
         </div>
       </div>
