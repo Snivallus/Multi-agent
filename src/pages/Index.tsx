@@ -94,10 +94,6 @@ const Index: React.FC = () => {
                   <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
                 </button>
               </div>
-              
-              <p className="text-sm text-gray-500 mt-4">
-                {getText(translations.clickToStartHint, language)}
-              </p>
             </div>
           </div>
         </div>
