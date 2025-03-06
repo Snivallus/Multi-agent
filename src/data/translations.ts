@@ -1,3 +1,4 @@
+
 import { MultilingualText, createMultilingualText } from '@/types/language';
 
 // UI translations for the entire application
@@ -12,24 +13,16 @@ export const translations = {
     '一个用于集成多模态医学诊断的多智能体框架'
   ),
   selectCaseButton: createMultilingualText('Select a Case Study', '选择案例'),
+  directInteractionButton: createMultilingualText('Direct Interaction', '直接交互'),
   clickToStartHint: createMultilingualText('Click on a case to start the simulation', '点击案例开始模拟'),
   
-  // Features
-  // featureClinicalCasesTitle: createMultilingualText('Clinical Cases', '临床案例'),
-  // featureClinicalCasesDesc: createMultilingualText(
-  //   'Explore a variety of medical scenarios across different specialties, from common presentations to complex diagnoses.',
-  //   '探索各个专科的各种医疗场景，从常见表现到复杂诊断。'
-  // ),
-  // featureInteractiveTitle: createMultilingualText('Interactive Dialogue', '互动对话'),
-  // featureInteractiveDesc: createMultilingualText(
-  //   'Experience the natural flow of doctor-patient conversations with realistic clinical discussions.',
-  //   '通过真实的临床讨论体验医患对话的自然流程。'
-  // ),
-  // featureLearningTitle: createMultilingualText('Learning Experience', '学习体验'),
-  // featureLearningDesc: createMultilingualText(
-  //   'Observe diagnostic reasoning and medical decision-making in action through detailed clinical conversations.',
-  //   '通过详细的临床对话观察诊断推理和医疗决策制定过程。'
-  // ),
+  // Direct Interaction
+  directInteractionTitle: createMultilingualText('Direct Interaction', '直接交互'),
+  typeMessage: createMultilingualText('Type your message here...', '在此输入您的消息...'),
+  sendMessage: createMultilingualText('Send Message', '发送消息'),
+  waitingForResponse: createMultilingualText('Waiting for response...', '等待回应...'),
+  interactiveMedicalLearning: createMultilingualText('Interactive Medical Learning', '交互式医学学习'),
+  jumpToPosition: createMultilingualText('Click to jump to this position', '点击跳转到该位置'),
   
   // Case selection
   selectCase: createMultilingualText('Select a Case Study', '选择案例'),

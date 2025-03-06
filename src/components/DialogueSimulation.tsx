@@ -161,6 +161,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
           <div
               className="h-2 bg-gray-200 rounded-full overflow-hidden cursor-pointer"
               onClick={handleProgressClick}
+              title={getText(translations.jumpToPosition, language)}
             >
             <div 
               className="h-full bg-medical-blue transition-all duration-500 ease-out"

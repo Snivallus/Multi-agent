@@ -1,3 +1,4 @@
+
 import { defineConfig } from "vite";
 import react from "@vitejs/plugin-react-swc";
 import path from "path";
@@ -7,7 +8,7 @@ import { componentTagger } from "lovable-tagger";
 export default defineConfig(({ mode }) => ({
   server: {
     host: 'localhost', // 或 '0.0.0.0'
-    port: 5173,        // 确保端口是 5173（或任何未被占用的端口）
+    port: 8080,
   },
   plugins: [
     react(),
