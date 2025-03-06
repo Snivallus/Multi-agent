@@ -1,5 +1,5 @@
+
 import type { Config } from "tailwindcss";
-import tailwindcssAnimate from "tailwindcss-animate";
 
 export default {
 	darkMode: ["class"],
@@ -64,14 +64,14 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				},
 				medical: {
-					'blue': '#3498db',
-					'light-blue': '#63ceee',
+					blue: '#3498db',
+					'light-blue': '#edf7fd',
+					green: '#2ecc71',
+					red: '#e74c3c',
+					gray: '#95a5a6',
 					'dark-blue': '#2c3e50',
-					'green': '#2ecc71',
-					'red': '#e74c3c',
-					'gray': '#95a5a6',
-					'doctor': '#12a1f4',
-					'patient': '#b2adad'
+					'doctor': '#ebf5fb',
+					'patient': '#f5f5f5'
 				}
 			},
 			borderRadius: {
@@ -140,5 +140,5 @@ export default {
 			}
 		}
 	},
-	plugins: [tailwindcssAnimate],
+	plugins: [require("tailwindcss-animate")],
 } satisfies Config;

@@ -7,25 +7,34 @@ export const translations = {
   toggleLanguage: createMultilingualText('English', '中文'),
   
   // Landing page
-  appTitle: createMultilingualText('Medical Multi-Agent Systems', '医学多智能体系统'),
+  interactiveMedicalLearning: createMultilingualText('Interactive Medical Learning', '互动医疗学习'),
+  appTitle: createMultilingualText('Medical Dialogue Diagnostics', '医疗对话诊断'),
   appDescription: createMultilingualText(
-    'A multi-agent framework for integrated multi-modality medical diagnosis',
-    '一个用于集成多模态医学诊断的多智能体框架'
+    'Experience realistic doctor-patient interactions through simulated clinical cases. Learn diagnostic approaches and improve clinical reasoning skills.',
+    '通过模拟临床案例体验真实的医患互动。学习诊断方法并提高临床推理能力。'
   ),
-  selectCaseButton: createMultilingualText('Select a Case Study', '选择案例'),
-  directInteractionButton: createMultilingualText('Direct Interaction', '直接交互'),
+  selectCaseButton: createMultilingualText('Select a Case Study', '选择案例研究'),
   clickToStartHint: createMultilingualText('Click on a case to start the simulation', '点击案例开始模拟'),
   
-  // Direct Interaction
-  directInteractionTitle: createMultilingualText('Direct Interaction', '直接交互'),
-  typeMessage: createMultilingualText('Type your message here...', '在此输入您的消息...'),
-  sendMessage: createMultilingualText('Send Message', '发送消息'),
-  waitingForResponse: createMultilingualText('Waiting for response...', '等待回应...'),
-  interactiveMedicalLearning: createMultilingualText('Interactive Medical Learning', '交互式医学学习'),
-  jumpToPosition: createMultilingualText('Click to jump to this position', '点击跳转到该位置'),
+  // Features
+  featureClinicalCasesTitle: createMultilingualText('Clinical Cases', '临床案例'),
+  featureClinicalCasesDesc: createMultilingualText(
+    'Explore a variety of medical scenarios across different specialties, from common presentations to complex diagnoses.',
+    '探索各个专科的各种医疗场景，从常见表现到复杂诊断。'
+  ),
+  featureInteractiveTitle: createMultilingualText('Interactive Dialogue', '互动对话'),
+  featureInteractiveDesc: createMultilingualText(
+    'Experience the natural flow of doctor-patient conversations with realistic clinical discussions.',
+    '通过真实的临床讨论体验医患对话的自然流程。'
+  ),
+  featureLearningTitle: createMultilingualText('Learning Experience', '学习体验'),
+  featureLearningDesc: createMultilingualText(
+    'Observe diagnostic reasoning and medical decision-making in action through detailed clinical conversations.',
+    '通过详细的临床对话观察诊断推理和医疗决策制定过程。'
+  ),
   
   // Case selection
-  selectCase: createMultilingualText('Select a Case Study', '选择案例'),
+  selectCase: createMultilingualText('Select a Case Study', '选择案例研究'),
   searchCasesPlaceholder: createMultilingualText(
     'Search cases by title, description, category, or tags...',
     '按标题、描述、类别或标签搜索案例...'
@@ -51,5 +60,4 @@ export const translations = {
   // Roles
   doctor: createMultilingualText('Doctor', '医生'),
   patient: createMultilingualText('Patient', '患者'),
-  reporter: createMultilingualText('Reporter', '检查员'),
 };
