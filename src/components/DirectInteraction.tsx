@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Send } from 'lucide-react';
 import { Language, getText } from '@/types/language';
