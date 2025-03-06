@@ -23,8 +23,7 @@ export default defineConfig(({ mode }) => ({
     postcss: './postcss.config.js', // 显式指定 postcss 配置文件路径
   },
   // Add base path for GitHub Pages deployment
-  // base: '/Multi-agent/', // 使用你的仓库名称替换 'Multi-agent'
-  base: '/Multi-agent/',  // 这里确保仓库名正确
+  // base: '/Multi-agent/', // 使用Github仓库名称
   build: {
       outDir: 'docs',  // 将 Vite 构建输出到 docs 目录
   }
