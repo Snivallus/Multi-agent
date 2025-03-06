@@ -21,7 +21,7 @@ export const translations = {
   typeMessage: createMultilingualText('在此输入您的消息...', 'Type your message here...'),
   sendMessage: createMultilingualText('发送消息', 'Send Message'),
   waitingForResponse: createMultilingualText('等待回应...', 'Waiting for response...'),
-  interactiveMedicalLearning: createMultilingualText('交互式医学学习', 'Interactive Medical Learning'),
+  // interactiveMedicalLearning: createMultilingualText('交互式医学学习', 'Interactive Medical Learning'),
   jumpToPosition: createMultilingualText('点击跳转到该位置', 'Click to jump to this position'),
   conversationHint: createMultilingualText('通过在下方输入消息开始对话', 'Start a conversation by typing a message below.'),
   doctorPlaceHolder: createMultilingualText('无响应', 'No response'),

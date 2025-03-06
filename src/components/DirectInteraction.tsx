@@ -147,9 +147,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         <div className="max-w-3xl mx-auto space-y-2 pb-20">
           {messages.length === 0 && (
             <div className="text-center my-20 text-gray-500">
-              <h3 className="text-2xl font-medium mb-4">
+              {/* <h3 className="text-2xl font-medium mb-4">
                 {getText(translations.interactiveMedicalLearning, language)}
-              </h3>
+              </h3> */}
               <p>{getText(translations.conversationHint, language)}</p>
             </div>
           )}
