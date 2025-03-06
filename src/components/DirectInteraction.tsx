@@ -174,8 +174,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           {/* Show waiting message if waiting for response */}
           {isWaiting && (
             <div className="text-center py-4 text-gray-500">
-              <p>{getText(translations.waitingForResponse, language)}</p>
-              {countdown !== null && <p>{countdown} seconds remaining...</p>}
+              <p>{getText(translations.waitingForResponse, language)}
+              {countdown !== null && <span>({countdown} s) ...</span>}
+              </p>
             </div>
           )}
 
