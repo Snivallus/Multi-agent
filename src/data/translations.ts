@@ -9,8 +9,8 @@ export const translations = {
   // Landing page
   appTitle: createMultilingualText('Medical Multi-Agent Systems', '医学多智能体系统'),
   appDescription: createMultilingualText(
-    'A multi-agent framework for integrated multi-modality medical diagnosis',
-    '一个用于集成多模态医学诊断的多智能体框架'
+    'A multi-agent framework for multi-modality medical diagnosis',
+    '一个用于多模态医学诊断的多智能体框架'
   ),
   selectCaseButton: createMultilingualText('Select a Case Study', '选择案例'),
   directInteractionButton: createMultilingualText('Direct Interaction', '直接交互'),
