@@ -22,6 +22,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
   const timerRef = useRef<number | null>(null);
   const containerRef = useRef<HTMLDivElement>(null);
   const lastBubbleRef = useRef<HTMLDivElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
   
   /**
    * Advance to the next dialogue line
@@ -44,14 +45,24 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
   };
 
   /**
-   * Handle click on progress bar to jump to a specific dialogue line
+   * Jump to a specific dialogue index based on progress bar click
+   * @param e Click event on the progress bar
    */
-  const handleProgressClick = (event: React.MouseEvent<HTMLDivElement, MouseEvent>) => {
-    const rect = event.currentTarget.getBoundingClientRect();
-    const clickX = event.clientX - rect.left;
-    const newProgress = clickX / rect.width;
-    const newIndex = Math.floor(newProgress * caseData.dialogue.length);
-    setCurrentDialogueIndex(newIndex);
+  const handleProgressBarClick = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (progressBarRef.current) {
+      // Calculate click position relative to progress bar width
+      const rect = progressBarRef.current.getBoundingClientRect();
+      const clickPositionX = e.clientX - rect.left;
+      const clickPercentage = clickPositionX / rect.width;
+      
+      // Calculate and set the new dialogue index based on click position
+      const newIndex = Math.min(
+        Math.max(0, Math.floor(clickPercentage * caseData.dialogue.length)),
+        caseData.dialogue.length - 1
+      );
+      
+      setCurrentDialogueIndex(newIndex);
+    }
   };
 
   // Auto-scroll to the latest dialogue bubble when it appears
@@ -85,7 +96,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
           <div className="flex items-center gap-4">
             <button
               onClick={onBack}
-              className="p-3 rounded-full hover:bg-gray-100 transition-colors duration-200"
+              className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
               aria-label="Go back"
             >
               <ArrowLeft className="h-5 w-5 text-gray-600" />
@@ -155,20 +166,34 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
         </div>
       </div>
       
-      {/* Progress indicator */}
+      {/* Interactive progress indicator */}
       <div className="bg-white border-t p-4">
         <div className="max-w-7xl mx-auto">
-          <div
-              className="h-2 bg-gray-200 rounded-full overflow-hidden cursor-pointer"
-              onClick={handleProgressClick}
-              title={getText(translations.jumpToPosition, language)}
-            >
+          <div 
+            ref={progressBarRef}
+            onClick={handleProgressBarClick}
+            className="h-3 bg-gray-200 rounded-full overflow-hidden cursor-pointer relative"
+            title={getText(translations.clickToJump, language)}
+          >
             <div 
               className="h-full bg-medical-blue transition-all duration-500 ease-out"
               style={{ 
                 width: `${(currentDialogueIndex + 1) / caseData.dialogue.length * 100}%` 
               }}
             />
+            {/* Render clickable dialogue markers */}
+            <div className="absolute inset-0 flex items-center">
+              {caseData.dialogue.map((_, index) => (
+                <div 
+                  key={index}
+                  className={`w-1 h-3 ${index <= currentDialogueIndex ? 'bg-white opacity-50' : 'bg-transparent'}`}
+                  style={{ 
+                    marginLeft: `${index === 0 ? 0 : (100 / caseData.dialogue.length)}%`,
+                    transform: 'translateX(-50%)'
+                  }}
+                />
+              ))}
+            </div>
           </div>
           <div className="flex justify-between mt-2 text-xs text-gray-500">
             <span>{getText(translations.progress, language)}</span>
