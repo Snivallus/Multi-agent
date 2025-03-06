@@ -23,7 +23,7 @@ export const translations = {
   waitingForResponse: createMultilingualText('等待回应...', 'Waiting for response...'),
   // interactiveMedicalLearning: createMultilingualText('交互式医学学习', 'Interactive Medical Learning'),
   jumpToPosition: createMultilingualText('点击跳转到该位置', 'Click to jump to this position'),
-  conversationHint: createMultilingualText('通过在下方输入消息开始对话', 'Start a conversation by typing a message below.'),
+  conversationHint: createMultilingualText('输入消息开始对话', 'Start a conversation by typing a message below.'),
   doctorPlaceHolder: createMultilingualText('无响应', 'No response'),
   
   // Case selection
