@@ -4,57 +4,57 @@ import { MultilingualText, createMultilingualText } from '@/types/language';
 // UI translations for the entire application
 export const translations = {
   // Common UI elements
-  toggleLanguage: createMultilingualText('English', '中文'),
+  toggleLanguage: createMultilingualText('中文', 'English'),
   
   // Landing page
-  appTitle: createMultilingualText('Medical Multi-Agent Systems', '医学多智能体系统'),
+  appTitle: createMultilingualText('医学多智能体系统', 'Medical Multi-Agent Systems'),
   appDescription: createMultilingualText(
-    'A multi-agent framework for multi-modality medical diagnosis',
-    '一个用于多模态医学诊断的多智能体框架'
+    '一个用于多模态医学诊断的多智能体框架',
+    'A multi-agent framework for multi-modality medical diagnosis'
   ),
-  selectCaseButton: createMultilingualText('Select a Case Study', '选择案例'),
-  directInteractionButton: createMultilingualText('Direct Interaction', '直接交互'),
-  clickToStartHint: createMultilingualText('Click on a case to start the simulation', '点击案例开始模拟'),
+  selectCaseButton: createMultilingualText('选择案例', 'Select a Case Study'),
+  directInteractionButton: createMultilingualText('直接交互', 'Direct Interaction'),
+  clickToStartHint: createMultilingualText('点击案例开始模拟', 'Click on a case to start the simulation'),
   
   // Direct Interaction
-  directInteractionTitle: createMultilingualText('Direct Interaction', '直接交互'),
-  typeMessage: createMultilingualText('Type your message here...', '在此输入您的消息...'),
-  sendMessage: createMultilingualText('Send Message', '发送消息'),
-  waitingForResponse: createMultilingualText('Waiting for response...', '等待回应...'),
-  interactiveMedicalLearning: createMultilingualText('Interactive Medical Learning', '交互式医学学习'),
-  jumpToPosition: createMultilingualText('Click to jump to this position', '点击跳转到该位置'),
-  conversationHint: createMultilingualText('Start a conversation by typing a message below.', '通过在下方输入消息开始对话'),
+  directInteractionTitle: createMultilingualText('直接交互', 'Direct Interaction'),
+  typeMessage: createMultilingualText('在此输入您的消息...', 'Type your message here...'),
+  sendMessage: createMultilingualText('发送消息', 'Send Message'),
+  waitingForResponse: createMultilingualText('等待回应...', 'Waiting for response...'),
+  interactiveMedicalLearning: createMultilingualText('交互式医学学习', 'Interactive Medical Learning'),
+  jumpToPosition: createMultilingualText('点击跳转到该位置', 'Click to jump to this position'),
+  conversationHint: createMultilingualText('通过在下方输入消息开始对话', 'Start a conversation by typing a message below.'),
   
   // Case selection
-  selectCase: createMultilingualText('Select a Case Study', '选择案例'),
+  selectCase: createMultilingualText('选择案例', 'Select a Case Study'),
   searchCasesPlaceholder: createMultilingualText(
-    'Search cases by title, description, category, or tags...',
-    '按标题、描述、类别或标签搜索案例...'
+    '按标题、描述、类别或标签搜索案例...',
+    'Search cases by title, description, category, or tags...'
   ),
   noCasesFound: createMultilingualText(
-    'No cases found matching your search criteria',
-    '未找到匹配您搜索条件的案例'
+    '未找到匹配您搜索条件的案例',
+    'No cases found matching your search criteria'
   ),
   
   // Dialogue simulation
-  resetDialogue: createMultilingualText('Reset dialogue', '重置对话'),
-  pause: createMultilingualText('Pause', '暂停'),
-  play: createMultilingualText('Play', '播放'),
-  nextDialogue: createMultilingualText('Next dialogue', '下一段对话'),
-  previousDialogue: createMultilingualText('Previous dialogue', '上一段对话'),
-  progress: createMultilingualText('Progress', '进度'),
-  of: createMultilingualText('of', '共'),
-  playPause: createMultilingualText('Space: Play/Pause', '空格键: 播放/暂停'),
-  previousLine: createMultilingualText('&larr;: Previous', '&larr;: 上一句'),
-  nextLine: createMultilingualText('&rarr;: Next', '&rarr;: 下一句'),
+  resetDialogue: createMultilingualText('重置对话', 'Reset dialogue'),
+  pause: createMultilingualText('暂停', 'Pause'),
+  play: createMultilingualText('播放', 'Play'),
+  nextDialogue: createMultilingualText('下一段对话', 'Next dialogue'),
+  previousDialogue: createMultilingualText('上一段对话', 'Previous dialogue'),
+  progress: createMultilingualText('进度', 'Progress'),
+  of: createMultilingualText('共', 'of'),
+  playPause: createMultilingualText('空格键: 播放/暂停', 'Space: Play/Pause'),
+  previousLine: createMultilingualText('&larr;: 上一句', '&larr;: Previous'),
+  nextLine: createMultilingualText('&rarr;: 下一句', '&rarr;: Next'),
   
   // Difficulty levels
-  easy: createMultilingualText('Easy', '简单'),
-  medium: createMultilingualText('Medium', '中等'),
-  hard: createMultilingualText('Hard', '困难'),
+  easy: createMultilingualText('简单', 'Easy'),
+  medium: createMultilingualText('中等', 'Medium'),
+  hard: createMultilingualText('困难', 'Hard'),
   
   // Roles
-  doctor: createMultilingualText('Doctor', '医生'),
-  patient: createMultilingualText('Patient', '患者'),
-  reporter: createMultilingualText('Reporter', '检查员'),
+  doctor: createMultilingualText('医生', 'Doctor'),
+  patient: createMultilingualText('患者', 'Patient'),
+  reporter: createMultilingualText('检查员', 'Reporter'),
 };

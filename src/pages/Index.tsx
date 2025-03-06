@@ -1,4 +1,3 @@
-
 import React, { useState } from 'react';
 import { MedicalCase } from '@/data/medicalCases';
 import CaseSelection from '@/components/CaseSelection';
@@ -23,7 +22,7 @@ enum AppState {
 const Index: React.FC = () => {
   const [appState, setAppState] = useState<AppState>(AppState.LANDING);
   const [selectedCase, setSelectedCase] = useState<MedicalCase | null>(null);
-  const [language, setLanguage] = useState<Language>('en');
+  const [language, setLanguage] = useState<Language>('zh');
 
   // Navigation handlers
   const handleStartClick = () => {
@@ -47,9 +46,9 @@ const Index: React.FC = () => {
     setAppState(AppState.CASE_SELECTION);
   };
 
-  // Toggle between English and Chinese
+  // Toggle between Chinese and English
   const toggleLanguage = () => {
-    setLanguage(prev => prev === 'en' ? 'zh' : 'en');
+    setLanguage(prev => prev === 'zh' ? 'en' : 'zh');
   };
 
   return (
