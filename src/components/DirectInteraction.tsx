@@ -114,7 +114,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           {messages.length === 0 && (
             <div className="text-center my-20 text-gray-500">
               <h3 className="text-2xl font-medium mb-4">{getText(translations.interactiveMedicalLearning, language)}</h3>
-              <p>{language === 'en' ? 'Start a conversation by typing a message below.' : '通过在下方输入消息开始对话。'}</p>
+              <p>{getText(translations.conversationHint, language)}</p>
             </div>
           )}
           
