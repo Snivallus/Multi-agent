@@ -4,6 +4,7 @@ import DialogueBubble from './DialogueBubble';
 import { ArrowLeft, ArrowRight, Play, Pause, FastForward, RotateCcw, Rewind } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
+import ReactMarkdown from 'react-markdown';
 
 interface DialogueSimulationProps {
   caseData: MedicalCase;
@@ -232,13 +233,12 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ caseData, onBac
           
           {/* Keyboard shortcuts help */}
           <div className="mt-3 text-xs text-gray-500 flex flex-wrap gap-4 justify-center">
-            <span className="text-center">{getText(translations.keyboardShortcuts, language)}</span>
             <div className="flex gap-3">
               <span>{getText(translations.playPause, language)}</span>
               <span>|</span>
-              <span>{getText(translations.previousLine, language)}</span>
+              <ReactMarkdown>{getText(translations.previousLine, language)}</ReactMarkdown>
               <span>|</span>
-              <span>{getText(translations.nextLine, language)}</span>
+              <ReactMarkdown>{getText(translations.nextLine, language)}</ReactMarkdown>
             </div>
           </div>
         </div>
