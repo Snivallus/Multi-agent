@@ -1,14 +1,11 @@
-
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 @layer base {
   :root {
-    --medical-blue: #4b87b5;
-    --medical-light-blue: #e5f3fa;
-    --medical-dark-blue: #2a5e84;
-    --medical-gray: #6b7280;
+    --medical-blue: #3498db;
+    --medical-dark-blue: #205890;
     
     --background: 0 0% 100%;
     --foreground: 224 71.4% 4.1%;
@@ -58,8 +55,8 @@
 @layer components {
   /* Button styles */
   .btn-primary {
-    @apply bg-medical-blue px-6 py-3 text-white font-medium rounded-lg 
-           hover:bg-medical-dark-blue transition-colors duration-200 
+    @apply bg-[var(--medical-blue)] px-6 py-3 text-white font-medium rounded-lg 
+           hover:bg-[var(--medical-dark-blue)] transition-colors duration-200 
            shadow-md hover:shadow-lg active:shadow-sm;
   }
   
