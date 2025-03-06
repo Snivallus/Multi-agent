@@ -52,6 +52,12 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     };
   }, []);
 
+  // Monitor language value
+  const languageRef = useRef(language);
+  useEffect(() => {
+    languageRef.current = language;
+  }, [language]);
+
   const handleSendMessage = async () => {
     if (inputText.trim() === '' || isWaiting) return;
 
@@ -90,7 +96,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
 
         const aiResponse = {
           role: 'doctor' as DialogueRole,
-          text: `This is a placeholder response. In a real application, this would be an actual AI response to: "${inputText}"`
+          text: ""
         };
 
         setMessages(prevMessages => [...prevMessages, aiResponse]);
@@ -148,16 +154,22 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             </div>
           )}
 
-          {messages.map((message, index) => (
-            <div key={index}>
-              <DialogueBubble
-                role={message.role}
-                text={createMultilingualText(message.text, message.text)}
-                isActive={true}
-                language={language}
-              />
-            </div>
-          ))}
+          {messages.map((message, index) => {
+            // 根据文本长度来决定 bubble 显示的文本是什么
+            const bubbleText = message.text.length > 0 
+              ? createMultilingualText(message.text, message.text)
+              : translations.doctorPlaceHolder;
+            return (
+              <div key={index}>
+                <DialogueBubble
+                  role={message.role}
+                  text={bubbleText}
+                  isActive={true}
+                  language={language}
+                />
+              </div>
+            );
+          })}
 
           {/* Show waiting message if waiting for response */}
           {isWaiting && (
