@@ -5,7 +5,7 @@ import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
 import { createMultilingualText } from '@/types/language';
 import { DialogueRole } from '@/data/medicalCases';
-import config from '@/config';
+import config from '@/config'; // API base URL
 import { useToast } from '@/hooks/use-toast';
 
 interface DirectInteractionProps {
@@ -73,7 +73,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     setMessages(prevMessages => [...prevMessages, userMessage]);
     setInputText('');
     setIsWaiting(true);
-    setCountdown(3); // Set countdown to 3 seconds
+    setCountdown(10); // Set countdown to 10 seconds
 
     // Start countdown interval to update the countdown every second
     countdownIntervalRef.current = setInterval(() => {
