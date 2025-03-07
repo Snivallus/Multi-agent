@@ -4,6 +4,7 @@ import React from 'react';
 import { Language, getText, MultilingualText } from '@/types/language';
 import { translations } from '@/data/translations';
 import ReactMarkdown from 'react-markdown';
+import { Clipboard } from 'lucide-react';
 
 interface DialogueBubbleProps {
   role: DialogueRole;
@@ -17,6 +18,9 @@ interface DialogueBubbleProps {
  * Styles differ based on the speaker role (doctor/patient/reporter)
  */
 const DialogueBubble: React.FC<DialogueBubbleProps> = ({ role, text, isActive, language }) => {
+  const handleCopy = () => {
+    navigator.clipboard.writeText(getText(text, language));
+  };
   return (
     <div
       className={cn(
@@ -51,11 +55,19 @@ const DialogueBubble: React.FC<DialogueBubbleProps> = ({ role, text, isActive, l
       </div>
       <div className="flex flex-col mt-1">
         {/* Dialogue text */}
-        <div className="text-gray-800 max-w-xs text-left">
+        <div className="text-gray-800 max-w-xs text-left border border-gray-300 p-2 rounded-lg">
           <ReactMarkdown>
             {getText(text, language)}
           </ReactMarkdown>
         </div>
+        {/* Copy button */}
+        <button
+          onClick={handleCopy}
+          className="absolute top-0 right-0 mt-2 mr-2 text-gray-200 hover:text-gray-500"
+          aria-label="Copy text"
+        >
+          <Clipboard className="h-5 w-5" />
+        </button>
       </div>
     </div>
   );

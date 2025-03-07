@@ -48,6 +48,7 @@ export const translations = {
   playPause: createMultilingualText('空格键: 播放/暂停', 'Space: Play/Pause'),
   previousLine: createMultilingualText('&larr;: 上一句', '&larr;: Previous'),
   nextLine: createMultilingualText('&rarr;: 下一句', '&rarr;: Next'),
+  copybutton: createMultilingualText('复制', 'Copy'),
   
   // Difficulty levels
   easy: createMultilingualText('简单', 'Easy'),
