@@ -1,4 +1,3 @@
-
 import { MultilingualText, createMultilingualText } from '@/types/language';
 
 // UI translations for the entire application
@@ -59,4 +58,9 @@ export const translations = {
   doctor: createMultilingualText('医生', 'Doctor'),
   patient: createMultilingualText('患者', 'Patient'),
   reporter: createMultilingualText('检查员', 'Reporter'),
+  
+  // Error messages
+  errorTitle: createMultilingualText('错误', 'Error'),
+  networkError: createMultilingualText('网络错误，请稍后再试', 'Network error, please try again later'),
+  apiError: createMultilingualText('服务器错误，请稍后再试', 'Server error, please try again later'),
 };

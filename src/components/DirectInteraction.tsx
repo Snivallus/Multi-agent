@@ -5,6 +5,8 @@ import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
 import { createMultilingualText } from '@/types/language';
 import { DialogueRole } from '@/data/medicalCases';
+import config from '@/config';
+import { useToast } from '@/hooks/use-toast';
 
 interface DirectInteractionProps {
   onBack: () => void;
@@ -23,7 +25,8 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
-  const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const abortControllerRef = useRef<AbortController | null>(null);
+  const { toast } = useToast();
 
   // Auto-scroll to the bottom when messages change
   useEffect(() => {
@@ -40,14 +43,14 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }
   }, [inputText]);
 
-  // Cleanup intervals and timeouts on component unmount
+  // Cleanup intervals and controllers on component unmount
   useEffect(() => {
     return () => {
       if (countdownIntervalRef.current) {
         clearInterval(countdownIntervalRef.current);
       }
-      if (timeoutRef.current) {
-        clearTimeout(timeoutRef.current);
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
       }
     };
   }, []);
@@ -75,43 +78,71 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     // Start countdown interval to update the countdown every second
     countdownIntervalRef.current = setInterval(() => {
       setCountdown(prevCountdown => {
-        if (prevCountdown === 1) {
-          // When countdown reaches 1, clear the interval and set countdown to null
-          clearInterval(countdownIntervalRef.current!);
-          countdownIntervalRef.current = null;
+        if (prevCountdown === null) return null;
+        if (prevCountdown <= 1) {
+          // When countdown reaches 1, clear the interval
+          if (countdownIntervalRef.current) {
+            clearInterval(countdownIntervalRef.current);
+            countdownIntervalRef.current = null;
+          }
           return null;
         }
-        return prevCountdown! - 1;
+        return prevCountdown - 1;
       });
     }, 1000);
 
+    // Create abort controller for the fetch request
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
     try {
-      // Simulate AI response (in a real app, this would be an API call)
-      timeoutRef.current = setTimeout(() => {
-        // Clear the countdown interval if it is still active
-        if (countdownIntervalRef.current) {
-          clearInterval(countdownIntervalRef.current);
-          countdownIntervalRef.current = null;
-        }
+      console.log("Sending message to API:", config.apiBaseUrl + "/chat");
+      const response = await fetch(`${config.apiBaseUrl}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: inputText,
+          language: languageRef.current
+        }),
+        signal
+      });
 
-        const aiResponse = {
-          role: 'doctor' as DialogueRole,
-          text: ""
-        };
-
-        setMessages(prevMessages => [...prevMessages, aiResponse]);
-        setIsWaiting(false);
-        setCountdown(null); // Ensure countdown is cleared when response is received
-      }, 3000);
-    } catch (error) {
-      console.error('Error sending message:', error);
-      // Clear the countdown interval in case of an error
+      // Clear the countdown interval
       if (countdownIntervalRef.current) {
         clearInterval(countdownIntervalRef.current);
         countdownIntervalRef.current = null;
       }
+
+      if (!response.ok) {
+        throw new Error(`API error: ${response.status}`);
+      }
+
+      const data = await response.text();
+      
+      // Add AI response to the conversation
+      const aiResponse = {
+        role: 'doctor' as DialogueRole,
+        text: data
+      };
+
+      setMessages(prevMessages => [...prevMessages, aiResponse]);
+    } catch (error) {
+      console.error('Error sending message:', error);
+      
+      // Only show error toast if the request wasn't aborted by the user
+      if (!(error instanceof DOMException && error.name === 'AbortError')) {
+        toast({
+          title: getText(translations.errorTitle, language),
+          description: getText(translations.networkError, language),
+          variant: "destructive"
+        });
+      }
+    } finally {
       setIsWaiting(false);
-      setCountdown(null); // Clear countdown if there's an error
+      setCountdown(null);
+      abortControllerRef.current = null;
     }
   };
 
@@ -147,9 +178,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         <div className="max-w-3xl mx-auto space-y-2 pb-20">
           {messages.length === 0 && (
             <div className="text-center my-20 text-gray-500">
-              {/* <h3 className="text-2xl font-medium mb-4">
-                {getText(translations.interactiveMedicalLearning, language)}
-              </h3> */}
               <p>{getText(translations.conversationHint, language)}</p>
             </div>
           )}
