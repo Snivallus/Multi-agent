@@ -32,13 +32,17 @@ jobs:
       - name: Setup Ruby
         uses: ruby/setup-ruby@v1
         with:
-          ruby-version: '3.0' # Specify the Ruby version you need
+          ruby-version: '3.1' # Specify the Ruby version you need
 
       - name: Install dependencies
-        run: bundle install
+        run: |
+          gem install bundler
+          bundle install
+        working-directory: ./ # Ensure this is the directory where your Gemfile is located
 
       - name: Build with Jekyll
         run: bundle exec jekyll build -d ./_site
+        working-directory: ./ # Ensure this is the directory where your Jekyll site is located
 
       - name: Upload artifact
         uses: actions/upload-pages-artifact@v3
