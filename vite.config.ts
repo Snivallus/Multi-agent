@@ -6,7 +6,7 @@ import { componentTagger } from "lovable-tagger";
 
 // https://vitejs.dev/config/
 export default defineConfig(({ mode }) => ({
-  base: './',  // Add this line for GitHub Pages
+  base: './',  // This ensures assets are loaded correctly for GitHub Pages
   server: {
     host: "::",
     port: 8080,
