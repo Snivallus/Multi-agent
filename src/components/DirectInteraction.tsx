@@ -175,6 +175,36 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }
   };
 
+  // Reset the dialogue memory
+  const handleResetDialogue = async () => {
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/reset`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' }
+      });
+  
+      if (response.ok) {
+        const data = await response.json();
+        toast({
+          title: "Memory Reset",
+          description: data.message || "Memory reset successfully",
+          variant: "default"
+        });
+        // Clear the conversation messages after resetting memory
+        setMessages([]);
+      } else {
+        throw new Error('Failed to reset memory');
+      }
+    } catch (error) {
+      console.error('Error resetting dialogue:', error);
+      toast({
+        title: getText(translations.errorTitle, language),
+        description: getText(translations.apiError, language),
+        variant: "destructive"
+      });
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen animate-fade-in">
       {/* Header */}
@@ -192,6 +222,14 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               {getText(translations.directInteractionTitle, language)}
             </h2>
           </div>
+          {/* Reset dialogue button */}
+          <button
+            onClick={handleResetDialogue}
+            className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors duration-200 disabled:opacity-0 disabled:cursor-not-allowed"
+            aria-label="Reset Dialogue"
+          >
+          {getText(translations.resetMomery, language)}
+          </button>
         </div>
       </div>
 

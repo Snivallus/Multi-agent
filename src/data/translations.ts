@@ -1,3 +1,4 @@
+
 import { MultilingualText, createMultilingualText } from '@/types/language';
 
 // UI translations for the entire application
@@ -24,6 +25,7 @@ export const translations = {
   jumpToPosition: createMultilingualText('点击跳转到该位置', 'Click to jump to this position'),
   conversationHint: createMultilingualText('输入消息开始对话', 'Start a conversation by typing a message below.'),
   doctorPlaceHolder: createMultilingualText('(无响应)', '(No response)'),
+  resetMomery: createMultilingualText('清除记忆', 'Reset momery'),
   
   // Case selection
   selectCase: createMultilingualText('选择案例', 'Select a Case Study'),
@@ -58,7 +60,7 @@ export const translations = {
   doctor: createMultilingualText('医生', 'Doctor'),
   patient: createMultilingualText('患者', 'Patient'),
   reporter: createMultilingualText('检查员', 'Reporter'),
-  
+
   // Error messages
   errorTitle: createMultilingualText('错误', 'Error'),
   networkError: createMultilingualText('网络错误，请稍后再试', 'Network error, please try again later'),
