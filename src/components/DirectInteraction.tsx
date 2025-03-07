@@ -201,7 +201,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
                 maxLength={3000} // Character limit
                 style={{ minHeight: '48px', maxHeight: '200px' }}
               />
-              <div className="absolute bottom-1 right-2 text-xs text-gray-500">
+              <div className="absolute bottom-2 right-5 text-xs text-gray-300">
                 {inputText.length}/3000 {/* Character counter */}
               </div>
             </div>
