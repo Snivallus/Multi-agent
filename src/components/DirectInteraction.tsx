@@ -75,16 +75,17 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     setIsWaiting(true);
     setCountdown(10); // Set countdown to 10 seconds
 
+    // **避免多次创建倒计时**
+    if (countdownIntervalRef.current) {
+      clearInterval(countdownIntervalRef.current);
+    }
+
     // Start countdown interval to update the countdown every second
     countdownIntervalRef.current = setInterval(() => {
       setCountdown(prevCountdown => {
-        if (prevCountdown === null) return null;
-        if (prevCountdown <= 1) {
-          // When countdown reaches 1, clear the interval
-          if (countdownIntervalRef.current) {
-            clearInterval(countdownIntervalRef.current);
-            countdownIntervalRef.current = null;
-          }
+        if (prevCountdown === null || prevCountdown <= 1) {
+          clearInterval(countdownIntervalRef.current!);
+          countdownIntervalRef.current = null;
           return null;
         }
         return prevCountdown - 1;
@@ -95,19 +96,32 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     abortControllerRef.current = new AbortController();
     const signal = abortControllerRef.current.signal;
 
+    // 增加超时逻辑
+    const timeoutId = setTimeout(() => {
+      if (abortControllerRef.current) {
+        abortControllerRef.current.abort();
+        setIsWaiting(false);
+        setCountdown(null);
+        toast({
+          title: getText(translations.errorTitle, language),
+          description: '请求超时',
+          variant: 'destructive'
+        });
+      }
+    }, 10000); // 10s 超时
+
     try {
-      console.log("Sending message to API:", config.apiBaseUrl + "/chat");
       const response = await fetch(`${config.apiBaseUrl}/chat`, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: inputText,
-          language: languageRef.current
+          message: inputText, 
+          language: languageRef.current 
         }),
         signal
       });
+
+      clearTimeout(timeoutId); // 如果请求成功，取消超时
 
       // Clear the countdown interval
       if (countdownIntervalRef.current) {
@@ -119,7 +133,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         throw new Error(`API error: ${response.status}`);
       }
 
-      const data = await response.text();
+      const data = await response.json();
       
       // Add AI response to the conversation
       const aiResponse = {
