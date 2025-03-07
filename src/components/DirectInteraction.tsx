@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Send } from 'lucide-react';
 import { Language, getText } from '@/types/language';
@@ -75,7 +76,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     setIsWaiting(true);
     setCountdown(10); // Set countdown to 10 seconds
 
-    // **避免多次创建倒计时**
+    // Clear any existing countdown interval
     if (countdownIntervalRef.current) {
       clearInterval(countdownIntervalRef.current);
     }
@@ -96,7 +97,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     abortControllerRef.current = new AbortController();
     const signal = abortControllerRef.current.signal;
 
-    // 增加超时逻辑
+    // Set up timeout for the request
     const timeoutId = setTimeout(() => {
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
@@ -108,9 +109,12 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           variant: 'destructive'
         });
       }
-    }, 10000); // 10s 超时
+    }, 10000); // 10s timeout
 
     try {
+      console.log("Sending request to:", `${config.apiBaseUrl}/chat`);
+      console.log("Request payload:", { message: inputText, language: languageRef.current });
+      
       const response = await fetch(`${config.apiBaseUrl}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -121,7 +125,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         signal
       });
 
-      clearTimeout(timeoutId); // 如果请求成功，取消超时
+      clearTimeout(timeoutId); // Clear timeout if request completes
 
       // Clear the countdown interval
       if (countdownIntervalRef.current) {
@@ -134,11 +138,15 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       }
 
       const data = await response.json();
+      console.log("Response from server:", data);
+      
+      // Extract response_text from the response if it exists
+      const responseText = data.response_text || data;
       
       // Add AI response to the conversation
       const aiResponse = {
         role: 'doctor' as DialogueRole,
-        text: data
+        text: responseText
       };
 
       setMessages(prevMessages => [...prevMessages, aiResponse]);
