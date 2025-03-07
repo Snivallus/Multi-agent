@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Send } from 'lucide-react';
 import { Language, getText } from '@/types/language';
@@ -5,6 +6,8 @@ import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
 import { createMultilingualText } from '@/types/language';
 import { DialogueRole } from '@/data/medicalCases';
+import config from '@/config';
+import { useToast } from "@/hooks/use-toast";
 
 interface DirectInteractionProps {
   onBack: () => void;
@@ -24,6 +27,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const timeoutRef = useRef<NodeJS.Timeout | null>(null);
+  const { toast } = useToast();
 
   // Auto-scroll to the bottom when messages change
   useEffect(() => {
@@ -70,7 +74,10 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     setMessages(prevMessages => [...prevMessages, userMessage]);
     setInputText('');
     setIsWaiting(true);
-    setCountdown(3); // Set countdown to 3 seconds
+    
+    // Default countdown to 30 seconds (can be adjusted)
+    const countdownSeconds = 30;
+    setCountdown(countdownSeconds); 
 
     // Start countdown interval to update the countdown every second
     countdownIntervalRef.current = setInterval(() => {
@@ -86,30 +93,55 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }, 1000);
 
     try {
-      // Simulate AI response (in a real app, this would be an API call)
-      timeoutRef.current = setTimeout(() => {
-        // Clear the countdown interval if it is still active
-        if (countdownIntervalRef.current) {
-          clearInterval(countdownIntervalRef.current);
-          countdownIntervalRef.current = null;
-        }
+      // Send request to backend API
+      const response = await fetch(`${config.apiBaseUrl}/chat`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          message: inputText,
+          language: languageRef.current
+        }),
+      });
 
-        const aiResponse = {
-          role: 'doctor' as DialogueRole,
-          text: ""
-        };
+      // Clear countdown interval since we got a response
+      if (countdownIntervalRef.current) {
+        clearInterval(countdownIntervalRef.current);
+        countdownIntervalRef.current = null;
+      }
 
-        setMessages(prevMessages => [...prevMessages, aiResponse]);
-        setIsWaiting(false);
-        setCountdown(null); // Ensure countdown is cleared when response is received
-      }, 3000);
+      if (!response.ok) {
+        throw new Error(`API responded with status: ${response.status}`);
+      }
+
+      const data = await response.json();
+      
+      // Add AI response to the conversation
+      const aiResponse = {
+        role: 'doctor' as DialogueRole,
+        text: data.text || "" // Expecting a string response from the backend
+      };
+
+      setMessages(prevMessages => [...prevMessages, aiResponse]);
+      setIsWaiting(false);
+      setCountdown(null); // Ensure countdown is cleared when response is received
+      
     } catch (error) {
       console.error('Error sending message:', error);
+      // Show error toast
+      toast({
+        title: getText(translations.errorTitle, language),
+        description: getText(translations.networkError, language),
+        variant: "destructive"
+      });
+      
       // Clear the countdown interval in case of an error
       if (countdownIntervalRef.current) {
         clearInterval(countdownIntervalRef.current);
         countdownIntervalRef.current = null;
       }
+      
       setIsWaiting(false);
       setCountdown(null); // Clear countdown if there's an error
     }
