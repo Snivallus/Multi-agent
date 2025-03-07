@@ -1,4 +1,3 @@
-
 import { MultilingualText, createMultilingualText } from '@/types/language';
 
 // UI translations for the entire application
