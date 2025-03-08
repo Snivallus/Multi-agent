@@ -132,10 +132,12 @@ export function useSpeechToText({
         
         if (isMountedRef.current) {
           setTranscript(transcriptText);
-          if (onResult) {
+
+          // Only handle final results to avoid intermediate results interfering
+          if (result.isFinal && onResult) {
             // Append the new transcription to existing text
-            const combinedText = existingTextRef.current + transcriptText;
-            onResult(combinedText);
+            existingTextRef.current += transcriptText;
+            onResult(existingTextRef.current);
           }
         }
       };
