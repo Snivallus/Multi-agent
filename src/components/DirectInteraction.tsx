@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react';
+import { ArrowLeft, Send, Mic, MicOff, Timer } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
@@ -24,7 +24,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const [inputText, setInputText] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null); // countdown when waiting for response
-  const [isHoldingMic, setIsHoldingMic] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -39,9 +38,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const { 
     isListening, 
     transcript, 
-    startListening, 
-    stopListening, 
-    isSupported 
+    toggleListening, 
+    isSupported,
+    recordingDuration
   } = useSpeechToText({
     language: speechLanguage,
     continuous: true,
@@ -56,9 +55,15 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         description: getText(translations.browserNotSupported, language),
         variant: "destructive"
       });
-      setIsHoldingMic(false);
     }
   });
+
+  // Format recording duration as minutes:seconds
+  const formatDuration = (seconds: number) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = seconds % 60;
+    return `${mins > 0 ? `${mins}:` : ''}${secs.toString().padStart(2, '0')}`;
+  };
 
   // Auto-scroll to the bottom when messages change
   useEffect(() => {
@@ -236,37 +241,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }
   };
 
-  // Handle microphone button press
-  const handleMicButtonDown = () => {
-    if (!isSupported) {
-      toast({
-        title: getText(translations.errorTitle, language),
-        description: getText(translations.browserNotSupported, language),
-        variant: "destructive"
-      });
-      return;
-    }
-    
-    setIsHoldingMic(true);
-    startListening();
-  };
-
-  // Handle microphone button release
-  const handleMicButtonUp = () => {
-    if (isHoldingMic) {
-      setIsHoldingMic(false);
-      stopListening();
-    }
-  };
-
-  // Handle microphone button leave (mouse leaves the button while pressed)
-  const handleMicButtonLeave = () => {
-    if (isHoldingMic) {
-      setIsHoldingMic(false);
-      stopListening();
-    }
-  };
-
   return (
     <div className="flex flex-col h-screen animate-fade-in">
       {/* Header */}
@@ -358,31 +332,30 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             
             {/* Speech to text button */}
             <button
-              onMouseDown={handleMicButtonDown}
-              onMouseUp={handleMicButtonUp}
-              onMouseLeave={handleMicButtonLeave}
-              onTouchStart={handleMicButtonDown}
-              onTouchEnd={handleMicButtonUp}
+              onClick={toggleListening}
               disabled={isWaiting || !isSupported}
               className={`px-4 py-3 rounded-lg transition-colors duration-200 flex items-center gap-2 ${
-                isHoldingMic 
+                isListening 
                   ? 'bg-red-500 text-white hover:bg-red-600' 
                   : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
               } ${!isSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
-              aria-label={getText(translations.holdToSpeak, language)}
+              aria-label={isListening 
+                ? getText(translations.stopRecording, language)
+                : getText(translations.startRecording, language)
+              }
             >
-              {isHoldingMic ? (
+              {isListening ? (
                 <>
-                  <Mic className="h-5 w-5 animate-pulse" />
+                  <MicOff className="h-5 w-5" />
                   <span className="hidden sm:inline">
-                    {getText(translations.listeningToSpeech, language)}
+                    {getText(translations.stopRecording, language)}
                   </span>
                 </>
               ) : (
                 <>
                   <Mic className="h-5 w-5" />
                   <span className="hidden sm:inline">
-                    {getText(translations.holdToSpeak, language)}
+                    {getText(translations.startRecording, language)}
                   </span>
                 </>
               )}
@@ -401,10 +374,16 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             </button>
           </div>
           
-          {/* Display instruction for microphone usage */}
-          {isHoldingMic && (
-            <div className="text-center mt-2 text-sm text-gray-500">
-              {getText(translations.releaseToCancelRecording, language)}
+          {/* Display recording information and duration */}
+          {isListening && (
+            <div className="mt-3 text-sm p-2 bg-red-50 rounded-lg border border-red-100 flex items-center gap-2">
+              <Timer className="h-4 w-4 text-red-500" />
+              <span className="text-red-600">
+                {getText(translations.recordingInProgress, language)} 
+                <span className="font-medium ml-2">
+                  {formatDuration(recordingDuration)} {getText(translations.seconds, language)}
+                </span>
+              </span>
             </div>
           )}
         </div>

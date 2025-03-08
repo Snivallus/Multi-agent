@@ -28,9 +28,11 @@ export const translations = {
   resetMomery: createMultilingualText('清除记忆', 'Reset momery'),
   
   // Speech to text 
-  holdToSpeak: createMultilingualText('按住说话', 'Hold to speak'),
-  releaseToCancelRecording: createMultilingualText('松开取消录音', 'Release to cancel recording'),
-  listeningToSpeech: createMultilingualText('正在聆听...', 'Listening...'),
+  startRecording: createMultilingualText('开始录音', 'Start recording'),
+  stopRecording: createMultilingualText('停止录音', 'Stop recording'),
+  recordingInProgress: createMultilingualText('录音中...', 'Recording...'),
+  recordingDuration: createMultilingualText('录音时长: ', 'Recording duration: '),
+  seconds: createMultilingualText('秒', 'seconds'),
   microphonePermission: createMultilingualText('需要麦克风权限', 'Microphone permission needed'),
   browserNotSupported: createMultilingualText('您的浏览器不支持语音识别', 'Your browser does not support speech recognition'),
   
@@ -73,3 +75,4 @@ export const translations = {
   networkError: createMultilingualText('网络错误，请稍后再试', 'Network error, please try again later'),
   apiError: createMultilingualText('服务器错误，请稍后再试', 'Server error, please try again later'),
 };
+
