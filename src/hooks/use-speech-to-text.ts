@@ -24,6 +24,7 @@ export function useSpeechToText({
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const isMountedRef = useRef(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const existingTextRef = useRef('');
 
   // Check if SpeechRecognition is supported
   useEffect(() => {
@@ -87,10 +88,20 @@ export function useSpeechToText({
     try {
       stopListening();
       
+      // Store the current input text before starting a new recognition session
+      if (onResult) {
+        // Capture the text that is currently in the input field via a callback
+        const currentTextCallback = (currentText: string) => {
+          existingTextRef.current = currentText;
+        };
+        // Call onResult with a null transcript to request the current text
+        onResult('__GET_CURRENT_TEXT__');
+      }
+      
       // Initialize SpeechRecognition using the global constructor
-      // Fix the TS error by using the appropriate constructor
-      const SpeechRecognitionConstructor = window.SpeechRecognition || 
-                                          window.webkitSpeechRecognition;
+      const SpeechRecognitionConstructor = 
+          window.SpeechRecognition || 
+          window.webkitSpeechRecognition;
       
       if (!SpeechRecognitionConstructor) {
         setIsSupported(false);
@@ -121,7 +132,11 @@ export function useSpeechToText({
         
         if (isMountedRef.current) {
           setTranscript(transcriptText);
-          if (onResult) onResult(transcriptText);
+          if (onResult) {
+            // Append the new transcription to existing text
+            const combinedText = existingTextRef.current + transcriptText;
+            onResult(combinedText);
+          }
         }
       };
       
@@ -170,7 +185,7 @@ export function useSpeechToText({
   };
 }
 
-// Add TypeScript interface for SpeechRecognition
+// Define SpeechRecognition types
 interface SpeechRecognition extends EventTarget {
   continuous: boolean;
   interimResults: boolean;

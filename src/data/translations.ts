@@ -75,4 +75,3 @@ export const translations = {
   networkError: createMultilingualText('网络错误，请稍后再试', 'Network error, please try again later'),
   apiError: createMultilingualText('服务器错误，请稍后再试', 'Server error, please try again later'),
 };
-
