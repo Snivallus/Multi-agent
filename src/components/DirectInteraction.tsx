@@ -36,11 +36,11 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   
   // Initialize speech to text
   const { 
-    isListening, 
-    transcript, 
-    toggleListening, 
-    isSupported,
-    recordingDuration
+    isListening,         // 是否正在监听语音
+    transcript,          // 语音转换的文本
+    toggleListening,     // 开启或关闭语音识别的函数
+    isSupported,         // 设备/浏览器是否支持语音识别
+    recordingDuration    // 录音的持续时间
   } = useSpeechToText({
     language: speechLanguage,
     continuous: true,
@@ -50,7 +50,8 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       if (result === '__GET_CURRENT_TEXT__') {
         return;
       }
-      setInputText(result);
+      // 追加文本到输入框
+      setInputText((prevText) => prevText ? `${prevText} ${result}` : result);
     },
     onError: (error) => {
       console.error('Speech recognition error:', error);
