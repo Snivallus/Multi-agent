@@ -24,7 +24,7 @@ export function useSpeechToText({
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const isMountedRef = useRef(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const existingTextRef = useRef('');
+  // const existingTextRef = useRef('');
 
   // Check if SpeechRecognition is supported
   useEffect(() => {
@@ -88,15 +88,15 @@ export function useSpeechToText({
     try {
       stopListening();
       
-      // Store the current input text before starting a new recognition session
-      if (onResult) {
-        // Capture the text that is currently in the input field via a callback
-        const currentTextCallback = (currentText: string) => {
-          existingTextRef.current = currentText;
-        };
-        // Call onResult with a null transcript to request the current text
-        onResult('__GET_CURRENT_TEXT__');
-      }
+      // // Store the current input text before starting a new recognition session
+      // if (onResult) {
+      //   // Capture the text that is currently in the input field via a callback
+      //   const currentTextCallback = (currentText: string) => {
+      //     existingTextRef.current = currentText;
+      //   };
+      //   // Call onResult with a null transcript to request the current text
+      //   onResult('__GET_CURRENT_TEXT__');
+      // }
       
       // Initialize SpeechRecognition using the global constructor
       const SpeechRecognitionConstructor = 
@@ -122,7 +122,7 @@ export function useSpeechToText({
           setIsListening(true);
           setTranscript('');
           setRecordingDuration(0);
-          existingTextRef.current = ''; // Reset existing text
+          // existingTextRef.current = ''; // Reset existing text
         }
       };
       
