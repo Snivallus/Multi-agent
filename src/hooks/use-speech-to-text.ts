@@ -52,9 +52,18 @@ export function useSpeechToText({
     try {
       stopListening();
       
-      // Initialize SpeechRecognition
-      const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-      const recognition = new SpeechRecognition();
+      // Initialize SpeechRecognition using the global constructor
+      // Fix the TS error by using the appropriate constructor
+      const SpeechRecognitionConstructor = window.SpeechRecognition || 
+                                          window.webkitSpeechRecognition;
+      
+      if (!SpeechRecognitionConstructor) {
+        setIsSupported(false);
+        if (onError) onError(new Error("Speech recognition not supported in this browser"));
+        return;
+      }
+      
+      const recognition = new SpeechRecognitionConstructor();
       
       // Configure
       recognition.lang = language;
@@ -154,7 +163,13 @@ interface SpeechRecognitionAlternative {
 // Add global interfaces
 declare global {
   interface Window {
-    SpeechRecognition: typeof SpeechRecognition;
-    webkitSpeechRecognition: typeof SpeechRecognition;
+    SpeechRecognition: {
+      new(): SpeechRecognition;
+      prototype: SpeechRecognition;
+    };
+    webkitSpeechRecognition: {
+      new(): SpeechRecognition;
+      prototype: SpeechRecognition;
+    };
   }
 }
