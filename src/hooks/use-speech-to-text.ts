@@ -122,6 +122,7 @@ export function useSpeechToText({
           setIsListening(true);
           setTranscript('');
           setRecordingDuration(0);
+          existingTextRef.current = ''; // Reset existing text
         }
       };
       
@@ -136,7 +137,7 @@ export function useSpeechToText({
           // Only handle final results to avoid intermediate results interfering
           if (result.isFinal && onResult) {
             // Append the new transcription to existing text
-            existingTextRef.current += transcriptText;
+            existingTextRef.current = transcriptText;
             onResult(existingTextRef.current);
           }
         }
