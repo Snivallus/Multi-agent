@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send } from 'lucide-react';
+import { ArrowLeft, Send, Mic, MicOff } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
@@ -8,6 +8,7 @@ import { createMultilingualText } from '@/types/language';
 import { DialogueRole } from '@/data/medicalCases';
 import config from '@/config'; // API base URL
 import { useToast } from '@/hooks/use-toast';
+import { useSpeechToText } from '@/hooks/use-speech-to-text';
 
 interface DirectInteractionProps {
   onBack: () => void;
@@ -23,11 +24,41 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const [inputText, setInputText] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null); // countdown when waiting for response
+  const [isHoldingMic, setIsHoldingMic] = useState(false);
+  
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const { toast } = useToast();
+
+  // Set speech recognition language based on app language
+  const speechLanguage = language === 'zh' ? 'zh-CN' : 'en-US';
+  
+  // Initialize speech to text
+  const { 
+    isListening, 
+    transcript, 
+    startListening, 
+    stopListening, 
+    isSupported 
+  } = useSpeechToText({
+    language: speechLanguage,
+    continuous: true,
+    interimResults: true,
+    onResult: (result) => {
+      setInputText(result);
+    },
+    onError: (error) => {
+      console.error('Speech recognition error:', error);
+      toast({
+        title: getText(translations.errorTitle, language),
+        description: getText(translations.browserNotSupported, language),
+        variant: "destructive"
+      });
+      setIsHoldingMic(false);
+    }
+  });
 
   // Auto-scroll to the bottom when messages change
   useEffect(() => {
@@ -205,6 +236,37 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }
   };
 
+  // Handle microphone button press
+  const handleMicButtonDown = () => {
+    if (!isSupported) {
+      toast({
+        title: getText(translations.errorTitle, language),
+        description: getText(translations.browserNotSupported, language),
+        variant: "destructive"
+      });
+      return;
+    }
+    
+    setIsHoldingMic(true);
+    startListening();
+  };
+
+  // Handle microphone button release
+  const handleMicButtonUp = () => {
+    if (isHoldingMic) {
+      setIsHoldingMic(false);
+      stopListening();
+    }
+  };
+
+  // Handle microphone button leave (mouse leaves the button while pressed)
+  const handleMicButtonLeave = () => {
+    if (isHoldingMic) {
+      setIsHoldingMic(false);
+      stopListening();
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen animate-fade-in">
       {/* Header */}
@@ -293,6 +355,40 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
                 {inputText.length}/3000 {/* Character counter */}
               </div>
             </div>
+            
+            {/* Speech to text button */}
+            <button
+              onMouseDown={handleMicButtonDown}
+              onMouseUp={handleMicButtonUp}
+              onMouseLeave={handleMicButtonLeave}
+              onTouchStart={handleMicButtonDown}
+              onTouchEnd={handleMicButtonUp}
+              disabled={isWaiting || !isSupported}
+              className={`px-4 py-3 rounded-lg transition-colors duration-200 flex items-center gap-2 ${
+                isHoldingMic 
+                  ? 'bg-red-500 text-white hover:bg-red-600' 
+                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+              } ${!isSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
+              aria-label={getText(translations.holdToSpeak, language)}
+            >
+              {isHoldingMic ? (
+                <>
+                  <Mic className="h-5 w-5 animate-pulse" />
+                  <span className="hidden sm:inline">
+                    {getText(translations.listeningToSpeech, language)}
+                  </span>
+                </>
+              ) : (
+                <>
+                  <Mic className="h-5 w-5" />
+                  <span className="hidden sm:inline">
+                    {getText(translations.holdToSpeak, language)}
+                  </span>
+                </>
+              )}
+            </button>
+            
+            {/* Send button */}
             <button
               onClick={handleSendMessage}
               disabled={inputText.trim() === '' || isWaiting}
@@ -304,6 +400,13 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               </span>
             </button>
           </div>
+          
+          {/* Display instruction for microphone usage */}
+          {isHoldingMic && (
+            <div className="text-center mt-2 text-sm text-gray-500">
+              {getText(translations.releaseToCancelRecording, language)}
+            </div>
+          )}
         </div>
       </div>
     </div>

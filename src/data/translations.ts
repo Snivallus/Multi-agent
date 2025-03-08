@@ -1,3 +1,4 @@
+
 import { MultilingualText, createMultilingualText } from '@/types/language';
 
 // UI translations for the entire application
@@ -25,6 +26,13 @@ export const translations = {
   conversationHint: createMultilingualText('输入消息开始对话', 'Start a conversation by typing a message below.'),
   doctorPlaceHolder: createMultilingualText('(无响应)', '(No response)'),
   resetMomery: createMultilingualText('清除记忆', 'Reset momery'),
+  
+  // Speech to text 
+  holdToSpeak: createMultilingualText('按住说话', 'Hold to speak'),
+  releaseToCancelRecording: createMultilingualText('松开取消录音', 'Release to cancel recording'),
+  listeningToSpeech: createMultilingualText('正在聆听...', 'Listening...'),
+  microphonePermission: createMultilingualText('需要麦克风权限', 'Microphone permission needed'),
+  browserNotSupported: createMultilingualText('您的浏览器不支持语音识别', 'Your browser does not support speech recognition'),
   
   // Case selection
   selectCase: createMultilingualText('选择案例', 'Select a Case Study'),
