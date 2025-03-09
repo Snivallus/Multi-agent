@@ -28,10 +28,8 @@ export function useSpeechToText({
 
   // Check if SpeechRecognition is supported
   useEffect(() => {
-    if (!('webkitSpeechRecognition' in window) && 
-        !('SpeechRecognition' in window)) {
-      setIsSupported(false);
-    }
+    const isSpeechRecognitionAvailable = 'webkitSpeechRecognition' in window || 'SpeechRecognition' in window;
+    setIsSupported(isSpeechRecognitionAvailable);
     
     return () => {
       isMountedRef.current = false;
@@ -66,15 +64,24 @@ export function useSpeechToText({
     };
   }, [isListening]);
 
+  useEffect(() => {
+    console.log("isSupported changed:", isSupported);
+  }, [isSupported]);
+
   const stopListening = useCallback(() => {
     if (recognitionRef.current) {
+      recognitionRef.current.onend = () => {
+        if (isMountedRef.current) {
+          setIsListening(false);
+        }
+        recognitionRef.current = null;
+      };
       recognitionRef.current.stop();
-      recognitionRef.current = null;
     }
     if (isMountedRef.current) {
       setIsListening(false);
     }
-    
+  
     // Clear timer when stopped
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -104,11 +111,13 @@ export function useSpeechToText({
           window.webkitSpeechRecognition;
       
       if (!SpeechRecognitionConstructor) {
-        setIsSupported(false);
+        if (isMountedRef.current) {
+          setIsSupported(false);
+        }
         if (onError) onError(new Error("Speech recognition not supported in this browser"));
         return;
       }
-      
+
       const recognition = new SpeechRecognitionConstructor();
       
       // Configure
@@ -162,7 +171,7 @@ export function useSpeechToText({
       if (onError) onError(error);
       if (isMountedRef.current) {
         setIsListening(false);
-        setIsSupported(false);
+        // setIsSupported(false);
       }
     }
   }, [language, continuous, interimResults, isSupported, onResult, onError, stopListening]);
