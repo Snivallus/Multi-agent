@@ -24,22 +24,14 @@ export function useSpeechToText({
   const recognitionRef = useRef<SpeechRecognition | null>(null);
   const isMountedRef = useRef(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const existingTextRef = useRef('');
 
   // Check if SpeechRecognition is supported
   useEffect(() => {
-    // Explicitly check for the constructors in the window object
-    const speechRecognitionSupported = 
-      'SpeechRecognition' in window || 
-      'webkitSpeechRecognition' in window;
-    
-    setIsSupported(speechRecognitionSupported);
-    
-    // Log this to help with debugging - fixed syntax errors here
-    console.log('Speech recognition support check:', {
-      speechRecognitionInWindow: 'SpeechRecognition' in window,
-      webkitSpeechRecognitionInWindow: 'webkitSpeechRecognition' in window,
-      supported: speechRecognitionSupported
-    });
+    if (!('webkitSpeechRecognition' in window) && 
+        !('SpeechRecognition' in window)) {
+      setIsSupported(false);
+    }
     
     return () => {
       isMountedRef.current = false;
@@ -91,24 +83,27 @@ export function useSpeechToText({
   }, []);
 
   const startListening = useCallback(() => {
-    if (!isSupported) {
-      console.error('Speech recognition is not supported in this browser');
-      if (onError) onError(new Error("Speech recognition not supported in this browser"));
-      return;
-    }
+    if (!isSupported) return;
     
     try {
       stopListening();
       
-      // Get the correct speech recognition constructor
+      // Store the current input text before starting a new recognition session
+      if (onResult) {
+        // Capture the text that is currently in the input field via a callback
+        const currentTextCallback = (currentText: string) => {
+          existingTextRef.current = currentText;
+        };
+        // Call onResult with a null transcript to request the current text
+        onResult('__GET_CURRENT_TEXT__');
+      }
+      
+      // Initialize SpeechRecognition using the global constructor
       const SpeechRecognitionConstructor = 
-        // @ts-ignore - We know this exists because we checked isSupported
-        window.SpeechRecognition || 
-        // @ts-ignore - We know this exists because we checked isSupported
-        window.webkitSpeechRecognition;
+          window.SpeechRecognition || 
+          window.webkitSpeechRecognition;
       
       if (!SpeechRecognitionConstructor) {
-        console.error('Failed to get SpeechRecognition constructor');
         setIsSupported(false);
         if (onError) onError(new Error("Speech recognition not supported in this browser"));
         return;
@@ -127,6 +122,7 @@ export function useSpeechToText({
           setIsListening(true);
           setTranscript('');
           setRecordingDuration(0);
+          existingTextRef.current = ''; // Reset existing text
         }
       };
       
@@ -231,11 +227,11 @@ interface SpeechRecognitionAlternative {
 // Add global interfaces
 declare global {
   interface Window {
-    SpeechRecognition?: {
+    SpeechRecognition: {
       new(): SpeechRecognition;
       prototype: SpeechRecognition;
     };
-    webkitSpeechRecognition?: {
+    webkitSpeechRecognition: {
       new(): SpeechRecognition;
       prototype: SpeechRecognition;
     };
