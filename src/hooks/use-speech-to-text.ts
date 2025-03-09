@@ -28,12 +28,15 @@ export function useSpeechToText({
 
   // Check if SpeechRecognition is supported
   useEffect(() => {
+    console.debug('[SpeechToText] 检查浏览器支持情况...');
     if (!('webkitSpeechRecognition' in window) && 
         !('SpeechRecognition' in window)) {
+      console.warn('[SpeechToText] 浏览器不支持语音识别 API');
       setIsSupported(false);
     }
     
     return () => {
+      console.debug('[SpeechToText] 执行清理操作...');
       isMountedRef.current = false;
       stopListening();
     };
@@ -41,17 +44,21 @@ export function useSpeechToText({
 
   // Handle recording timer
   useEffect(() => {
+    console.debug(`[SpeechToText] 监听状态变更: ${isListening ? '开始' : '停止'}`);
     if (isListening) {
+      console.debug('[SpeechToText] 启动录音计时器');
       // Reset timer when starting
       setRecordingDuration(0);
       
       // Start timer to update duration every second
       timerRef.current = setInterval(() => {
+        console.debug(`[SpeechToText] 录音时长: ${recordingDuration + 1}秒`);
         setRecordingDuration(prev => prev + 1);
       }, 1000);
     } else {
       // Clear timer when stopped
       if (timerRef.current) {
+        console.debug('[SpeechToText] 清除录音计时器');
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
@@ -60,6 +67,7 @@ export function useSpeechToText({
     // Cleanup on unmount or when isListening changes
     return () => {
       if (timerRef.current) {
+        console.debug('[SpeechToText] 清理旧计时器'); 
         clearInterval(timerRef.current);
         timerRef.current = null;
       }
@@ -67,7 +75,9 @@ export function useSpeechToText({
   }, [isListening]);
 
   const stopListening = useCallback(() => {
+    console.debug('[SpeechToText] 执行停止监听操作');
     if (recognitionRef.current) {
+      console.debug('[SpeechToText] 调用 recognition.stop()');
       recognitionRef.current.stop();
       recognitionRef.current = null;
     }
@@ -77,14 +87,18 @@ export function useSpeechToText({
     
     // Clear timer when stopped
     if (timerRef.current) {
+      console.debug('[SpeechToText] 清除停止后的计时器'); 
       clearInterval(timerRef.current);
       timerRef.current = null;
     }
   }, []);
 
   const startListening = useCallback(() => {
-    if (!isSupported) return;
-    
+    console.debug('[SpeechToText] 尝试启动语音识别...'); 
+    if (!isSupported) {
+      console.warn('[SpeechToText] 在不支持的浏览器中尝试启动');
+      return;
+    }
     try {
       stopListening();
       
@@ -97,6 +111,10 @@ export function useSpeechToText({
       //   // Call onResult with a null transcript to request the current text
       //   onResult('__GET_CURRENT_TEXT__');
       // }
+      if (onResult){
+        console.debug('[SpeechToText] 请求获取当前文本');
+        onResult('__GET_CURRENT_TEXT__');
+      }
       
       // Initialize SpeechRecognition using the global constructor
       const SpeechRecognitionConstructor = 
@@ -104,10 +122,17 @@ export function useSpeechToText({
           window.webkitSpeechRecognition;
       
       if (!SpeechRecognitionConstructor) {
+        console.error('[SpeechToText] 找不到语音识别构造函数');
         setIsSupported(false);
         if (onError) onError(new Error("Speech recognition not supported in this browser"));
         return;
       }
+
+      console.debug('[SpeechToText] 创建语音识别实例', {
+        language,
+        continuous,
+        interimResults
+      });
       
       const recognition = new SpeechRecognitionConstructor();
       
@@ -118,6 +143,7 @@ export function useSpeechToText({
       
       // Set up event handlers
       recognition.onstart = () => {
+        console.log('[SpeechToText] 语音识别开始');
         if (isMountedRef.current) {
           setIsListening(true);
           setTranscript('');
@@ -130,35 +156,43 @@ export function useSpeechToText({
         const current = event.resultIndex;
         const result = event.results[current];
         const transcriptText = result[0].transcript;
-        
+
+        console.debug('[SpeechToText] 收到识别结果', {
+          isFinal: result.isFinal,
+          transcript: transcriptText
+        });        
+
         if (isMountedRef.current) {
           setTranscript(transcriptText);
 
           // Only handle final results to avoid intermediate results interfering
           if (result.isFinal && onResult) {
             // Append the new transcription to existing text
+            console.debug('[SpeechToText] 转写文本:', transcriptText);
             onResult(transcriptText);
           }
         }
       };
       
       recognition.onerror = (event) => {
-        console.error('Speech recognition error', event);
+        console.error('[SpeechToText] 语音识别错误:', event);
         if (onError) onError(event);
         stopListening();
       };
       
       recognition.onend = () => {
+        console.log('[SpeechToText] 语音识别结束');
         if (isMountedRef.current) {
           setIsListening(false);
         }
       };
       
       // Start listening
+      console.debug('[SpeechToText] 调用 recognition.start()');
       recognition.start();
       recognitionRef.current = recognition;
     } catch (error) {
-      console.error('Error starting speech recognition:', error);
+      console.error('[SpeechToText] 启动语音识别异常:', error);
       if (onError) onError(error);
       if (isMountedRef.current) {
         setIsListening(false);
@@ -169,6 +203,9 @@ export function useSpeechToText({
 
   // Toggle listening state
   const toggleListening = useCallback(() => {
+    console.debug('[SpeechToText] 切换监听状态', {
+      currentState: isListening ? '监听中' : '已停止'
+    })
     if (isListening) {
       stopListening();
     } else {
