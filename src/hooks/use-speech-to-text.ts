@@ -110,6 +110,9 @@ export function useSpeechToText({
           window.SpeechRecognition || 
           window.webkitSpeechRecognition;
       
+      console.log(SpeechRecognitionConstructor); // 检查构造函数是否正确
+
+      
       if (!SpeechRecognitionConstructor) {
         if (isMountedRef.current) {
           setIsSupported(false);
@@ -152,7 +155,7 @@ export function useSpeechToText({
       };
       
       recognition.onerror = (event) => {
-        console.error('Speech recognition error', event);
+        console.error('Speech recognition error:', event);
         if (onError) onError(event);
         stopListening();
       };
