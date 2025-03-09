@@ -34,10 +34,10 @@ export function useSpeechToText({
     
     setIsSupported(speechRecognitionSupported);
     
-    // Log this to help with debugging
+    // Log this to help with debugging - fixed syntax errors here
     console.log('Speech recognition support check:', {
-      'SpeechRecognition' in window: 'SpeechRecognition' in window,
-      'webkitSpeechRecognition' in window: 'webkitSpeechRecognition' in window,
+      speechRecognitionInWindow: 'SpeechRecognition' in window,
+      webkitSpeechRecognitionInWindow: 'webkitSpeechRecognition' in window,
       supported: speechRecognitionSupported
     });
     
