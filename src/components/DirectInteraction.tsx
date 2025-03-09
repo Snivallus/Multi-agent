@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, MicOff, Timer } from 'lucide-react';
+import { ArrowLeft, Send, Mic, MicOff, Timer, AlertTriangle } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
@@ -8,7 +8,7 @@ import { createMultilingualText } from '@/types/language';
 import { DialogueRole } from '@/data/medicalCases';
 import config from '@/config'; // API base URL
 import { useToast } from '@/hooks/use-toast';
-import { useSpeechToText } from '@/hooks/use-speech-to-text';
+import { useSpeechToText, SpeechRecognitionErrorType, SpeechRecognitionError } from '@/hooks/use-speech-to-text';
 
 interface DirectInteractionProps {
   onBack: () => void;
@@ -24,6 +24,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const [inputText, setInputText] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null); // countdown when waiting for response
+  const [speechError, setSpeechError] = useState<SpeechRecognitionError | null>(null);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -34,34 +35,64 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   // Set speech recognition language based on app language
   const speechLanguage = language === 'zh' ? 'zh-CN' : 'en-US';
   
+  // Map error types to user-friendly messages
+  const getErrorMessage = (error: SpeechRecognitionError): string => {
+    // Default messages in English
+    const defaultMessages = {
+      [SpeechRecognitionErrorType.NOT_SUPPORTED]: 'Your browser does not support speech recognition.',
+      [SpeechRecognitionErrorType.NO_SPEECH]: 'No speech was detected. Please try again.',
+      [SpeechRecognitionErrorType.AUDIO_CAPTURE]: 'Could not capture audio. Please check your microphone.',
+      [SpeechRecognitionErrorType.NETWORK]: 'Network error occurred. Please check your connection.',
+      [SpeechRecognitionErrorType.ABORTED]: 'Speech recognition was aborted.',
+      [SpeechRecognitionErrorType.NOT_ALLOWED]: 'Microphone access denied. Please allow microphone permissions.',
+      [SpeechRecognitionErrorType.SERVICE_NOT_ALLOWED]: 'Speech recognition service quota exceeded.',
+      [SpeechRecognitionErrorType.BAD_GRAMMAR]: 'Bad grammar configuration.',
+      [SpeechRecognitionErrorType.LANGUAGE_NOT_SUPPORTED]: 'The selected language is not supported.',
+      [SpeechRecognitionErrorType.UNKNOWN]: 'An unknown error occurred with speech recognition.'
+    };
+    
+    // Get message from translations if available, otherwise use default
+    const translationKey = `speech${error.type.split('-').map(part => part.charAt(0).toUpperCase() + part.slice(1)).join('')}Error`;
+    return getText(translations[translationKey] || { en: error.message, zh: error.message }, language) || 
+           defaultMessages[error.type] || 
+           error.message;
+  };
+  
   // Initialize speech to text
   const { 
-    isListening,         // 是否正在监听语音
-    transcript,          // 语音转换的文本
-    toggleListening,     // 开启或关闭语音识别的函数
-    isSupported,         // 设备/浏览器是否支持语音识别
-    recordingDuration    // 录音的持续时间
+    isListening,
+    transcript,
+    toggleListening,
+    isSupported,
+    recordingDuration
   } = useSpeechToText({
     language: speechLanguage,
     continuous: true,
     interimResults: false,
     onResult: (result) => {
-      // Check if this is a request to get the current text
-      // if (result === '__GET_CURRENT_TEXT__') {
-      //   return;
-      // }
+      console.log('Speech recognition result received:', result);
       // 追加文本到输入框
       setInputText((prevText) => prevText ? `${prevText} ${result}` : result);
     },
     onError: (error) => {
-      console.error('Speech recognition error:', error);
+      console.error('Speech recognition error details:', error);
+      setSpeechError(error);
+      
+      // Show toast with appropriate error message
       toast({
         title: getText(translations.errorTitle, language),
-        description: getText(translations.browserNotSupported, language),
+        description: getErrorMessage(error),
         variant: "destructive"
       });
     }
   });
+
+  // Reset speech error when starting listening
+  useEffect(() => {
+    if (isListening) {
+      setSpeechError(null);
+    }
+  }, [isListening]);
 
   // Format recording duration as minutes:seconds
   const formatDuration = (seconds: number) => {
@@ -175,7 +206,11 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       }
 
       if (!response.ok) {
-        throw new Error(`API error: ${response.status}`);
+        console.error('API error response:', {
+          status: response.status,
+          statusText: response.statusText
+        });
+        throw new Error(`API error: ${response.status} - ${response.statusText}`);
       }
 
       const data = await response.json();
@@ -219,13 +254,18 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   // Reset the dialogue memory
   const handleResetDialogue = async () => {
     try {
+      console.log("Resetting dialogue memory at:", `${config.apiBaseUrl}/reset`);
       const response = await fetch(`${config.apiBaseUrl}/reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
   
+      console.log("Reset response status:", response.status);
+      
       if (response.ok) {
         const data = await response.json();
+        console.log("Reset response data:", data);
+        
         toast({
           title: "Memory Reset",
           description: data.message || "Memory reset successfully",
@@ -234,6 +274,10 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         // Clear the conversation messages after resetting memory
         setMessages([]);
       } else {
+        console.error("Reset response error:", {
+          status: response.status,
+          statusText: response.statusText
+        });
         throw new Error('Failed to reset memory');
       }
     } catch (error) {
@@ -317,6 +361,16 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       {/* Input area */}
       <div className="bg-white border-t p-4">
         <div className="max-w-3xl mx-auto">
+          {/* Display speech recognition error information if there is an error */}
+          {speechError && (
+            <div className="mb-3 p-2 bg-red-50 rounded-lg border border-red-100 flex items-center gap-2">
+              <AlertTriangle className="h-4 w-4 text-red-500" />
+              <span className="text-red-600 text-sm">
+                {getErrorMessage(speechError)}
+              </span>
+            </div>
+          )}
+          
           <div className="flex gap-2">
             <div className="flex-grow relative">
               <textarea
