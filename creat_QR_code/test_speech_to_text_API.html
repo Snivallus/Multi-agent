@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <button onclick="start()">Start</button>
+  <div id="result"></div>
+
+  <script>
+    const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
+    recognition.lang = 'zh-CN';
+    recognition.interimResults = true;
+
+    recognition.onresult = (event) => {
+      const transcript = event.results[0][0].transcript;
+      document.getElementById('result').innerHTML = transcript;
+    };
+
+    recognition.onerror = (event) => {
+      console.error('识别错误:', event.error);
+    };
+
+    function start() {
+      recognition.start();
+    }
+  </script>
+</body>
+</html>
