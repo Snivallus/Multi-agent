@@ -47,9 +47,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     interimResults: false,
     onResult: (result) => {
       // Check if this is a request to get the current text
-      if (result === '__GET_CURRENT_TEXT__') {
-        return;
-      }
+      // if (result === '__GET_CURRENT_TEXT__') {
+      //   return;
+      // }
       // 追加文本到输入框
       setInputText((prevText) => prevText ? `${prevText} ${result}` : result);
     },
