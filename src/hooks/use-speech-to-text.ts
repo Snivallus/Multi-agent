@@ -101,6 +101,12 @@ export function useSpeechToText({
 
   const startListening = useCallback(() => {
     console.debug('[SpeechToText] 尝试启动语音识别...'); 
+    console.log('调试信息:', {
+      browser: navigator.userAgent,
+      protocol: window.location.protocol,
+      online: navigator.onLine,
+      speechSupport: 'SpeechRecognition' in window || 'webkitSpeechRecognition' in window
+    });
     if (!isSupported) {
       console.warn('[SpeechToText] 在不支持的浏览器中尝试启动');
       return;
