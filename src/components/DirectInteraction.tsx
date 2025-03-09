@@ -30,6 +30,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
+  const errorTimeoutRef = useRef<NodeJS.Timeout | null>(null);
   const { toast } = useToast();
 
   // Set speech recognition language based on app language
@@ -84,6 +85,16 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         description: getErrorMessage(error),
         variant: "destructive"
       });
+      
+      // Auto-clear the error message after 5 seconds
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+      
+      errorTimeoutRef.current = setTimeout(() => {
+        setSpeechError(null);
+        errorTimeoutRef.current = null;
+      }, 5000);
     }
   });
 
@@ -91,8 +102,21 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   useEffect(() => {
     if (isListening) {
       setSpeechError(null);
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+        errorTimeoutRef.current = null;
+      }
     }
   }, [isListening]);
+
+  // Clean up timers on unmount
+  useEffect(() => {
+    return () => {
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
+      }
+    };
+  }, []);
 
   // Format recording duration as minutes:seconds
   const formatDuration = (seconds: number) => {
@@ -124,6 +148,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       }
       if (abortControllerRef.current) {
         abortControllerRef.current.abort();
+      }
+      if (errorTimeoutRef.current) {
+        clearTimeout(errorTimeoutRef.current);
       }
     };
   }, []);
@@ -363,7 +390,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         <div className="max-w-3xl mx-auto">
           {/* Display speech recognition error information if there is an error */}
           {speechError && (
-            <div className="mb-3 p-2 bg-red-50 rounded-lg border border-red-100 flex items-center gap-2">
+            <div className="mb-3 p-2 bg-red-50 rounded-lg border border-red-100 flex items-center gap-2 animate-fade-in">
               <AlertTriangle className="h-4 w-4 text-red-500" />
               <span className="text-red-600 text-sm">
                 {getErrorMessage(speechError)}
@@ -435,7 +462,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           
           {/* Display recording information and duration */}
           {isListening && (
-            <div className="mt-3 text-sm p-2 bg-red-50 rounded-lg border border-red-100 flex items-center gap-2">
+            <div className="mt-3 text-sm p-2 bg-red-50 rounded-lg border border-red-100 flex items-center gap-2 animate-fade-in">
               <Timer className="h-4 w-4 text-red-500" />
               <span className="text-red-600">
                 {getText(translations.recordingInProgress, language)} 

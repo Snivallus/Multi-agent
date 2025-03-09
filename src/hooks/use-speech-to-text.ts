@@ -251,6 +251,7 @@ export function useSpeechToText({
           });
         }
         
+        // Always stop listening and reset state on error
         stopListening();
       };
       
