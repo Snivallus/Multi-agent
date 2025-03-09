@@ -9,6 +9,11 @@ interface SpeechToTextOptions {
   onError?: (error: any) => void;
 }
 
+interface SpeechRecognitionErrorEvent extends Event {
+  error: 'aborted' | 'network' | 'not-allowed' | 'service-not-allowed' | 'no-speech' | 'language-not-supported';
+  message: string;
+}
+
 export function useSpeechToText({
   language = 'zh-CN',
   continuous = true,
@@ -25,6 +30,7 @@ export function useSpeechToText({
   const isMountedRef = useRef(true);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   // const existingTextRef = useRef('');
+  const errorTypeRef = useRef<string>('');
 
   // Check if SpeechRecognition is supported
   useEffect(() => {
@@ -174,16 +180,67 @@ export function useSpeechToText({
         }
       };
       
+      // 在 recognition.onerror 处理部分增加详细错误解析
       recognition.onerror = (event) => {
-        console.error('[SpeechToText] 语音识别错误:', event);
-        if (onError) onError(event);
+        const errorMap: { [key: string]: string } = {
+          'aborted': '用户中止识别',
+          'network': '网络通信失败',
+          'not-allowed': '权限被拒绝',
+          'service-not-allowed': '服务不可用',
+          'no-speech': '未检测到语音输入',
+          'language-not-supported': '语言不支持'
+        };
+
+        const errorType = event.error;
+        errorTypeRef.current = errorType; // 记录错误类型到ref
+        const errorMessage = `[SpeechToText] 识别错误: ${errorMap[errorType] || '未知错误'} (${errorType})`;
+        
+        console.error(errorMessage, {
+          errorEvent: event,
+          config: {
+            language,
+            continuous,
+            interimResults
+          },
+          systemInfo: {
+            online: navigator.onLine,
+            protocol: window.location.protocol,
+            userAgent: navigator.userAgent
+          }
+        });
+
+        if (onError) {
+          onError({
+            type: errorType,
+            message: errorMap[errorType] || '未知错误',
+            originalEvent: event
+          });
+        }
+
+        // 特殊处理网络错误
+        if (errorType === 'network') {
+          console.warn('[SpeechToText] 网络问题建议：',
+            '1. 检查互联网连接\n',
+            '2. 确保使用HTTPS协议\n',
+            '3. 验证语音服务是否可用');
+        }
+
         stopListening();
       };
       
       recognition.onend = () => {
-        console.log('[SpeechToText] 语音识别结束');
+        console.log('[SpeechToText] 语音识别结束', {
+          finalTranscript: transcript,
+          duration: recordingDuration
+        });
         if (isMountedRef.current) {
           setIsListening(false);
+        }
+
+        // 自动重连机制（针对网络错误）
+        if (continuous && recognitionRef.current && errorTypeRef.current === 'network') {
+          console.debug('[SpeechToText] 尝试网络错误自动重连...');
+          setTimeout(startListening, 2000);
         }
       };
       
@@ -230,7 +287,7 @@ interface SpeechRecognition extends EventTarget {
   interimResults: boolean;
   lang: string;
   onend: ((this: SpeechRecognition, ev: Event) => any) | null;
-  onerror: ((this: SpeechRecognition, ev: Event) => any) | null;
+  onerror: ((this: SpeechRecognition, ev: SpeechRecognitionErrorEvent) => any) | null;
   onresult: ((this: SpeechRecognition, ev: SpeechRecognitionEvent) => any) | null;
   onstart: ((this: SpeechRecognition, ev: Event) => any) | null;
   start(): void;
@@ -272,5 +329,10 @@ declare global {
       new(): SpeechRecognition;
       prototype: SpeechRecognition;
     };
+  }
+
+  interface SpeechRecognitionErrorEvent extends Event {
+    error: 'aborted' | 'network' | 'not-allowed' | 'service-not-allowed' | 'no-speech' | 'language-not-supported';
+    message: string;
   }
 }
