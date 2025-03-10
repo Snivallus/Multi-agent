@@ -191,14 +191,16 @@ export function useSpeechToText({
         const errorMap: { [key: string]: string } = {
           'aborted': '用户中止识别',
           'network': '网络通信失败',
-          'not-allowed': '权限被拒绝',
+          'not-allowed': '麦克风权限被拒绝',
           'service-not-allowed': '服务不可用',
           'no-speech': '未检测到语音输入',
           'language-not-supported': '语言不支持'
         };
 
         const errorType = event.error;
-        errorTypeRef.current = errorType; // 记录错误类型到ref
+        const mappedType = errorType === 'not-allowed' || 
+                           errorType === 'service-not-allowed' 
+                           ? 'microphonePermissionDenied' : errorType;
         const errorMessage = `[SpeechToText] 识别错误: ${errorMap[errorType] || '未知错误'} (${errorType})`;
         
         console.error(errorMessage, {
@@ -217,7 +219,7 @@ export function useSpeechToText({
 
         if (onError) {
           onError({
-            type: errorType,
+            type: mappedType,
             message: errorMap[errorType] || '未知错误',
             originalEvent: event
           });

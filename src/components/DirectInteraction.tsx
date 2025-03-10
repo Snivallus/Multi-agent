@@ -55,9 +55,26 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     },
     onError: (error) => {
       console.error('Speech recognition error:', error);
+      
+      // 根据错误类型选择翻译键
+      let errorKey;
+      switch (error.type) {
+        case 'browserNotSupported':
+          errorKey = translations.browserNotSupported;
+          break;
+        case 'network':
+          errorKey = translations.webSpeechAPIError;
+          break;
+        case 'microphonePermissionDenied':
+          errorKey = translations.microphonePermissionDenied;
+          break;
+        default:
+          errorKey = translations.genericError;
+      }
+
       toast({
         title: getText(translations.errorTitle, language),
-        description: getText(translations.browserNotSupported, language),
+        description: getText(errorKey, language),
         variant: "destructive"
       });
     }

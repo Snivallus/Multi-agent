@@ -33,9 +33,11 @@ export const translations = {
   recordingInProgress: createMultilingualText('录音中...', 'Recording...'),
   recordingDuration: createMultilingualText('录音时长: ', 'Recording duration: '),
   seconds: createMultilingualText('秒', 'seconds'),
-  microphonePermission: createMultilingualText('需要麦克风权限', 'Microphone permission needed'),
+  microphonePermissionDenied: createMultilingualText('需要麦克风权限', 'Microphone permission needed'),
   browserNotSupported: createMultilingualText('您的浏览器不支持语音识别, 请使用 Chrome 浏览器', 'Your browser does not support speech recognition. Please use the Chrome browser.'),
-  
+  webSpeechAPIError: createMultilingualText('Web Speech API 通讯错误, 请更换 VPN 或使用 Chrome 浏览器', 'Web Speech API communication error, please change VPN or use the Chrome brower.'),
+  genericError: createMultilingualText('发生未知错误, 请稍后再试', 'An unknown error occurred, please try again later'),
+
   // Case selection
   selectCase: createMultilingualText('选择案例', 'Select a Case Study'),
   searchCasesPlaceholder: createMultilingualText(
