@@ -109,6 +109,10 @@ export function useSpeechToText({
     });
     if (!isSupported) {
       console.warn('[SpeechToText] 在不支持的浏览器中尝试启动');
+      if (onError) onError({
+        type: 'browserNotSupported',
+        message: '当前浏览器不支持语音功能'
+      });
       return;
     }
     try {
@@ -136,7 +140,10 @@ export function useSpeechToText({
       if (!SpeechRecognitionConstructor) {
         console.error('[SpeechToText] 找不到语音识别构造函数');
         setIsSupported(false);
-        if (onError) onError(new Error("Speech recognition not supported in this browser"));
+        if (onError) onError({
+          type: 'browserNotSupported',
+          message: "浏览器不支持语音识别"
+        });
         return;
       }
 
@@ -201,6 +208,7 @@ export function useSpeechToText({
         const mappedType = errorType === 'not-allowed' || 
                            errorType === 'service-not-allowed' 
                            ? 'microphonePermissionDenied' : errorType;
+        errorTypeRef.current = mappedType;
         const errorMessage = `[SpeechToText] 识别错误: ${errorMap[errorType] || '未知错误'} (${errorType})`;
         
         console.error(errorMessage, {
@@ -246,7 +254,7 @@ export function useSpeechToText({
         }
 
         // 自动重连机制（针对网络错误）
-        if (continuous && recognitionRef.current && errorTypeRef.current === 'network') {
+        if (continuous && isMountedRef.current && errorTypeRef.current === 'network') {
           console.debug('[SpeechToText] 尝试网络错误自动重连...');
           setTimeout(startListening, 2000);
         }
