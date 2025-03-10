@@ -24,7 +24,7 @@ export const translations = {
   jumpToPosition: createMultilingualText('点击跳转到该位置', 'Click to jump to this position'),
   conversationHint: createMultilingualText('输入消息开始对话', 'Start a conversation by typing a message below.'),
   doctorPlaceHolder: createMultilingualText('(无响应)', '(No response)'),
-  resetMomery: createMultilingualText('清除记忆', 'Reset momery'),
+  resetMomery: createMultilingualText('清除记忆', 'Reset Momery'),
   endConsultation: createMultilingualText('结束问诊', 'End Consultation'),
   uploadFile: createMultilingualText('上传文件', 'Upload File'),
   featureNotImplemented: createMultilingualText('多模态交互功能尚未实现，敬请期待', 'Multi-modal interaction feature is not yet implemented, stay tuned'),
