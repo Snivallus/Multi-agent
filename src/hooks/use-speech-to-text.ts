@@ -249,14 +249,9 @@ export function useSpeechToText({
           finalTranscript: transcript,
           duration: recordingDuration
         });
+        
         if (isMountedRef.current) {
           setIsListening(false);
-        }
-
-        // 自动重连机制（针对网络错误）
-        if (continuous && isMountedRef.current && errorTypeRef.current === 'network') {
-          console.debug('[SpeechToText] 尝试网络错误自动重连...');
-          setTimeout(startListening, 2000);
         }
       };
       
