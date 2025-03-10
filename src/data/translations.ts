@@ -7,10 +7,10 @@ export const translations = {
   toggleLanguage: createMultilingualText('中文', 'English'),
   
   // Landing page
-  appTitle: createMultilingualText('医学多智能体系统', 'Medical Multi-Agent Systems'),
+  appTitle: createMultilingualText('AI 医院', 'AI Hospital'),
   appDescription: createMultilingualText(
-    '一个用于多模态医学诊断的多智能体框架',
-    'A multi-agent framework for multi-modality medical diagnosis'
+    '多模态医学诊断大模型',
+    'Multi-modality Large Model for Medical Diagnosis'
   ),
   selectCaseButton: createMultilingualText('选择案例', 'Select a Case Study'),
   directInteractionButton: createMultilingualText('直接交互', 'Direct Interaction'),
