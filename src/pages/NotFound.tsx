@@ -11,12 +11,22 @@ const NotFound = () => {
     );
   }, [location.pathname]);
 
+  const imageUrl = "/piblic/man.jpg";
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">404</h1>
-        <p className="text-xl text-gray-600 mb-4">Oops! Page not found</p>
-        <a href="/" className="text-blue-500 hover:text-blue-700 underline">
+        <img
+          src={imageUrl}
+          alt="Man!"
+          className="max-auto mb-8 w-64 h-64 object-contain animate-bounce"
+        />
+        <h1 className="text-4xl font-bold mb-4">024</h1>
+        <p className="text-xl text-gray-600 mb-4">Man! What can I say?</p>
+        <a 
+          href="/" 
+          className="text-blue-500 hover:text-blue-700 underline"
+        >
           Return to Home
         </a>
       </div>
