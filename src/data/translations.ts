@@ -34,7 +34,7 @@ export const translations = {
   recordingDuration: createMultilingualText('录音时长: ', 'Recording duration: '),
   seconds: createMultilingualText('秒', 'seconds'),
   microphonePermission: createMultilingualText('需要麦克风权限', 'Microphone permission needed'),
-  browserNotSupported: createMultilingualText('您的浏览器不支持语音识别', 'Your browser does not support speech recognition'),
+  browserNotSupported: createMultilingualText('您的浏览器不支持语音识别, 请使用 Chrome 浏览器', 'Your browser does not support speech recognition. Please use the Chrome browser.'),
   
   // Case selection
   selectCase: createMultilingualText('选择案例', 'Select a Case Study'),
