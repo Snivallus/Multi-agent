@@ -36,7 +36,7 @@ export const medicalCases: MedicalCase[] = [
       'Right Knee Injury'
     ),
     description: createMultilingualText(
-      '患者摔倒后右膝盖肿胀和疼痛。',
+      '患者摔倒后右膝盖肿胀和疼痛',
       'A patient presents with a swollen and painful right knee after a fall.'
     ),
     category: createMultilingualText('骨科', 'Orthopedics'),
@@ -58,7 +58,7 @@ export const medicalCases: MedicalCase[] = [
         role: 'patient',
         text: createMultilingualText(
           '您好，我前几天在家里摔了一跤，从那以后我的右膝盖就肿起来了，疼得厉害，腿也不好使了。',
-          'Hello, I fell at home a few days ago. Since then, my right knee has been swollen, extremely painful, and I can’t move my leg properly.'
+          "Hello, I fell at home a few days ago. Since then, my right knee has been swollen, extremely painful, and I can't move my leg properly."
         )
       },
       {
@@ -132,8 +132,8 @@ export const medicalCases: MedicalCase[] = [
       {
         role: 'reporter',
         text: createMultilingualText(
-          '#检查项目#\n- X光检查: 无异常\n- MRI检查: 无异常\n\n#影像学检查#\n- DR: 右膝关节置换术后，右股骨髁上骨折，对位不良。',
-          '#Examinations#\n- X-ray: No abnormalities\n- MRI: No abnormalities\n\n#Imaging Findings#\n- DR: Post right knee joint replacement, supracondylar fracture of the right femur, malalignment.'
+          '**检查项目**\n- X光检查: 无异常\n- MRI检查: 无异常\n\n#影像学检查#\n- DR: 右膝关节置换术后，右股骨髁上骨折，对位不良。',
+          '**Examinations**\n- X-ray: No abnormalities\n- MRI: No abnormalities\n\n#Imaging Findings#\n- DR: Post right knee joint replacement, supracondylar fracture of the right femur, malalignment.'
         )
       },
       {
@@ -152,7 +152,7 @@ export const medicalCases: MedicalCase[] = [
       'Acute Liver Injury'
     ),
     description: createMultilingualText(
-      '患者过去五天出现疲劳、尿色变深和尿量减少。',
+      '患者过去五天出现疲劳、尿色变深和尿量减少',
       'A patient presents with fatigue, dark urine, and reduced urine output over the past five days.'
     ),
     category: createMultilingualText('肝病学','Hepatology'),
@@ -229,7 +229,7 @@ export const medicalCases: MedicalCase[] = [
         role: 'patient',
         text: createMultilingualText(
           '没有呼吸困难、咳嗽，也没有心慌、胸闷。我不吸烟，偶尔喝点酒，睡眠质量不太好，经常睡不深。',
-          'I don’t have difficulty breathing, coughing, palpitations, or chest tightness. I don’t smoke, occasionally drink alcohol, and my sleep quality is not good—I often don’t sleep deeply.'
+          "I don't have difficulty breathing, coughing, palpitations, or chest tightness. I don't smoke, occasionally drink alcohol, and my sleep quality is not good—I often don't sleep deeply."
         )
       },
       {
@@ -249,8 +249,8 @@ export const medicalCases: MedicalCase[] = [
       {
         role: 'reporter',
         text: createMultilingualText(
-          '#检查项目#\n- 肝功能检测:\n  - 血清丙氨酸氨基转移酶(ALT): 297U/L\n  - 血清天门冬氨酸氨基转移酶(AST): 83U/L\n  - 总胆红素(TBIL): 34.4μmol/L\n  - 血清γ-谷氨酰基转移酶(GGT): 243.00IU/L\n  - 血清直接胆红素(DBIL): 7.24μmol/L\n  - 血清总蛋白(TP): 68.20g/L\n  - 血清白蛋白(ALB): 40.10g/L\n- 尿常规: 无异常\n- 血常规:\n  - 白细胞(WBC): 4.77×10^9/L\n  - 中性粒细胞数(NEU#): 3.04×10^9/L\n  - 血红蛋白(HGB): 112g/L\n- 腹部B超: 无异常',
-          '#Examinations#\n- Liver function test:\n  - Serum alanine aminotransferase (ALT): 297U/L\n  - Serum aspartate aminotransferase (AST): 83U/L\n  - Total bilirubin (TBIL): 34.4μmol/L\n  - Serum gamma-glutamyl transferase (GGT): 243.00IU/L\n  - Serum direct bilirubin (DBIL): 7.24μmol/L\n  - Serum total protein (TP): 68.20g/L\n  - Serum albumin (ALB): 40.10g/L\n- Urinalysis: No abnormalities\n- Complete blood count:\n  - White blood cells (WBC): 4.77×10^9/L\n  - Neutrophil count (NEU#): 3.04×10^9/L\n  - Hemoglobin (HGB): 112g/L\n- Abdominal ultrasound: No abnormalities'
+          '**检查项目**\n- 肝功能检测:\n  - 血清丙氨酸氨基转移酶(ALT): 297U/L\n  - 血清天门冬氨酸氨基转移酶(AST): 83U/L\n  - 总胆红素(TBIL): 34.4μmol/L\n  - 血清γ-谷氨酰基转移酶(GGT): 243.00IU/L\n  - 血清直接胆红素(DBIL): 7.24μmol/L\n  - 血清总蛋白(TP): 68.20g/L\n  - 血清白蛋白(ALB): 40.10g/L\n- 尿常规: 无异常\n- 血常规:\n  - 白细胞(WBC): 4.77×10^9/L\n  - 中性粒细胞数(NEU#): 3.04×10^9/L\n  - 血红蛋白(HGB): 112g/L\n- 腹部B超: 无异常',
+          '**Examinations**\n- Liver function test:\n  - Serum alanine aminotransferase (ALT): 297U/L\n  - Serum aspartate aminotransferase (AST): 83U/L\n  - Total bilirubin (TBIL): 34.4μmol/L\n  - Serum gamma-glutamyl transferase (GGT): 243.00IU/L\n  - Serum direct bilirubin (DBIL): 7.24μmol/L\n  - Serum total protein (TP): 68.20g/L\n  - Serum albumin (ALB): 40.10g/L\n- Urinalysis: No abnormalities\n- Complete blood count:\n  - White blood cells (WBC): 4.77×10^9/L\n  - Neutrophil count (NEU#): 3.04×10^9/L\n  - Hemoglobin (HGB): 112g/L\n- Abdominal ultrasound: No abnormalities'
         )
       },
       {
@@ -263,15 +263,15 @@ export const medicalCases: MedicalCase[] = [
       {
         role: 'patient',
         text: createMultilingualText(
-          '<结束>',
-          '<End>'
+          '谢谢医生，我会按照您的建议去做的。',
+          'Thank you, doctor. I will follow your advice.'
         )
       },
       {
         role: 'doctor',
         text: createMultilingualText(
-          '#症状#\n(1) 疲劳\n(2) 尿色变黄\n(3) 尿量减少\n\n#辅助检查#\n(1) 肝功能检测：血清丙氨酸氨基转移酶(ALT) 297 U/L（显著升高），血清天门冬氨酸氨基转移酶(AST) 83 U/L（轻度升高），总胆红素(TBIL) 34.4 μmol/L（轻度升高），血清γ-谷氨酰基转移酶(GGT) 243.00 IU/L（显著升高），血清直接胆红素(DBIL) 7.24 μmol/L（正常范围），血清总蛋白(TP) 68.20 g/L（正常范围），血清白蛋白(ALB) 40.10 g/L（正常范围）。\n(2) 尿常规：无异常。\n(3) 血常规：白细胞(WBC) 4.77 × 10^9/L（正常范围），中性粒细胞数(NEU#) 3.04 × 10^9/L（正常范围），血红蛋白(HGB) 112 g/L（轻度降低）。\n(4) 腹部B超：无异常。\n\n#诊断结果#\n急性肝损伤\n\n#诊断依据#\n(1) 患者出现疲劳、尿色变黄和尿量减少等症状。\n(2) 肝功能检测显示ALT、AST及GGT显著升高，提示肝细胞损伤。\n\n#治疗方案#\n(1) 停用所有可能导致肝损害的药物，包括复方对乙酰氨基酚片。\n(2) 保证充分休息，避免饮酒和吸烟等不良生活习惯。\n(3) 采用清淡饮食，多吃新鲜蔬菜水果，少吃油腻食物。\n(4) 可以考虑使用保肝药物如甘草酸制剂或水飞蓟宾胶囊（具体用药需遵医嘱）。\n(5) 定期复查肝功能，监测病情变化。\n(6) 如果症状持续恶化或者没有改善，请及时就医并考虑进一步检查以排除其他潜在病因。',
-          '#Symptoms#\n(1) Fatigue\n(2) Dark urine\n(3) Reduced urine output\n\n#Auxiliary Examinations#\n(1) Liver function test: Serum alanine aminotransferase (ALT) 297 U/L (significantly elevated), serum aspartate aminotransferase (AST) 83 U/L (slightly elevated), total bilirubin (TBIL) 34.4 μmol/L (slightly elevated), serum gamma-glutamyl transferase (GGT) 243.00 IU/L (significantly elevated), serum direct bilirubin (DBIL) 7.24 μmol/L (normal range), serum total protein (TP) 68.20 g/L (normal range), serum albumin (ALB) 40.10 g/L (normal range).\n(2) Urinalysis: No abnormalities.\n(3) Complete blood count: White blood cells (WBC) 4.77 × 10^9/L (normal range), neutrophil count (NEU#) 3.04 × 10^9/L (normal range), hemoglobin (HGB) 112 g/L (slightly low).\n(4) Abdominal ultrasound: No abnormalities.\n\n#Diagnosis#\nAcute liver injury\n\n#Diagnostic Basis#\n(1) The patient presents with fatigue, dark urine, and reduced urine output.\n(2) Liver function test shows significantly elevated ALT, AST, and GGT levels, indicating liver cell injury.\n\n#Treatment Plan#\n(1) Stop all medications that may cause liver damage, including compound paracetamol tablets.\n(2) Ensure adequate rest, avoid alcohol and smoking.\n(3) Adopt a light diet, eat more fresh vegetables and fruits, and avoid greasy foods.\n(4) Consider using liver-protecting medications such as glycyrrhizin or silymarin capsules (specific medication should follow medical advice).\n(5) Regularly recheck liver function to monitor changes.\n(6) If symptoms persist or worsen, seek medical attention promptly and consider further tests to rule out other potential causes.'
+          '**症状**\n(1) 疲劳\n(2) 尿色变黄\n(3) 尿量减少\n\n#辅助检查#\n(1) 肝功能检测：血清丙氨酸氨基转移酶(ALT) 297 U/L（显著升高），血清天门冬氨酸氨基转移酶(AST) 83 U/L（轻度升高），总胆红素(TBIL) 34.4 μmol/L（轻度升高），血清γ-谷氨酰基转移酶(GGT) 243.00 IU/L（显著升高），血清直接胆红素(DBIL) 7.24 μmol/L（正常范围），血清总蛋白(TP) 68.20 g/L（正常范围），血清白蛋白(ALB) 40.10 g/L（正常范围）。\n(2) 尿常规：无异常。\n(3) 血常规：白细胞(WBC) 4.77 × 10^9/L（正常范围），中性粒细胞数(NEU#) 3.04 × 10^9/L（正常范围），血红蛋白(HGB) 112 g/L（轻度降低）。\n(4) 腹部B超：无异常。\n\n**诊断结果**\n急性肝损伤\n\n#诊断依据#\n(1) 患者出现疲劳、尿色变黄和尿量减少等症状。\n(2) 肝功能检测显示ALT、AST及GGT显著升高，提示肝细胞损伤。\n\n#治疗方案#\n(1) 停用所有可能导致肝损害的药物，包括复方对乙酰氨基酚片。\n(2) 保证充分休息，避免饮酒和吸烟等不良生活习惯。\n(3) 采用清淡饮食，多吃新鲜蔬菜水果，少吃油腻食物。\n(4) 可以考虑使用保肝药物如甘草酸制剂或水飞蓟宾胶囊（具体用药需遵医嘱）。\n(5) 定期复查肝功能，监测病情变化。\n(6) 如果症状持续恶化或者没有改善，请及时就医并考虑进一步检查以排除其他潜在病因。',
+          '**Symptoms**\n(1) Fatigue\n(2) Dark urine\n(3) Reduced urine output\n\n#Auxiliary Examinations#\n(1) Liver function test: Serum alanine aminotransferase (ALT) 297 U/L (significantly elevated), serum aspartate aminotransferase (AST) 83 U/L (slightly elevated), total bilirubin (TBIL) 34.4 μmol/L (slightly elevated), serum gamma-glutamyl transferase (GGT) 243.00 IU/L (significantly elevated), serum direct bilirubin (DBIL) 7.24 μmol/L (normal range), serum total protein (TP) 68.20 g/L (normal range), serum albumin (ALB) 40.10 g/L (normal range).\n(2) Urinalysis: No abnormalities.\n(3) Complete blood count: White blood cells (WBC) 4.77 × 10^9/L (normal range), neutrophil count (NEU#) 3.04 × 10^9/L (normal range), hemoglobin (HGB) 112 g/L (slightly low).\n(4) Abdominal ultrasound: No abnormalities.\n\n#Diagnosis#\nAcute liver injury\n\n**Diagnostic Basis**\n(1) The patient presents with fatigue, dark urine, and reduced urine output.\n(2) Liver function test shows significantly elevated ALT, AST, and GGT levels, indicating liver cell injury.\n\n#Treatment Plan#\n(1) Stop all medications that may cause liver damage, including compound paracetamol tablets.\n(2) Ensure adequate rest, avoid alcohol and smoking.\n(3) Adopt a light diet, eat more fresh vegetables and fruits, and avoid greasy foods.\n(4) Consider using liver-protecting medications such as glycyrrhizin or silymarin capsules (specific medication should follow medical advice).\n(5) Regularly recheck liver function to monitor changes.\n(6) If symptoms persist or worsen, seek medical attention promptly and consider further tests to rule out other potential causes.'
         )
       }
     ]
@@ -283,7 +283,7 @@ export const medicalCases: MedicalCase[] = [
       'Multiple Lacunar Infarctions'
     ),
     description: createMultilingualText(
-      '患者出现左侧肢体无力、口干和便秘。',
+      '患者出现左侧肢体无力、口干和便秘',
       'A patient presents with weakness in the left limbs, dry mouth, and constipation.'
     ),
     category: createMultilingualText('神经内科', 'Neurology'),
@@ -305,7 +305,7 @@ export const medicalCases: MedicalCase[] = [
         role: 'patient',
         text: createMultilingualText(
           '医生您好，我昨天上午开始觉得左边的手脚都没什么力气，休息了会儿也没见好。头不疼也不发烧，就是嘴巴干，大便不太顺畅。',
-          'Doctor, since yesterday morning, I have felt weakness in my left hand and foot. Resting didn’t help. I don’t have a headache or fever, just a dry mouth and constipation.'
+          "Doctor, since yesterday morning, I have felt weakness in my left hand and foot. Resting didn't help. I don't have a headache or fever, just a dry mouth and constipation."
         )
       },
       {
@@ -319,7 +319,7 @@ export const medicalCases: MedicalCase[] = [
         role: 'patient',
         text: createMultilingualText(
           '就是感觉左边的手脚没劲，抬起来有点费力，但是没有麻木的感觉。走路的时候左腿也不太听使唤。',
-          'It feels like my left hand and foot are weak, and it’s hard to lift them, but there’s no numbness. My left leg doesn’t cooperate well when walking.'
+          "It feels like my left hand and foot are weak, and it's hard to lift them, but there's no numbness. My left leg doesn't cooperate well when walking."
         )
       },
       {
@@ -347,7 +347,7 @@ export const medicalCases: MedicalCase[] = [
         role: 'patient',
         text: createMultilingualText(
           '以前没有过这样的情况。我有高血压，已经5年了，最高的时候血压到过180/110mmHg，一直在吃吲哒帕胺和硝苯地平片控制。还有2018年11月查出食管上段癌，后来做了放疗，现在吃饭都正常。其他的慢性病就没有了。',
-          'I’ve never had this issue before. I have had hypertension for five years, with the highest reading being 180/110 mmHg. I take indapamide and nifedipine to control it. In November 2018, I was diagnosed with upper esophageal cancer and underwent radiotherapy. I eat normally now. I don’t have any other chronic diseases.'
+          "I've never had this issue before. I have had hypertension for five years, with the highest reading being 180/110 mmHg. I take indapamide and nifedipine to control it. In November 2018, I was diagnosed with upper esophageal cancer and underwent radiotherapy. I eat normally now. I don't have any other chronic diseases."
         )
       },
       {
@@ -361,7 +361,7 @@ export const medicalCases: MedicalCase[] = [
         role: 'patient',
         text: createMultilingualText(
           '没有其他药物了，就这两种药。我不吃中药和保健品的。',
-          'No other medications, just those two. I don’t take traditional Chinese medicine or supplements.'
+          "No other medications, just those two. I don't take traditional Chinese medicine or supplements."
         )
       },
       {
@@ -375,7 +375,7 @@ export const medicalCases: MedicalCase[] = [
         role: 'patient',
         text: createMultilingualText(
           '我是个农民，平时就在田里干活。我不抽烟也不喝酒，生活挺简单的。',
-          'I am a farmer and usually work in the fields. I don’t smoke or drink alcohol. My life is quite simple.'
+          "I am a farmer and usually work in the fields. I don't smoke or drink alcohol. My life is quite simple."
         )
       },
       {
@@ -403,28 +403,28 @@ export const medicalCases: MedicalCase[] = [
         role: 'patient',
         text: createMultilingualText(
           '没有视力模糊，胸也不闷，心不慌。吃饭喝水都正常，就是手脚没劲和嘴巴干、大便干燥。',
-          'No blurred vision, chest tightness, or palpitations. I eat and drink normally. It’s just the weakness in my limbs, dry mouth, and constipation.'
+          "No blurred vision, chest tightness, or palpitations. I eat and drink normally. It's just the weakness in my limbs, dry mouth, and constipation."
         )
       },
       {
         role: 'doctor',
         text: createMultilingualText(
-          '根据您的描述，我们需要进一步做一些检查来明确病因。接下来我将为您安排一些辅助检查。\n\n实验室检查：血常规、电解质、血糖、肝肾功能\n影像学检查：头颅CT或MRI，以排除脑血管意外\n心电图检查：12导联心电图，了解心脏情况\n功能性检查：神经系统检查，评估神经功能状态\n\n请您尽快完成这些检查，并将结果告诉我，以便我们进行下一步的诊断和治疗。',
+          '根据您的描述，我们需要进一步做一些检查来明确病因。接下来我将为您安排一些辅助检查。\n\n**实验室检查**：血常规、电解质、血糖、肝肾功能\n影像学检查：头颅CT或MRI，以排除脑血管意外\n心电图检查：12导联心电图，了解心脏情况\n功能性检查：神经系统检查，评估神经功能状态\n\n请您尽快完成这些检查，并将结果告诉我，以便我们进行下一步的诊断和治疗。',
           'Based on your description, we need to conduct some tests to determine the cause. I will arrange the following tests for you: Complete blood count, electrolytes, blood glucose, liver and kidney function tests, head CT or MRI to rule out cerebrovascular accidents, 12-lead ECG to assess heart condition, and neurological examination to evaluate nerve function. Please complete these tests and provide the results so we can proceed with the diagnosis and treatment.'
         )
       },
       {
         role: 'patient',
         text: createMultilingualText(
-          '您好，我需要做血常规、电解质、血糖、肝肾功能的检查，还有头颅CT或MRI，12导联心电图和神经系统检查。能否告诉我这些检查的结果？医生，检查结果出来了。血常规、电解质、血糖、肝肾功能都正常。头颅CT显示没有出血，但是发现有小范围的梗死灶。心电图也正常。神经系统检查提示左侧肢体肌力减弱，其他神经功能基本正常。',
-          'Hello, I need to do a complete blood count, electrolytes, blood glucose, liver and kidney function tests, head CT or MRI, 12-lead ECG, and neurological examination. Can you tell me the results? Doctor, the test results are out. The complete blood count, electrolytes, blood glucose, liver and kidney function tests are all normal. The head CT shows no bleeding but a small infarct. The ECG is normal. The neurological examination indicates reduced muscle strength in the left limbs, but other nerve functions are mostly normal.'
+          '您好，我需要做血常规、电解质、血糖、肝肾功能的检查，还有头颅CT或MRI，12导联心电图和神经系统检查。',
+          'Hello, I need to do a complete blood count, electrolytes, blood glucose, liver and kidney function tests, head CT or MRI, 12-lead ECG, and neurological examination.'
         )
       },
       {
         role: 'reporter',
         text: createMultilingualText(
-          '#检查项目#\n- 血常规:\n  - 即刻血糖: 8.4mmol/L\n- 肝肾功能: 无异常\n- 电解质: 无异常\n\n#影像学检查#\n- 头颅CT: 右侧侧脑室旁脑梗死\n- 头颅MRI: 脑白质脱髓鞘改变，右侧基底节区、双侧侧脑室旁、顶叶及额叶腔隙性脑梗塞\n\n#心电图#\n- 窦性心律\n- 心电轴正常\n- T波异常\n\n#查体#\n- 左侧肢体肌力4级，触痛觉减退\n- 其他神经系统检查结果：神志清晰，言语流利，记忆力、计算力、理解力良好。视力视野正常，眼球运动正常，无复视或震颤。面部感觉对称，张口下颌无偏斜，无口角低垂，眼裂对称，左侧鼻唇沟浅。无眩晕、恶心，饮水无呛咳，伸舌居中。巴宾斯基征双侧阴性。脑膜刺激征：颈无抵抗，克氏征阴性，布氏征阴性。',
-          '#Examinations#\n- Complete blood count:\n  - Immediate blood glucose: 8.4 mmol/L\n- Liver and kidney function: No abnormalities\n- Electrolytes: No abnormalities\n\n#Imaging Examinations#\n- Head CT: Infarction near the right lateral ventricle\n- Head MRI: Demyelination in the white matter, lacunar infarctions in the right basal ganglia, bilateral periventricular areas, parietal and frontal lobes\n\n#ECG#\n- Sinus rhythm\n- Normal heart axis\n- T wave abnormalities\n\n#Physical Examination#\n- Muscle strength in the left limbs: Grade 4, reduced touch and pain sensation\n- Other neurological examination results: Clear consciousness, fluent speech, good memory, calculation, and comprehension. Normal vision and visual fields, normal eye movements, no diplopia or nystagmus. Symmetrical facial sensation, no jaw deviation, no drooping of the mouth corners, symmetrical palpebral fissures, shallow left nasolabial fold. No dizziness or nausea, no choking when drinking, tongue midline. Negative Babinski sign bilaterally. No meningeal irritation signs: no neck stiffness, negative Kernig’s and Brudzinski’s signs.'
+          '**检查项目**\n- 血常规:\n  - 即刻血糖: 8.4mmol/L\n- 肝肾功能: 无异常\n- 电解质: 无异常\n\n#影像学检查#\n- 头颅CT: 右侧侧脑室旁脑梗死\n- 头颅MRI: 脑白质脱髓鞘改变，右侧基底节区、双侧侧脑室旁、顶叶及额叶腔隙性脑梗塞\n\n#心电图#\n- 窦性心律\n- 心电轴正常\n- T波异常\n\n#查体#\n- 左侧肢体肌力4级，触痛觉减退\n- 其他神经系统检查结果：神志清晰，言语流利，记忆力、计算力、理解力良好。视力视野正常，眼球运动正常，无复视或震颤。面部感觉对称，张口下颌无偏斜，无口角低垂，眼裂对称，左侧鼻唇沟浅。无眩晕、恶心，饮水无呛咳，伸舌居中。巴宾斯基征双侧阴性。脑膜刺激征：颈无抵抗，克氏征阴性，布氏征阴性。',
+          '**Examinations**\n- Complete blood count:\n  - Immediate blood glucose: 8.4 mmol/L\n- Liver and kidney function: No abnormalities\n- Electrolytes: No abnormalities\n\n#Imaging Examinations#\n- Head CT: Infarction near the right lateral ventricle\n- Head MRI: Demyelination in the white matter, lacunar infarctions in the right basal ganglia, bilateral periventricular areas, parietal and frontal lobes\n\n#ECG#\n- Sinus rhythm\n- Normal heart axis\n- T wave abnormalities\n\n#Physical Examination#\n- Muscle strength in the left limbs: Grade 4, reduced touch and pain sensation\n- Other neurological examination results: Clear consciousness, fluent speech, good memory, calculation, and comprehension. Normal vision and visual fields, normal eye movements, no diplopia or nystagmus. Symmetrical facial sensation, no jaw deviation, no drooping of the mouth corners, symmetrical palpebral fissures, shallow left nasolabial fold. No dizziness or nausea, no choking when drinking, tongue midline. Negative Babinski sign bilaterally. No meningeal irritation signs: no neck stiffness, negative Kernig’s and Brudzinski’s signs.'
         )
       },
       {
@@ -437,36 +437,36 @@ export const medicalCases: MedicalCase[] = [
       {
         role: 'patient',
         text: createMultilingualText(
-          '您好，我需要做糖化血红蛋白 (HbA1c)、血脂全套、凝血功能的检查，还有颈动脉超声和神经系统的详细评估，包括神经传导速度和肌电图。能否告诉我这些检查的结果？',
-          'Hello, I need to do glycated hemoglobin (HbA1c), full lipid profile, coagulation function tests, carotid ultrasound, and detailed neurological assessment, including nerve conduction velocity and electromyography. Can you tell me the results?'
+          '您好，我需要做糖化血红蛋白 (HbA1c)、血脂全套、凝血功能的检查，还有颈动脉超声和神经系统的详细评估，包括神经传导速度和肌电图。',
+          'Hello, I need to do glycated hemoglobin (HbA1c), full lipid profile, coagulation function tests, carotid ultrasound, and detailed neurological assessment, including nerve conduction velocity and electromyography.'
         )
       },
       {
         role: 'reporter',
         text: createMultilingualText(
-          '您好，根据您提供的追加检查结果，这里为您整理如下：\n\n#检查项目#\n- 糖化血红蛋白 (HbA1c): 6.8%\n- 血脂全套:\n - 总胆固醇: 稍高\n - 其他指标: 正常\n- 凝血功能: 正常范围内\n- 颈动脉超声: 无明显狭窄或斑块\n- 神经传导速度: 左侧肢体神经传导稍有减慢\n- 肌电图: 提示左侧肢体神经传导稍有减慢\n\n对于接下来的治疗方案，请咨询您的主治医生。他们会基于上述信息以及其他可能的因素（如病史、症状等）来制定最适合您的治疗计划。如果有任何疑问或者需要进一步的帮助，请随时告知。\n\n请注意，我的建议不能替代专业医疗意见。确保与医疗团队保持沟通以获得最合适的护理。',
-          'Hello, based on the additional test results you provided, here is a summary:\n\n#Examinations#\n- Glycated hemoglobin (HbA1c): 6.8%\n- Full lipid profile:\n - Total cholesterol: Slightly high\n - Other indicators: Normal\n- Coagulation function: Within normal range\n- Carotid ultrasound: No significant stenosis or plaques\n- Nerve conduction velocity: Slightly slowed in the left limbs\n- Electromyography: Indicates slightly slowed nerve conduction in the left limbs\n\nFor the next steps in your treatment plan, please consult your primary doctor. They will create the most suitable treatment plan based on this information and other possible factors (such as medical history and symptoms). If you have any questions or need further assistance, please let us know.\n\nPlease note that my advice cannot replace professional medical opinions. Ensure you stay in communication with your medical team for the best care.'
+          '您好，根据您提供的追加检查结果，这里为您整理如下：\n\n**检查项目**\n- 糖化血红蛋白 (HbA1c): 6.8%\n- 血脂全套:\n - 总胆固醇: 稍高\n - 其他指标: 正常\n- 凝血功能: 正常范围内\n- 颈动脉超声: 无明显狭窄或斑块\n- 神经传导速度: 左侧肢体神经传导稍有减慢\n- 肌电图: 提示左侧肢体神经传导稍有减慢\n\n对于接下来的治疗方案，请咨询您的主治医生。他们会基于上述信息以及其他可能的因素（如病史、症状等）来制定最适合您的治疗计划。如果有任何疑问或者需要进一步的帮助，请随时告知。',
+          'Hello, based on the additional test results you provided, here is a summary:\n\n#Examinations#\n- Glycated hemoglobin (HbA1c): 6.8%\n- Full lipid profile:\n - Total cholesterol: Slightly high\n - Other indicators: Normal\n- Coagulation function: Within normal range\n- Carotid ultrasound: No significant stenosis or plaques\n- Nerve conduction velocity: Slightly slowed in the left limbs\n- Electromyography: Indicates slightly slowed nerve conduction in the left limbs\n\nFor the next steps in your treatment plan, please consult your primary doctor. They will create the most suitable treatment plan based on this information and other possible factors (such as medical history and symptoms). If you have any questions or need further assistance, please let us know.'
         )
       },
       {
         role: 'doctor',
         text: createMultilingualText(
-          '感谢您提供了详细的追加检查结果。根据这些结果，我们可以进一步明确您的病情和制定治疗方案。\n\n### 追加检查结果总结：\n- 糖化血红蛋白 (HbA1c): 6.8%（略高）\n- 血脂全套:\n - 总胆固醇: 稍高\n - 其他指标: 正常\n- 凝血功能: 正常范围内\n- 颈动脉超声: 无明显狭窄或斑块\n- 神经传导速度: 左侧肢体神经传导稍有减慢\n- 肌电图: 提示左侧肢体神经传导稍有减慢\n\n### 诊断与分析：\n根据您的检查结果，初步诊断为多发性腔隙性脑梗塞，伴有轻度的糖尿病前期和高胆固醇。这些因素可能共同导致了您的症状。\n\n### 治疗建议：\n1. 药物治疗：\n - 抗血小板药物：如阿司匹林，以预防进一步的血栓形成。\n - 降压药：继续使用吲哒帕胺和硝苯地平片控制血压。\n - 降脂药物：如他汀类药物，以降低总胆固醇水平。\n - 血糖控制：考虑使用口服降糖药物（如二甲双胍）或调整饮食和生活方式来控制血糖。\n\n2. 生活方式调整：\n - 饮食：低盐、低脂、低糖饮食，增加蔬菜和水果的摄入。\n - 运动：适量的有氧运动，如散步、游泳等，每周至少150分钟。\n - 戒烟限酒：虽然您不吸烟也不饮酒，但继续保持这种良好的生活习惯。\n\n3. 定期复查：\n - 血压监测：定期测量血压，确保控制在正常范围内。\n - 血糖监测：定期检测血糖，特别是餐后血糖。\n - 血脂监测：每3-6个月复查一次血脂水平。\n - 神经系统评估：定期进行神经系统检查，评估神经功能恢复情况。\n\n4. 康复治疗：\n - 物理治疗：进行针对性的物理治疗，帮助恢复左侧肢体的功能。\n - 职业治疗：如有需要，可以进行职业治疗，提高日常生活自理能力。\n\n### 下一步行动：\n请尽快与您的主治医生联系，讨论上述治疗建议，并根据医生的具体指导开始治疗。如果有任何疑问或不适，请及时就医。\n\n如果您还有其他问题或需要进一步的帮助，请随时告诉我。祝您早日康复！',
-          'Thank you for providing the detailed additional test results. Based on these results, we can further clarify your condition and develop a treatment plan.\n\n### Summary of Additional Test Results:\n- Glycated hemoglobin (HbA1c): 6.8% (slightly high)\n- Full lipid profile:\n - Total cholesterol: Slightly high\n - Other indicators: Normal\n- Coagulation function: Within normal range\n- Carotid ultrasound: No significant stenosis or plaques\n- Nerve conduction velocity: Slightly slowed in the left limbs\n- Electromyography: Indicates slightly slowed nerve conduction in the left limbs\n\n### Diagnosis and Analysis:\nBased on your test results, the preliminary diagnosis is multiple lacunar infarctions, accompanied by mild prediabetes and high cholesterol. These factors may collectively contribute to your symptoms.\n\n### Treatment Recommendations:\n1. Medication:\n - Antiplatelet drugs: Such as aspirin, to prevent further thrombosis.\n - Antihypertensive drugs: Continue using indapamide and nifedipine to control blood pressure.\n - Lipid-lowering drugs: Such as statins, to lower total cholesterol levels.\n - Blood sugar control: Consider using oral hypoglycemic agents (such as metformin) or adjusting diet and lifestyle to control blood sugar.\n\n2. Lifestyle Adjustments:\n - Diet: Low-salt, low-fat, low-sugar diet, increase intake of vegetables and fruits.\n - Exercise: Moderate aerobic exercise, such as walking or swimming, at least 150 minutes per week.\n - Avoid smoking and alcohol: Although you do not smoke or drink, continue to maintain these good habits.\n\n3. Regular Check-ups:\n - Blood pressure monitoring: Regularly measure blood pressure to ensure it is within the normal range.\n - Blood sugar monitoring: Regularly check blood sugar, especially postprandial blood sugar.\n - Lipid monitoring: Recheck lipid levels every 3-6 months.\n - Neurological assessment: Regularly conduct neurological examinations to assess the recovery of nerve function.\n\n4. Rehabilitation Therapy:\n - Physical therapy: Conduct targeted physical therapy to help restore the function of the left limbs.\n - Occupational therapy: If needed, conduct occupational therapy to improve daily living skills.\n\n### Next Steps:\nPlease contact your primary doctor as soon as possible to discuss the above treatment recommendations and start treatment according to the doctor’s specific guidance. If you have any questions or discomfort, please seek medical attention promptly.\n\nIf you have any other questions or need further assistance, please let me know. Wishing you a speedy recovery!'
+          '感谢您提供了详细的追加检查结果。根据这些结果，我们可以进一步明确您的病情和制定治疗方案。\n\n **追加检查结果总结：**\n- 糖化血红蛋白 (HbA1c): 6.8%（略高）\n- 血脂全套:\n - 总胆固醇: 稍高\n - 其他指标: 正常\n- 凝血功能: 正常范围内\n- 颈动脉超声: 无明显狭窄或斑块\n- 神经传导速度: 左侧肢体神经传导稍有减慢\n- 肌电图: 提示左侧肢体神经传导稍有减慢\n\n### 诊断与分析：\n根据您的检查结果，初步诊断为多发性腔隙性脑梗塞，伴有轻度的糖尿病前期和高胆固醇。这些因素可能共同导致了您的症状。\n\n### 治疗建议：\n1. 药物治疗：\n - 抗血小板药物：如阿司匹林，以预防进一步的血栓形成。\n - 降压药：继续使用吲哒帕胺和硝苯地平片控制血压。\n - 降脂药物：如他汀类药物，以降低总胆固醇水平。\n - 血糖控制：考虑使用口服降糖药物（如二甲双胍）或调整饮食和生活方式来控制血糖。\n\n2. 生活方式调整：\n - 饮食：低盐、低脂、低糖饮食，增加蔬菜和水果的摄入。\n - 运动：适量的有氧运动，如散步、游泳等，每周至少150分钟。\n - 戒烟限酒：虽然您不吸烟也不饮酒，但继续保持这种良好的生活习惯。\n\n3. 定期复查：\n - 血压监测：定期测量血压，确保控制在正常范围内。\n - 血糖监测：定期检测血糖，特别是餐后血糖。\n - 血脂监测：每3-6个月复查一次血脂水平。\n - 神经系统评估：定期进行神经系统检查，评估神经功能恢复情况。\n\n4. 康复治疗：\n - 物理治疗：进行针对性的物理治疗，帮助恢复左侧肢体的功能。\n - 职业治疗：如有需要，可以进行职业治疗，提高日常生活自理能力。\n\n### 下一步行动：\n请尽快与您的主治医生联系，讨论上述治疗建议，并根据医生的具体指导开始治疗。如果有任何疑问或不适，请及时就医。\n\n如果您还有其他问题或需要进一步的帮助，请随时告诉我。祝您早日康复！',
+          'Thank you for providing the detailed additional test results. Based on these results, we can further clarify your condition and develop a treatment plan.\n\n **Summary of Additional Test Results:**\n- Glycated hemoglobin (HbA1c): 6.8% (slightly high)\n- Full lipid profile:\n - Total cholesterol: Slightly high\n - Other indicators: Normal\n- Coagulation function: Within normal range\n- Carotid ultrasound: No significant stenosis or plaques\n- Nerve conduction velocity: Slightly slowed in the left limbs\n- Electromyography: Indicates slightly slowed nerve conduction in the left limbs\n\n### Diagnosis and Analysis:\nBased on your test results, the preliminary diagnosis is multiple lacunar infarctions, accompanied by mild prediabetes and high cholesterol. These factors may collectively contribute to your symptoms.\n\n### Treatment Recommendations:\n1. Medication:\n - Antiplatelet drugs: Such as aspirin, to prevent further thrombosis.\n - Antihypertensive drugs: Continue using indapamide and nifedipine to control blood pressure.\n - Lipid-lowering drugs: Such as statins, to lower total cholesterol levels.\n - Blood sugar control: Consider using oral hypoglycemic agents (such as metformin) or adjusting diet and lifestyle to control blood sugar.\n\n2. Lifestyle Adjustments:\n - Diet: Low-salt, low-fat, low-sugar diet, increase intake of vegetables and fruits.\n - Exercise: Moderate aerobic exercise, such as walking or swimming, at least 150 minutes per week.\n - Avoid smoking and alcohol: Although you do not smoke or drink, continue to maintain these good habits.\n\n3. Regular Check-ups:\n - Blood pressure monitoring: Regularly measure blood pressure to ensure it is within the normal range.\n - Blood sugar monitoring: Regularly check blood sugar, especially postprandial blood sugar.\n - Lipid monitoring: Recheck lipid levels every 3-6 months.\n - Neurological assessment: Regularly conduct neurological examinations to assess the recovery of nerve function.\n\n4. Rehabilitation Therapy:\n - Physical therapy: Conduct targeted physical therapy to help restore the function of the left limbs.\n - Occupational therapy: If needed, conduct occupational therapy to improve daily living skills.\n\n### Next Steps:\nPlease contact your primary doctor as soon as possible to discuss the above treatment recommendations and start treatment according to the doctor’s specific guidance. If you have any questions or discomfort, please seek medical attention promptly.\n\nIf you have any other questions or need further assistance, please let me know. Wishing you a speedy recovery!'
         )
       },
       {
         role: 'patient',
         text: createMultilingualText(
-          '医生，谢谢您的详细解释和治疗建议。我会按照您的建议去做，尽快联系主治医生开始治疗。如果有问题我再找您。谢谢！\n\n<结束>',
-          'Doctor, thank you for your detailed explanation and treatment recommendations. I will follow your advice and contact my primary doctor to start treatment as soon as possible. If I have any questions, I will reach out to you. Thank you!\n\n<End>'
+          '医生，谢谢您的详细解释和治疗建议。我会按照您的建议去做，尽快联系主治医生开始治疗。如果有问题我再找您。谢谢！',
+          'Doctor, thank you for your detailed explanation and treatment recommendations. I will follow your advice and contact my primary doctor to start treatment as soon as possible. If I have any questions, I will reach out to you. Thank you!'
         )
       },
       {
         role: 'doctor',
         text: createMultilingualText(
-          '#症状#\n(1) 左侧手脚无力，抬起来有点费力，左腿走路不听使唤。\n(2) 口干、大便干燥。\n\n#辅助检查#\n(1) 实验室检查：\n - 即刻血糖：8.4 mmol/L（略高）\n - 肝肾功能和电解质：无异常\n - 糖化血红蛋白 (HbA1c)：6.8%（略高）\n - 血脂全套：总胆固醇稍高，其他指标正常\n - 凝血功能：正常范围内\n\n(2) 影像学检查：\n - 头颅CT：右侧侧脑室旁脑梗死\n - 头颅MRI：脑白质脱髓鞘改变，右侧基底节区、双侧侧脑室旁、顶叶及额叶腔隙性脑梗塞\n - 颈动脉超声：无明显狭窄或斑块\n\n(3) 心电图：\n - 窦性心律\n - 心电轴正常\n - T波异常\n\n(4) 神经系统检查：\n - 左侧肢体肌力4级，触痛觉减退\n - 其他神经系统检查结果：神志清晰，言语流利，记忆力、计算力、理解力良好。视力视野正常，眼球运动正常，无复视或震颤。面部感觉对称，张口下颌无偏斜，无口角低垂，眼裂对称，左侧鼻唇沟浅。无眩晕、恶心，饮水无呛咳，伸舌居中。巴宾斯基征双侧阴性。脑膜刺激征：颈无抵抗，克氏征阴性，布氏征阴性。\n - 神经传导速度：左侧肢体神经传导稍有减慢\n - 肌电图：提示左侧肢体神经传导稍有减慢\n\n#诊断结果#\n多发性腔隙性脑梗塞，伴有轻度糖尿病前期和高胆固醇血症。\n\n#诊断依据#\n(1) 症状：\n - 左侧手脚无力，符合脑血管病变的表现。\n - 口干、大便干燥可能与血糖控制不佳有关。\n\n(2) 辅助检查：\n - 头颅CT和MRI：显示右侧侧脑室旁脑梗死及多处腔隙性脑梗塞，支持脑血管病变的诊断。\n - 血糖和糖化血红蛋白：即刻血糖8.4 mmol/L，HbA1c 6.8%，提示轻度糖尿病前期。\n - 血脂检查：总胆固醇稍高，提示存在高胆固醇血症。\n - 神经系统检查：左侧肢体肌力4级，触痛觉减退，神经传导速度和肌电图均提示左侧肢体神经传导稍有减慢，支持脑梗塞后的神经功能受损。\n\n#治疗方案#\n(1) 药物治疗：\n - 抗血小板药物：如阿司匹林，每日一次，每次100 mg，以预防进一步的血栓形成。\n - 降压药：继续使用吲哒帕胺和硝苯地平片控制血压，监测血压变化。\n - 降脂药物：如他汀类药物（例如阿托伐他汀），每日一次，每次20 mg，以降低总胆固醇水平。\n - 降糖药物：考虑使用口服降糖药物（如二甲双胍），每日两次，每次500 mg，根据血糖监测调整剂量。\n\n(2) 生活方式调整：\n - 饮食：低盐、低脂、低糖饮食，增加蔬菜和水果的摄入。\n - 运动：适量的有氧运动，如散步、游泳等，每周至少150分钟。\n - 戒烟限酒：继续保持不吸烟、不饮酒的良好生活习惯。\n\n(3) 定期复查：\n - 血压监测：每日测量血压，确保控制在正常范围内。\n - 血糖监测：定期检测血糖，特别是餐后血糖，每3个月复查一次HbA1c。\n - 血脂监测：每3-6个月复查一次血脂水平。\n - 神经系统评估：定期进行神经系统检查，评估神经功能恢复情况。\n\n(4) 康复治疗：\n - 物理治疗：进行针对性的物理治疗，帮助恢复左侧肢体的功能。\n - 职业治疗：如有需要，可以进行职业治疗，提高日常生活自理能力。\n\n请尽快与您的主治医生联系，讨论上述治疗建议，并根据医生的具体指导开始治疗。如果有任何疑问或不适，请及时就医。祝您早日康复！',
-          '#Symptoms#\n(1) Weakness in the left hand and foot, difficulty lifting, left leg not cooperating when walking.\n(2) Dry mouth, constipation.\n\n#Auxiliary Examinations#\n(1) Laboratory Tests:\n - Immediate blood glucose: 8.4 mmol/L (slightly high)\n - Liver and kidney function and electrolytes: No abnormalities\n - Glycated hemoglobin (HbA1c): 6.8% (slightly high)\n - Full lipid profile: Total cholesterol slightly high, other indicators normal\n - Coagulation function: Within normal range\n\n(2) Imaging Examinations:\n - Head CT: Infarction near the right lateral ventricle\n - Head MRI: Demyelination in the white matter, lacunar infarctions in the right basal ganglia, bilateral periventricular areas, parietal and frontal lobes\n - Carotid ultrasound: No significant stenosis or plaques\n\n(3) ECG:\n - Sinus rhythm\n - Normal heart axis\n - T wave abnormalities\n\n(4) Neurological Examination:\n - Muscle strength in the left limbs: Grade 4, reduced touch and pain sensation\n - Other neurological examination results: Clear consciousness, fluent speech, good memory, calculation, and comprehension. Normal vision and visual fields, normal eye movements, no diplopia or nystagmus. Symmetrical facial sensation, no jaw deviation, no drooping of the mouth corners, symmetrical palpebral fissures, shallow left nasolabial fold. No dizziness or nausea, no choking when drinking, tongue midline. Negative Babinski sign bilaterally. No meningeal irritation signs: no neck stiffness, negative Kernig’s and Brudzinski’s signs.\n - Nerve conduction velocity: Slightly slowed in the left limbs\n - Electromyography: Indicates slightly slowed nerve conduction in the left limbs\n\n#Diagnosis#\nMultiple lacunar infarctions, accompanied by mild prediabetes and high cholesterol.\n\n#Diagnostic Basis#\n(1) Symptoms:\n - Weakness in the left hand and foot, consistent with cerebrovascular disease.\n - Dry mouth, constipation possibly related to poor blood sugar control.\n\n(2) Auxiliary Examinations:\n - Head CT and MRI: Show infarction near the right lateral ventricle and multiple lacunar infarctions, supporting the diagnosis of cerebrovascular disease.\n - Blood glucose and glycated hemoglobin: Immediate blood glucose 8.4 mmol/L, HbA1c 6.8%, indicating mild prediabetes.\n - Lipid profile: Total cholesterol slightly high, indicating high cholesterol.\n - Neurological examination: Muscle strength in the left limbs grade 4, reduced touch and pain sensation, nerve conduction velocity and electromyography indicate slightly slowed nerve conduction in the left limbs, supporting post-stroke nerve function impairment.\n\n#Treatment Plan#\n(1) Medication:\n - Antiplatelet drugs: Such as aspirin, once daily, 100 mg each time, to prevent further thrombosis.\n - Antihypertensive drugs: Continue using indapamide and nifedipine to control blood pressure, monitor blood pressure changes.\n - Lipid-lowering drugs: Such as statins (e.g., atorvastatin), once daily, 20 mg each time, to lower total cholesterol levels.\n - Hypoglycemic drugs: Consider using oral hypoglycemic agents (such as metformin), twice daily, 500 mg each time, adjust dosage based on blood sugar monitoring.\n\n(2) Lifestyle Adjustments:\n - Diet: Low-salt, low-fat, low-sugar diet, increase intake of vegetables and fruits.\n - Exercise: Moderate aerobic exercise, such as walking or swimming, at least 150 minutes per week.\n - Avoid smoking and alcohol: Continue to maintain good habits of not smoking and not drinking.\n\n(3) Regular Check-ups:\n - Blood pressure monitoring: Measure blood pressure daily to ensure it is within the normal range.\n - Blood sugar monitoring: Regularly check blood sugar, especially postprandial blood sugar, recheck HbA1c every 3 months.\n - Lipid monitoring: Recheck lipid levels every 3-6 months.\n - Neurological assessment: Regularly conduct neurological examinations to assess the recovery of nerve function.\n\n(4) Rehabilitation Therapy:\n - Physical therapy: Conduct targeted physical therapy to help restore the function of the left limbs.\n - Occupational therapy: If needed, conduct occupational therapy to improve daily living skills.\n\nPlease contact your primary doctor as soon as possible to discuss the above treatment recommendations and start treatment according to the doctor’s specific guidance. If you have any questions or discomfort, please seek medical attention promptly. Wishing you a speedy recovery!'
+          '**症状**\n(1) 左侧手脚无力，抬起来有点费力，左腿走路不听使唤。\n(2) 口干、大便干燥。\n\n**辅助检查**\n(1) 实验室检查：\n - 即刻血糖：8.4 mmol/L（略高）\n - 肝肾功能和电解质：无异常\n - 糖化血红蛋白 (HbA1c)：6.8%（略高）\n - 血脂全套：总胆固醇稍高，其他指标正常\n - 凝血功能：正常范围内\n\n(2) 影像学检查：\n - 头颅CT：右侧侧脑室旁脑梗死\n - 头颅MRI：脑白质脱髓鞘改变，右侧基底节区、双侧侧脑室旁、顶叶及额叶腔隙性脑梗塞\n - 颈动脉超声：无明显狭窄或斑块\n\n(3) 心电图：\n - 窦性心律\n - 心电轴正常\n - T波异常\n\n(4) 神经系统检查：\n - 左侧肢体肌力4级，触痛觉减退\n - 其他神经系统检查结果：神志清晰，言语流利，记忆力、计算力、理解力良好。视力视野正常，眼球运动正常，无复视或震颤。面部感觉对称，张口下颌无偏斜，无口角低垂，眼裂对称，左侧鼻唇沟浅。无眩晕、恶心，饮水无呛咳，伸舌居中。巴宾斯基征双侧阴性。脑膜刺激征：颈无抵抗，克氏征阴性，布氏征阴性。\n - 神经传导速度：左侧肢体神经传导稍有减慢\n - 肌电图：提示左侧肢体神经传导稍有减慢\n\n#诊断结果#\n多发性腔隙性脑梗塞，伴有轻度糖尿病前期和高胆固醇血症。\n\n#诊断依据#\n(1) 症状：\n - 左侧手脚无力，符合脑血管病变的表现。\n - 口干、大便干燥可能与血糖控制不佳有关。\n\n(2) 辅助检查：\n - 头颅CT和MRI：显示右侧侧脑室旁脑梗死及多处腔隙性脑梗塞，支持脑血管病变的诊断。\n - 血糖和糖化血红蛋白：即刻血糖8.4 mmol/L，HbA1c 6.8%，提示轻度糖尿病前期。\n - 血脂检查：总胆固醇稍高，提示存在高胆固醇血症。\n - 神经系统检查：左侧肢体肌力4级，触痛觉减退，神经传导速度和肌电图均提示左侧肢体神经传导稍有减慢，支持脑梗塞后的神经功能受损。\n\n#治疗方案#\n(1) 药物治疗：\n - 抗血小板药物：如阿司匹林，每日一次，每次100 mg，以预防进一步的血栓形成。\n - 降压药：继续使用吲哒帕胺和硝苯地平片控制血压，监测血压变化。\n - 降脂药物：如他汀类药物（例如阿托伐他汀），每日一次，每次20 mg，以降低总胆固醇水平。\n - 降糖药物：考虑使用口服降糖药物（如二甲双胍），每日两次，每次500 mg，根据血糖监测调整剂量。\n\n(2) 生活方式调整：\n - 饮食：低盐、低脂、低糖饮食，增加蔬菜和水果的摄入。\n - 运动：适量的有氧运动，如散步、游泳等，每周至少150分钟。\n - 戒烟限酒：继续保持不吸烟、不饮酒的良好生活习惯。\n\n(3) 定期复查：\n - 血压监测：每日测量血压，确保控制在正常范围内。\n - 血糖监测：定期检测血糖，特别是餐后血糖，每3个月复查一次HbA1c。\n - 血脂监测：每3-6个月复查一次血脂水平。\n - 神经系统评估：定期进行神经系统检查，评估神经功能恢复情况。\n\n(4) 康复治疗：\n - 物理治疗：进行针对性的物理治疗，帮助恢复左侧肢体的功能。\n - 职业治疗：如有需要，可以进行职业治疗，提高日常生活自理能力。\n\n请尽快与您的主治医生联系，讨论上述治疗建议，并根据医生的具体指导开始治疗。如果有任何疑问或不适，请及时就医。祝您早日康复！',
+          '**Symptoms**\n(1) Weakness in the left hand and foot, difficulty lifting, left leg not cooperating when walking.\n(2) Dry mouth, constipation.\n\n**Auxiliary Examinations**\n(1) Laboratory Tests:\n - Immediate blood glucose: 8.4 mmol/L (slightly high)\n - Liver and kidney function and electrolytes: No abnormalities\n - Glycated hemoglobin (HbA1c): 6.8% (slightly high)\n - Full lipid profile: Total cholesterol slightly high, other indicators normal\n - Coagulation function: Within normal range\n\n(2) Imaging Examinations:\n - Head CT: Infarction near the right lateral ventricle\n - Head MRI: Demyelination in the white matter, lacunar infarctions in the right basal ganglia, bilateral periventricular areas, parietal and frontal lobes\n - Carotid ultrasound: No significant stenosis or plaques\n\n(3) ECG:\n - Sinus rhythm\n - Normal heart axis\n - T wave abnormalities\n\n(4) Neurological Examination:\n - Muscle strength in the left limbs: Grade 4, reduced touch and pain sensation\n - Other neurological examination results: Clear consciousness, fluent speech, good memory, calculation, and comprehension. Normal vision and visual fields, normal eye movements, no diplopia or nystagmus. Symmetrical facial sensation, no jaw deviation, no drooping of the mouth corners, symmetrical palpebral fissures, shallow left nasolabial fold. No dizziness or nausea, no choking when drinking, tongue midline. Negative Babinski sign bilaterally. No meningeal irritation signs: no neck stiffness, negative Kernig’s and Brudzinski’s signs.\n - Nerve conduction velocity: Slightly slowed in the left limbs\n - Electromyography: Indicates slightly slowed nerve conduction in the left limbs\n\n#Diagnosis#\nMultiple lacunar infarctions, accompanied by mild prediabetes and high cholesterol.\n\n#Diagnostic Basis#\n(1) Symptoms:\n - Weakness in the left hand and foot, consistent with cerebrovascular disease.\n - Dry mouth, constipation possibly related to poor blood sugar control.\n\n(2) Auxiliary Examinations:\n - Head CT and MRI: Show infarction near the right lateral ventricle and multiple lacunar infarctions, supporting the diagnosis of cerebrovascular disease.\n - Blood glucose and glycated hemoglobin: Immediate blood glucose 8.4 mmol/L, HbA1c 6.8%, indicating mild prediabetes.\n - Lipid profile: Total cholesterol slightly high, indicating high cholesterol.\n - Neurological examination: Muscle strength in the left limbs grade 4, reduced touch and pain sensation, nerve conduction velocity and electromyography indicate slightly slowed nerve conduction in the left limbs, supporting post-stroke nerve function impairment.\n\n#Treatment Plan#\n(1) Medication:\n - Antiplatelet drugs: Such as aspirin, once daily, 100 mg each time, to prevent further thrombosis.\n - Antihypertensive drugs: Continue using indapamide and nifedipine to control blood pressure, monitor blood pressure changes.\n - Lipid-lowering drugs: Such as statins (e.g., atorvastatin), once daily, 20 mg each time, to lower total cholesterol levels.\n - Hypoglycemic drugs: Consider using oral hypoglycemic agents (such as metformin), twice daily, 500 mg each time, adjust dosage based on blood sugar monitoring.\n\n(2) Lifestyle Adjustments:\n - Diet: Low-salt, low-fat, low-sugar diet, increase intake of vegetables and fruits.\n - Exercise: Moderate aerobic exercise, such as walking or swimming, at least 150 minutes per week.\n - Avoid smoking and alcohol: Continue to maintain good habits of not smoking and not drinking.\n\n(3) Regular Check-ups:\n - Blood pressure monitoring: Measure blood pressure daily to ensure it is within the normal range.\n - Blood sugar monitoring: Regularly check blood sugar, especially postprandial blood sugar, recheck HbA1c every 3 months.\n - Lipid monitoring: Recheck lipid levels every 3-6 months.\n - Neurological assessment: Regularly conduct neurological examinations to assess the recovery of nerve function.\n\n(4) Rehabilitation Therapy:\n - Physical therapy: Conduct targeted physical therapy to help restore the function of the left limbs.\n - Occupational therapy: If needed, conduct occupational therapy to improve daily living skills.\n\nPlease contact your primary doctor as soon as possible to discuss the above treatment recommendations and start treatment according to the doctor’s specific guidance. If you have any questions or discomfort, please seek medical attention promptly. Wishing you a speedy recovery!'
         )
       }
     ]
