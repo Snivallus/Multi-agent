@@ -1,6 +1,5 @@
-
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare } from 'lucide-react';
+import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
@@ -276,6 +275,15 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }
   };
 
+  // Add handler for the new "Upload File" button
+  const handleUploadFile = () => {
+    toast({
+      title: getText(translations.uploadFile, language),
+      description: getText(translations.featureNotImplemented, language),
+      duration: 3000,
+    });
+  };
+
   return (
     <div className="flex flex-col h-screen animate-fade-in">
       {/* Header */}
@@ -304,6 +312,16 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               <CheckSquare className="h-5 w-5" />
               <span>{getText(translations.endConsultation, language)}</span>
             </button>
+            {/* Upload File button */}
+            <button
+              onClick={handleUploadFile}
+              className="p-2 px-4 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              aria-label="Upload File"
+              disabled={isWaiting}
+            >
+              <Upload className="h-5 w-5" />
+              <span>{getText(translations.uploadFile, language)}</span>
+            </button>
             {/* Reset dialogue button */}
             <button
               onClick={handleResetDialogue}
@@ -327,7 +345,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           )}
 
           {messages.map((message, index) => {
-            // 根据文本长度来决定 bubble 显示的文本是什么
+            // 根据文本长度来决定 bubble 显示的文本是什��
             const bubbleText = message.text.length > 0 
               ? createMultilingualText(message.text, message.text)
               : translations.doctorPlaceHolder;

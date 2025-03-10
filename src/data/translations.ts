@@ -26,6 +26,8 @@ export const translations = {
   doctorPlaceHolder: createMultilingualText('(无响应)', '(No response)'),
   resetMomery: createMultilingualText('清除记忆', 'Reset momery'),
   endConsultation: createMultilingualText('结束问诊', 'End Consultation'),
+  uploadFile: createMultilingualText('上传文件', 'Upload File'),
+  featureNotImplemented: createMultilingualText('多模态交互功能尚未实现，敬请期待', 'Multi-modal interaction feature is not yet implemented, stay tuned'),
   
   // Speech to text 
   startRecording: createMultilingualText('开始录音', 'Start recording'),
