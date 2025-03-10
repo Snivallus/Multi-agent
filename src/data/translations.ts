@@ -25,6 +25,7 @@ export const translations = {
   conversationHint: createMultilingualText('输入消息开始对话', 'Start a conversation by typing a message below.'),
   doctorPlaceHolder: createMultilingualText('(无响应)', '(No response)'),
   resetMomery: createMultilingualText('清除记忆', 'Reset momery'),
+  endConsultation: createMultilingualText('结束问诊', 'End Consultation'),
   
   // Speech to text 
   startRecording: createMultilingualText('开始录音', 'Start recording'),

@@ -1,6 +1,6 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, MicOff, Timer } from 'lucide-react';
+import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
@@ -120,16 +120,19 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     languageRef.current = language;
   }, [language]);
 
-  const handleSendMessage = async () => {
-    if (inputText.trim() === '' || isWaiting) return;
+  // Function to send request to the backend
+  const sendRequest = async (message: string, shouldDisplayMessage: boolean = true) => {
+    if (isWaiting) return;
 
-    // Add user message to the conversation
-    const userMessage = {
-      role: 'patient' as DialogueRole,
-      text: inputText
-    };
-
-    setMessages(prevMessages => [...prevMessages, userMessage]);
+    // Add user message to the conversation if it should be displayed
+    if (shouldDisplayMessage) {
+      const userMessage = {
+        role: 'patient' as DialogueRole,
+        text: message
+      };
+      setMessages(prevMessages => [...prevMessages, userMessage]);
+    }
+    
     setInputText('');
     setIsWaiting(true);
     setCountdown(60); // Set countdown to 60 seconds
@@ -171,13 +174,13 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
 
     try {
       console.log("Sending request to:", `${config.apiBaseUrl}/chat`);
-      console.log("Request payload:", { message: inputText, language: languageRef.current });
+      console.log("Request payload:", { message, language: languageRef.current });
       
       const response = await fetch(`${config.apiBaseUrl}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          message: inputText, 
+          message, 
           language: languageRef.current 
         }),
         signal
@@ -224,6 +227,16 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       setCountdown(null);
       abortControllerRef.current = null;
     }
+  };
+
+  const handleSendMessage = () => {
+    if (inputText.trim() === '' || isWaiting) return;
+    sendRequest(inputText);
+  };
+
+  const handleEndConsultation = () => {
+    // Send special message "<结束>" to backend without displaying it in the UI
+    sendRequest("<结束>", false);
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -280,14 +293,27 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               {getText(translations.directInteractionTitle, language)}
             </h2>
           </div>
-          {/* Reset dialogue button */}
-          <button
-            onClick={handleResetDialogue}
-            className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors duration-200 disabled:opacity-0 disabled:cursor-not-allowed"
-            aria-label="Reset Dialogue"
-          >
-          {getText(translations.resetMomery, language)}
-          </button>
+          <div className="flex items-center gap-4">
+            {/* End Consultation button */}
+            <button
+              onClick={handleEndConsultation}
+              className="p-2 px-4 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              aria-label="End Consultation"
+              disabled={isWaiting}
+            >
+              <CheckSquare className="h-5 w-5" />
+              <span>{getText(translations.endConsultation, language)}</span>
+            </button>
+            {/* Reset dialogue button */}
+            <button
+              onClick={handleResetDialogue}
+              className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              aria-label="Reset Dialogue"
+              disabled={isWaiting}
+            >
+              {getText(translations.resetMomery, language)}
+            </button>
+          </div>
         </div>
       </div>
 
