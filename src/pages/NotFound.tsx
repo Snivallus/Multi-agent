@@ -11,7 +11,7 @@ const NotFound = () => {
     );
   }, [location.pathname]);
 
-  const imageUrl = "/piblic/man.jpg";
+  const imageUrl = "/public/man.jpg";
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
