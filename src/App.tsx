@@ -19,6 +19,7 @@ const App = () => (
           <Route path="/" element={<Index />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
+          {/* 测试时只需访问 http://localhost:8080/#/non-existent-path 即可看到效果*/}
         </Routes>
       </HashRouter>
     </TooltipProvider>
