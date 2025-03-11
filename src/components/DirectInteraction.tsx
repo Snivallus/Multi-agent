@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload } from 'lucide-react';
+import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
@@ -325,11 +325,12 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             {/* Reset dialogue button */}
             <button
               onClick={handleResetDialogue}
-              className="p-2 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="p-2 px-4 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               aria-label="Reset Dialogue"
               disabled={isWaiting}
             >
-              {getText(translations.resetMomery, language)}
+              <Cpu className="h-5 w-5" />
+              <span>{getText(translations.resetMomery, language)}</span>
             </button>
           </div>
         </div>
