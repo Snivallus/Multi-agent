@@ -11,7 +11,8 @@ const NotFound = () => {
     );
   }, [location.pathname]);
 
-  const imageUrl = "/man.jpg";
+  const imageUrl = "https://github.com/Snivallus/Multi-agent/blob/main/public/man.jpg?raw=true";
+  // 或使用 "/man.jpg" 作为图片路径
   // 测试时只需访问 http://localhost:8080/#/non-existent-path 即可看到效果
   
   return (
