@@ -11,9 +11,9 @@ const NotFound = () => {
     );
   }, [location.pathname]);
 
-  const imageUrl = "/man.jpg";
+  const imageUrl = "./public/man.jpg";
   // 测试时只需访问 http://localhost:8080/#/non-existent-path 即可看到效果
-  
+
   return (
     <div className="min-h-screen flex items-center justify-center bg-gray-100">
       <div className="text-center">
