@@ -76,6 +76,6 @@ export const translations = {
 
   // Error messages
   errorTitle: createMultilingualText('错误', 'Error'),
-  networkError: createMultilingualText('网络错误，请稍后再试', 'Network error, please try again later'),
+  networkError: createMultilingualText('网络错误，请稍后再试或使用 VPN', 'Network error, please try again later or use a VPN'),
   apiError: createMultilingualText('服务器错误，请稍后再试', 'Server error, please try again later'),
 };
