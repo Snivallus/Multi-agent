@@ -34,7 +34,7 @@ interface DialogueBubbleProps {
       className={cn(
         'max-w-2xl mx-auto my-4 transition-all duration-500 ease-in-out',
         isActive ? 'opacity-100 transform translate-y-0' : 'opacity-0 transform translate-y-8',
-        role === 'doctor' ? 'ml-auto mr-4' : role === 'patient' ? 'mr-auto ml-4' : 'mx-auto',
+        role === 'doctor' ? 'ml-auto ml-4' : role === 'patient' ? 'mr-auto mr-4' : 'mx-auto',
         role === 'doctor' ? 'doctor-bubble' : role === 'patient' ? 'patient-bubble' : 'reporter-bubble',
         'w-fit max-w-[80%]'
       )}
