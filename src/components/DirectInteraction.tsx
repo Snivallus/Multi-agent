@@ -158,7 +158,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     
     setInputText('');
     setIsWaiting(true);
-    setCountdown(60); // Set countdown to 60 seconds
+    setCountdown(10); // Set countdown to 10 seconds
 
     // Clear any existing countdown interval
     if (countdownIntervalRef.current) {
@@ -193,7 +193,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           variant: 'destructive'
         });
       }
-    }, 60000); // 60s timeout
+    }, 10000); // 10s timeout
 
     try {
       console.log("Sending request to:", `${config.apiBaseUrl}/chat`);
@@ -271,7 +271,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               requestAnimationFrame(() => {
                 messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
               })
-              return { ...message, text: message.text + chunk }
+              return { ...message, text: chunk }
             }
             return message
           }));
