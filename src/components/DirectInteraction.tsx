@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu } from 'lucide-react';
 import { Language, getText } from '@/types/language';
@@ -24,7 +23,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const [inputText, setInputText] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null); // countdown when waiting for response
-  const [streamingMessage, setStreamingMessage] = useState<string>(''); // Store the currently streaming message
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -93,7 +91,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     if (messagesEndRef.current) {
       messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
     }
-  }, [messages, streamingMessage]);
+  }, [messages]);
 
   // Auto-resize textarea as content grows
   useEffect(() => {
@@ -137,7 +135,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     setInputText('');
     setIsWaiting(true);
     setCountdown(60); // Set countdown to 60 seconds
-    setStreamingMessage(''); // Clear any previous streaming message
 
     // Clear any existing countdown interval
     if (countdownIntervalRef.current) {
@@ -200,35 +197,19 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         throw new Error(`API error: ${response.status}`);
       }
 
-      // Handle streaming response
-      const reader = response.body?.getReader();
-      let accumulatedResponse = '';
+      const data = await response.json();
+      console.log("Response from server:", data);
       
-      if (reader) {
-        while (true) {
-          const { done, value } = await reader.read();
-          
-          if (done) {
-            break;
-          }
-          
-          // Convert the chunk to text
-          const chunk = new TextDecoder().decode(value);
-          accumulatedResponse += chunk;
-          
-          // Update the streaming message
-          setStreamingMessage(accumulatedResponse);
-        }
-        
-        // When the stream is complete, add the full message to the conversation
-        const aiResponse = {
-          role: 'doctor' as DialogueRole,
-          text: accumulatedResponse
-        };
-        
-        setMessages(prevMessages => [...prevMessages, aiResponse]);
-        setStreamingMessage(''); // Clear the streaming message
-      }
+      // Extract response_text from the response if it exists
+      const responseText = data.response_text || data;
+      
+      // Add AI response to the conversation
+      const aiResponse = {
+        role: 'doctor' as DialogueRole,
+        text: responseText
+      };
+
+      setMessages(prevMessages => [...prevMessages, aiResponse]);
     } catch (error) {
       console.error('Error sending message:', error);
       
@@ -358,14 +339,14 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       {/* Messages area */}
       <div className="flex-grow overflow-y-auto p-4 bg-gradient-to-b from-gray-50 to-white">
         <div className="max-w-3xl mx-auto space-y-2 pb-20">
-          {messages.length === 0 && !streamingMessage && (
+          {messages.length === 0 && (
             <div className="text-center my-20 text-gray-500">
               <p>{getText(translations.conversationHint, language)}</p>
             </div>
           )}
 
           {messages.map((message, index) => {
-            // 根据文本长度来决定 bubble 显示的文本是什么
+            // 根据文本长度来决定 bubble 显示的文本是什��
             const bubbleText = message.text.length > 0 
               ? createMultilingualText(message.text, message.text)
               : translations.doctorPlaceHolder;
@@ -381,20 +362,8 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             );
           })}
 
-          {/* Show streaming message if there is one */}
-          {streamingMessage && (
-            <div>
-              <DialogueBubble
-                role="doctor"
-                text={createMultilingualText(streamingMessage, streamingMessage)}
-                isActive={true}
-                language={language}
-              />
-            </div>
-          )}
-
-          {/* Show waiting message if waiting for response and no streaming yet */}
-          {isWaiting && !streamingMessage && (
+          {/* Show waiting message if waiting for response */}
+          {isWaiting && (
             <div className="text-center py-4 text-gray-500">
               <p>{getText(translations.waitingForResponse, language)}
               {countdown !== null && <span>({countdown} s) ...</span>}
