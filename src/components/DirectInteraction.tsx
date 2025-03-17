@@ -1,9 +1,8 @@
 
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu } from 'lucide-react';
+import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Brain } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
-import { createMultilingualText } from '@/types/language';
 import { DialogueRole } from '@/data/medicalCases';
 import config from '@/config'; // API base URL
 import { useToast } from '@/hooks/use-toast';
@@ -282,7 +281,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           const chunk = decoder.decode(value);
           accumulated += chunk;
           
-          // 更新流式消息
+          // 更新流式消息 - 直接使用当前累积的完整内容，而不是追加
           processStreamingContent(accumulated, currentMessageId);
 
           // 滚动触发逻辑
@@ -484,14 +483,14 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               <Upload className="h-5 w-5" />
               <span>{getText(translations.uploadFile, language)}</span>
             </button>
-            {/* Reset dialogue button */}
+            {/* Reset dialogue button with brain icon */}
             <button
               onClick={handleResetDialogue}
               className="p-2 px-4 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               aria-label="Reset Dialogue"
               disabled={isWaiting}
             >
-              <Cpu className="h-5 w-5" />
+              <Brain className="h-5 w-5" />
               <span>{getText(translations.resetMomery, language)}</span>
             </button>
           </div>
