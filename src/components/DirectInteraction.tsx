@@ -186,6 +186,12 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const sendRequest = async (message: string, shouldDisplayMessage: boolean = true) => {
     if (isWaiting) return;
 
+    // 收到第一个chunk时停止倒计时
+    const requestState = {
+      hasReceivedFirstChunk: false,
+      isAborted: false
+    };
+
     // Add user message to the conversation if it should be displayed
     if (shouldDisplayMessage) {
       const userMessage: MessageType = {
@@ -223,7 +229,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
 
     // Set up timeout for the request
     const timeoutId = setTimeout(() => {
-      if (abortControllerRef.current) {
+      if (!requestState.hasReceivedFirstChunk && !requestState.isAborted) {
         abortControllerRef.current.abort();
         setIsWaiting(false);
         setCountdown(null);
@@ -232,6 +238,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           description: '请求超时',
           variant: 'destructive'
         });
+        requestState.isAborted = true;
       }
     }, 60000); // 60s timeout
 
@@ -282,11 +289,27 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       ]);
 
       let retries = 0; // 重试次数
-      let lastUpdateTime = Date.now();
       while (true) {
         try {
           const { done, value } = await reader!.read();
           if (done) break;
+
+          // 首次收到数据时停止倒计时
+          if (!requestState.hasReceivedFirstChunk) {
+            requestState.hasReceivedFirstChunk = true;
+            // 使用函数式更新确保获取最新状态
+            setCountdown((prevCountdown) => {
+              if (prevCountdown !== null) {
+                if (countdownIntervalRef.current) {
+                  clearInterval(countdownIntervalRef.current);
+                  countdownIntervalRef.current = null;
+                }
+                return null;
+              }
+              return prevCountdown; // 已经是null则保持
+            });
+            setIsWaiting(false);
+          }
 
           // 更新流式消息
           const chunk = decoder.decode(value);
@@ -326,8 +349,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         });
       }
     } finally {
-      setIsWaiting(false);
-      setCountdown(null);
+      if (!requestState.hasReceivedFirstChunk) {
+        setIsWaiting(false); // 未收到任何chunk时确保清除
+      }
       abortControllerRef.current = null;
     }
   };
