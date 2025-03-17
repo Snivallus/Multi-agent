@@ -8,7 +8,6 @@ import { DialogueRole } from '@/data/medicalCases';
 import config from '@/config'; // API base URL
 import { useToast } from '@/hooks/use-toast';
 import { useSpeechToText } from '@/hooks/use-speech-to-text';
-import { useDebounce } from 'use-debounce'; // Debounce input text
 import { v4 as uuidv4 } from 'uuid';  // Generate unique IDs
 import ReactMarkdown from 'react-markdown';
 
@@ -42,8 +41,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const { toast } = useToast();
-  const [streamBuffer, setStreamBuffer] = useState('');
-  const [debouncedBuffer] = useDebounce(streamBuffer, 100); // Debounce stream buffer
 
   // Set speech recognition language based on app language
   const speechLanguage = language === 'zh' ? 'zh-CN' : 'en-US';
@@ -145,30 +142,30 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
 
   // Function to process and update streaming content
   const processStreamingContent = (rawText: string, messageId: string) => {
-    let parsedData = null;
-
-    // Try to parse as JSON
-    parsedData = tryParseJSON(rawText);
-
     setMessages(prevMessages => prevMessages.map(message => {
       if (message.id === messageId) {
-        if (parsedData && (parsedData.reasoning_content !== undefined || parsedData.content !== undefined)) {
+        // Try to parse JSON data
+        const parsedData = tryParseJSON(rawText);
+        let newReasoning = message.reasoning_content || ''
+        let newContent = message.content || '';
+
+        // 处理 reasoning_content 累加
+        if (parsedData?.reasoning_content) {
+          newReasoning += parsedData.reasoning_content;
+        }
+
+        // 处理 content 直接替换（只在有更新时替换）
+        if (parsedData?.content !== undefined) {
+          newContent = parsedData.content;
+        }       
           // JSON format with reasoning_content and content
           return {
             ...message,
-            reasoning_content: parsedData.reasoning_content || '',
-            content: parsedData.content || '',
+            reasoning_content: newReasoning,
+            content: newContent,
             rawText: rawText
           };
-        } else {
-          // Plain text format or incomplete JSON
-          return {
-            ...message,
-            content: rawText,
-            rawText: rawText
-          };
-        }
-      }
+      }  
       return message;
     }));
   };
@@ -285,6 +282,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       ]);
 
       let retries = 0; // 重试次数
+      let lastUpdateTime = Date.now();
       while (true) {
         try {
           const { done, value } = await reader!.read();
