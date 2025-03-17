@@ -1,8 +1,8 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
-import DialogueBubble from './DialogueBubble';
 import { createMultilingualText } from '@/types/language';
 import { DialogueRole } from '@/data/medicalCases';
 import config from '@/config'; // API base URL
@@ -10,6 +10,7 @@ import { useToast } from '@/hooks/use-toast';
 import { useSpeechToText } from '@/hooks/use-speech-to-text';
 import { useDebounce } from 'use-debounce'; // Debounce input text
 import { v4 as uuidv4 } from 'uuid';  // Generate unique IDs
+import ReactMarkdown from 'react-markdown';
 
 interface DirectInteractionProps {
   onBack: () => void;
@@ -19,9 +20,11 @@ interface DirectInteractionProps {
 
 interface MessageType {
   role: DialogueRole;
-  text: string;
+  content?: string;
+  reasoning_content?: string;
   id?: string;         // 唯一标识
   isStreaming?: boolean; // 流式状态
+  rawText?: string;    // 原始文本，用于存储流式传输的中间状态
 }
 
 /**
@@ -47,11 +50,11 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   
   // Initialize speech to text
   const { 
-    isListening,         // 是否正在监听语音
-    transcript,          // 语音转换的文本
-    toggleListening,     // 开启或关闭语音识别的函数
-    isSupported,         // 设备/浏览器是否支持语音识别
-    recordingDuration    // 录音的持续时间
+    isListening,
+    transcript,
+    toggleListening,
+    isSupported,
+    recordingDuration
   } = useSpeechToText({
     language: speechLanguage,
     continuous: true,
@@ -131,17 +134,44 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     languageRef.current = language;
   }, [language]);
 
-  // 滚动优化（使用 ref 存储消息ID）
-  const currentMessageId = useRef<string>();
-
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ 
-        behavior: "smooth",
-        block: "nearest"
-      });
+  // Function to try parsing JSON from text
+  const tryParseJSON = (text: string) => {
+    try {
+      return JSON.parse(text);
+    } catch (e) {
+      return null;
     }
-  }, [messages]);
+  };
+
+  // Function to process and update streaming content
+  const processStreamingContent = (rawText: string, messageId: string) => {
+    let parsedData = null;
+    
+    // Try to parse as JSON
+    parsedData = tryParseJSON(rawText);
+    
+    setMessages(prevMessages => prevMessages.map(message => {
+      if (message.id === messageId) {
+        if (parsedData && (parsedData.reasoning_content !== undefined || parsedData.content !== undefined)) {
+          // JSON format with reasoning_content and content
+          return {
+            ...message,
+            reasoning_content: parsedData.reasoning_content || '',
+            content: parsedData.content || '',
+            rawText: rawText
+          };
+        } else {
+          // Plain text format or incomplete JSON
+          return {
+            ...message,
+            content: rawText,
+            rawText: rawText
+          };
+        }
+      }
+      return message;
+    }));
+  };
 
   // Function to send request to the backend
   const sendRequest = async (message: string, shouldDisplayMessage: boolean = true) => {
@@ -151,7 +181,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     if (shouldDisplayMessage) {
       const userMessage = {
         role: 'patient' as DialogueRole,
-        text: message
+        content: message
       };
       setMessages(prevMessages => [...prevMessages, userMessage]);
     }
@@ -217,22 +247,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         countdownIntervalRef.current = null;
       }
 
-      // if (!response.ok) {
-      //   throw new Error(`API error: ${response.status}`);
-      // }
-
-      // const data = await response.json();
-      // console.log("Response from server:", data);
-      
-      // // Extract response_text from the response if it exists
-      // const responseText = data.response_text || data;
-      
-      // // Add AI response to the conversation
-      // const aiResponse = {
-      //   role: 'doctor' as DialogueRole,
-      //   text: responseText
-      // };
-
       // 处理非流式响应
       if (!response.body) {
         const errorData = await response.json();
@@ -249,32 +263,32 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         ...prevMessages, 
         {
           role: 'doctor' as DialogueRole,
-          text: '',
+          content: '',
+          reasoning_content: '',
           isStreaming: true,
-          id: currentMessageId
+          id: currentMessageId,
+          rawText: ''
         }
       ]);
 
+      let accumulated = '';
       let retries = 0; // 重试次数
+      
       while (true) {
         try {
           const { done, value } = await reader!.read();
           if (done) break;
 
           const chunk = decoder.decode(value);
-          setStreamBuffer(prev => prev + chunk); // 使用缓冲池
-
+          accumulated += chunk;
+          
           // 更新流式消息
-          setMessages(prevMessages => prevMessages.map(message => {
-            if (message.id === currentMessageId) {
-              // 添加滚动触发逻辑
-              requestAnimationFrame(() => {
-                messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-              })
-              return { ...message, text: chunk }
-            }
-            return message
-          }));
+          processStreamingContent(accumulated, currentMessageId);
+
+          // 滚动触发逻辑
+          requestAnimationFrame(() => {
+            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+          });
         } catch (error) {
           if (retries < 3) {
             retries++;
@@ -282,6 +296,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             await new Promise(res => setTimeout(res, 1000 * retries));
             continue;
           }
+          break;
         }
       }
 
@@ -366,6 +381,71 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     });
   };
 
+  // Render a message (user or AI response)
+  const renderMessage = (message: MessageType) => {
+    if (message.role === 'patient') {
+      // User message
+      return (
+        <div className="flex justify-end mb-4">
+          <div className="bg-blue-100 rounded-lg py-2 px-4 max-w-[80%]">
+            <p className="text-sm text-gray-800">{message.content}</p>
+          </div>
+        </div>
+      );
+    } else {
+      // Doctor message with reasoning and content
+      return (
+        <div className="mb-8">
+          {/* Doctor Avatar and Name */}
+          <div className="flex items-center mb-2">
+            <div className="h-8 w-8 rounded-full bg-medical-blue text-white flex items-center justify-center mr-2">
+              D
+            </div>
+            <div className="text-medical-blue font-medium">
+              {getText(translations.doctor, language)}
+            </div>
+            {message.isStreaming && (
+              <div className="flex space-x-1 ml-2">
+                <div className="h-2 w-2 bg-gray-400 rounded-full animate-pulse" />
+                <div className="h-2 w-2 bg-gray-400 rounded-full animate-pulse delay-150" />
+                <div className="h-2 w-2 bg-gray-400 rounded-full animate-pulse delay-300" />
+              </div>
+            )}
+          </div>
+          
+          {/* Reasoning Content (displayed as blockquote) */}
+          {message.reasoning_content && (
+            <div className="bg-gray-100 border-l-4 border-gray-300 rounded pl-4 pr-2 py-2 mb-4 overflow-auto">
+              <div className="prose prose-sm max-w-none">
+                <ReactMarkdown>
+                  {message.reasoning_content}
+                </ReactMarkdown>
+              </div>
+            </div>
+          )}
+          
+          {/* Main Content */}
+          {message.content && (
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <div className="prose prose-sm max-w-none">
+                <ReactMarkdown>
+                  {message.content}
+                </ReactMarkdown>
+              </div>
+            </div>
+          )}
+          
+          {/* Only show raw text if we don't have parsed content yet */}
+          {!message.reasoning_content && !message.content && message.rawText && (
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <p className="text-gray-600">{message.rawText}</p>
+            </div>
+          )}
+        </div>
+      );
+    }
+  };
+
   return (
     <div className="flex flex-col h-screen animate-fade-in">
       {/* Header */}
@@ -420,56 +500,19 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
 
       {/* Messages area */}
       <div className="flex-grow overflow-y-auto p-4 bg-gradient-to-b from-gray-50 to-white">
-        <div className="max-w-3xl mx-auto space-y-2 pb-20">
+        <div className="max-w-3xl mx-auto space-y-4 pb-20">
           {messages.length === 0 && (
             <div className="text-center my-20 text-gray-500">
               <p>{getText(translations.conversationHint, language)}</p>
             </div>
           )}
 
-          {/* {messages.map((message, index) => {
-            // 根据文本长度来决定 bubble 显示的文本是什么
-            const bubbleText = message.text.length > 0 
-              ? createMultilingualText(message.text, message.text)
-              : translations.doctorPlaceHolder;
-            return (
-              <div key={index}>
-                <DialogueBubble
-                  role={message.role}
-                  text={bubbleText}
-                  isActive={true}
-                  language={language}
-                />
-              </div>
-            );
-          })} */}
-
-          {messages.map((message, index) => {
-            // 添加加载状态指示器
-            const showLoading = message.isStreaming && !message.text;
-            
-            return (
-              <div key={message.id || index}>
-                {showLoading && (
-                  <div className="text-gray-400 pl-4">接收中...</div>
-                )}
-                
-                <DialogueBubble
-                  role={message.role}
-                  text={createMultilingualText(message.text, message.text)}
-                  isActive={true}
-                  language={language}
-                  isStreaming={message.isStreaming}
-                />
-                
-                {message.isStreaming && (
-                  <div className="text-right pr-4 text-xs text-gray-400">
-                    正在输入...
-                  </div>
-                )}
-              </div>
-            );
-          })}
+          {/* Render messages */}
+          {messages.map((message, index) => (
+            <div key={message.id || index}>
+              {renderMessage(message)}
+            </div>
+          ))}
 
           {/* Show waiting message if waiting for response */}
           {isWaiting && (
