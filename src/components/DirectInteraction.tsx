@@ -618,7 +618,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
                 <div className="relative">
                   <button
                     onClick={() => setShowDoctorDropdown(!showDoctorDropdown)}
-                    className="flex items-center gap-2 px-3 py-2 bg-gray-200 hover:bg-gray-300 rounded-lg text-gray-700 text-sm font-medium transition-colors"
+                    className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-medium transition-colors"
                     style={{ fontSize: '0.875rem'}}
                   >
                     <span className="text-medical-blue">{selectedDoctor}</span>
