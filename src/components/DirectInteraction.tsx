@@ -10,6 +10,8 @@ import { useToast } from '@/hooks/use-toast';
 import { useSpeechToText } from '@/hooks/use-speech-to-text';
 import { v4 as uuidv4 } from 'uuid';  // Generate unique IDs
 import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
+import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 interface DirectInteractionProps {
   onBack: () => void;
@@ -448,7 +450,27 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           {message.reasoning_content && (
             <div className="bg-gray-100 border-l-4 border-gray-300 rounded pl-4 pr-2 py-2 mb-4 overflow-auto">
               <div className="prose prose-sm max-w-none">
-                <ReactMarkdown>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}  // 添加 GFM 支持
+                  components={{
+                    h2: ({ node, ...props }) => (
+                      <h2 className="text-xl font-bold mt-6 mb-3 border-b pb-1" {...props} />
+                    ),
+                    h3: ({ node, ...props }) => (
+                      <h3 className="text-lg font-semibold mt-4 mb-2" {...props} />
+                    ),
+                    hr: () => <hr className="border-t border-gray-300 my-4" />,
+                    ul: ({ node, ...props }) => (
+                      <ul className="list-disc pl-6 my-2" {...props} />
+                    ),
+                    ol: ({ node, ...props }) => (
+                      <ol className="list-decimal pl-6 my-2" {...props} />
+                    ),
+                    li: ({ node, ...props }) => (
+                      <li className="mb-1" {...props} />
+                    ),
+                  }}
+                >
                   {message.reasoning_content}
                 </ReactMarkdown>
               </div>
@@ -459,7 +481,27 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           {message.content && (
             <div className="bg-white rounded-lg border border-gray-200 p-4">
               <div className="prose prose-sm max-w-none">
-                <ReactMarkdown>
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}  // 添加 GFM 支持
+                  components={{
+                    h2: ({ node, ...props }) => (
+                      <h2 className="text-xl font-bold mt-6 mb-3 border-b pb-1" {...props} />
+                    ),
+                    h3: ({ node, ...props }) => (
+                      <h3 className="text-lg font-semibold mt-4 mb-2" {...props} />
+                    ),
+                    hr: () => <hr className="border-t border-gray-300 my-4" />,
+                    ul: ({ node, ...props }) => (
+                      <ul className="list-disc pl-6 my-2" {...props} />
+                    ),
+                    ol: ({ node, ...props }) => (
+                      <ol className="list-decimal pl-6 my-2" {...props} />
+                    ),
+                    li: ({ node, ...props }) => (
+                      <li className="mb-1" {...props} />
+                    ),
+                  }}
+                >
                   {message.content}
                 </ReactMarkdown>
               </div>
