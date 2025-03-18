@@ -203,7 +203,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     
     setInputText('');
     setIsWaiting(true);
-    setCountdown(60); // Set countdown to 60 seconds
+    setCountdown(100); // Set countdown to 100 seconds
 
     // Clear any existing countdown interval
     if (countdownIntervalRef.current) {
@@ -239,7 +239,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         });
         requestState.isAborted = true;
       }
-    }, 60000); // 60s timeout
+    }, 100000); // 100s timeout
 
     try {
       console.log("Sending request to:", `${config.apiBaseUrl}/chat`);
