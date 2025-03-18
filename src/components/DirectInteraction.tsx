@@ -1,4 +1,3 @@
-
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu } from 'lucide-react';
 import { Language, getText } from '@/types/language';
@@ -42,7 +41,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const { toast } = useToast();
-  const [selectedDoctor, setSelectedDoctor] = useState("Qwen-max");
+  const [selectedDoctor, setSelectedDoctor] = useState("Qwen2.5-Max");
   const [showDoctorDropdown, setShowDoctorDropdown] = useState(false);
 
   // Set speech recognition language based on app language
@@ -50,7 +49,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
 
   // 定义 doctorMapping，将显示名称映射为后端识别的 doctor 参数
   const doctorMapping: { [key: string]: string } = {
-    "Qwen-max": "qwen-max",
+    "Qwen2.5-Max": "qwen-max",
     "DeepSeek-V3": "deepseek-chat",
     "DeepSeek-R1": "deepseek-reasoner"
   };  
@@ -565,94 +564,107 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       <div className="bg-white border-t p-4">
         <div className="max-w-3xl mx-auto">
           {/* Input area layout */}
-          <div className="relative rounded-lg border border-gray-300 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
-            {/* Doctor selection dropdown */}
-            <div className="absolute left-3 top-3 z-20">
-              <div className="relative">
+          {/* 使用伪元素保持圆角效果 */}
+          <div className="relative [&_:where(.dropdown-menu)]:overflow-visible
+            before:content-[''] before:absolute before:inset-0 before:rounded-lg before:shadow-sm
+            before:border before:border-gray-300 before:hover:shadow-md before:transition-shadow"
+          >
+            {/* 真实容器（需要保持透明背景） */}
+            <div className="relative bg-transparent">
+              {/* Doctor selection dropdown */}
+              <div className="absolute left-3 bottom-3 z-20">
+                <div className="relative">
+                  <button
+                    onClick={() => setShowDoctorDropdown(!showDoctorDropdown)}
+                    className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-medium transition-colors"
+                    style={{ fontSize: '0.875rem'}}
+                  >
+                    <span className="text-medical-blue">{selectedDoctor}</span>
+                    <svg className={`w-4 h-4 transition-transform ${showDoctorDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                    </svg>
+                  </button>
+                
+                  {showDoctorDropdown && (
+                    <div className="absolute left-0 bottom-full mb-2 w-40 bg-white shadow-lg border rounded-lg z-50 overflow-hidden text-sm">
+                      {Object.keys(doctorMapping).map((doctor) => (
+                        <div 
+                          key={doctor}
+                          className={`p-2 hover:bg-gray-100 transition-colors cursor-pointer ${selectedDoctor === doctor ? 'bg-blue-50 text-medical-blue' : ''}`}
+                          onClick={() => { 
+                            setSelectedDoctor(doctor); 
+                            setShowDoctorDropdown(false); 
+                          }}
+                        >
+                          {doctor === "Qwen2.5-Max" 
+                            ? getText(translations.QwenMax, language)
+                            : doctor === "DeepSeek-V3" 
+                              ? getText(translations.DeepSeekV3, language)
+                              : getText(translations.DeepSeekR1, language)
+                          }
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+              </div>
+            
+              {/* Textarea with proper spacing for doctor dropdown */}
+              <textarea
+                ref={textareaRef}
+                className="w-full px-4 py-2 resize-none focus:outline-none bg-transparent"
+                placeholder={getText(translations.typeMessage, language)}
+                rows={1}
+                value={inputText}
+                onChange={(e) => setInputText(e.target.value)}
+                onKeyDown={handleKeyDown}
+                maxLength={3000}
+                style={{ 
+                  minHeight: '48px', 
+                  maxHeight: '128px',
+                  paddingBottom: '1rem'
+                }}
+              />
+            
+              {/* Character counter - moved to bottom-right inside the textarea area */}
+              <div className="absolute bottom-16 right-4 text-xs text-gray-400">
+                {inputText.length}/3000
+              </div>
+            
+              {/* Action buttons */}
+              <div className="flex justify-end border-t border-gray-200 p-2 bg-gray-50">
+                {/* Speech to text button */}
                 <button
-                  onClick={() => setShowDoctorDropdown(!showDoctorDropdown)}
-                  className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-medium transition-colors"
+                  onClick={toggleListening}
+                  disabled={isWaiting || !isSupported}
+                  className={`mr-2 p-2 rounded-lg transition-colors ${
+                    isListening 
+                      ? 'bg-red-500 text-white hover:bg-red-600' 
+                      : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                  } ${!isSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
+                  aria-label={isListening 
+                    ? getText(translations.stopRecording, language)
+                    : getText(translations.startRecording, language)
+                  }
                 >
-                  <span className="text-medical-blue">{selectedDoctor}</span>
-                  <svg className={`w-4 h-4 transition-transform ${showDoctorDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
-                  </svg>
+                  {isListening 
+                    ? <MicOff className="h-5 w-5" /> 
+                    : <Mic className="h-5 w-5" />}
                 </button>
                 
-                {/* Fixed dropdown positioning to appear above the button */}
-                {showDoctorDropdown && (
-                  <div className="absolute left-0 bottom-full mb-2 w-40 bg-white shadow-lg border rounded-lg z-50 overflow-hidden">
-                    {Object.keys(doctorMapping).map((doctor) => (
-                      <div 
-                        key={doctor}
-                        className={`cursor-pointer p-3 hover:bg-gray-100 transition-colors ${selectedDoctor === doctor ? 'bg-blue-50 text-medical-blue' : ''}`}
-                        onClick={() => { 
-                          setSelectedDoctor(doctor); 
-                          setShowDoctorDropdown(false); 
-                        }}
-                      >
-                        {doctor === "Qwen-max" 
-                          ? getText(translations.QwenMax, language)
-                          : doctor === "DeepSeek-V3" 
-                            ? getText(translations.DeepSeekV3, language)
-                            : getText(translations.DeepSeekR1, language)
-                        }
-                      </div>
-                    ))}
-                  </div>
-                )}
+                {/* Send button */}
+                <button
+                  onClick={handleSendMessage}
+                  disabled={inputText.trim() === '' || isWaiting}
+                  className="bg-medical-blue text-white px-4 py-2 rounded-lg hover:bg-medical-dark-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                >
+                  <Send className="h-5 w-5" />
+                  <span>{getText(translations.sendMessage, language)}</span>
+                </button>
               </div>
             </div>
-            
-            {/* Textarea with proper spacing for doctor dropdown */}
-            <textarea
-              ref={textareaRef}
-              className="w-full px-4 py-3 pt-12 resize-none focus:outline-none focus:ring-2 focus:ring-medical-blue focus:border-transparent"
-              placeholder={getText(translations.typeMessage, language)}
-              rows={1}
-              value={inputText}
-              onChange={(e) => setInputText(e.target.value)}
-              onKeyDown={handleKeyDown}
-              maxLength={3000}
-              style={{ minHeight: '100px', maxHeight: '200px' }}
-            />
-            
-            {/* Character counter - moved to bottom-right inside the textarea area */}
-            <div className="absolute bottom-16 right-4 text-xs text-gray-400">
-              {inputText.length}/3000
-            </div>
-            
-            {/* Action buttons */}
-            <div className="flex justify-end border-t border-gray-200 p-2 bg-gray-50">
-              {/* Speech to text button */}
-              <button
-                onClick={toggleListening}
-                disabled={isWaiting || !isSupported}
-                className={`mr-2 p-2 rounded-lg transition-colors ${
-                  isListening 
-                    ? 'bg-red-500 text-white hover:bg-red-600' 
-                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-                } ${!isSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
-                aria-label={isListening 
-                  ? getText(translations.stopRecording, language)
-                  : getText(translations.startRecording, language)
-                }
-              >
-                {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
-              </button>
-              
-              {/* Send button */}
-              <button
-                onClick={handleSendMessage}
-                disabled={inputText.trim() === '' || isWaiting}
-                className="bg-medical-blue text-white px-4 py-2 rounded-lg hover:bg-medical-dark-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              >
-                <Send className="h-5 w-5" />
-                <span>{getText(translations.sendMessage, language)}</span>
-              </button>
-            </div>
           </div>
-          
+            
           {/* Display recording information */}
           {isListening && (
             <div className="mt-3 text-sm p-2 bg-red-50 rounded-lg border border-red-100 flex items-center gap-2">

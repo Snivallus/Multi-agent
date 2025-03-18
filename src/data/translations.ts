@@ -31,7 +31,7 @@ export const translations = {
   
   // Doctor Selection
   selectDoctor: createMultilingualText('医生模型', 'Doctor Model'),
-  QwenMax: createMultilingualText('通义千问-max', 'Qwen-max'),
+  QwenMax: createMultilingualText('Qwen2.5-Max', 'Qwen2.5-Max'),
   DeepSeekV3: createMultilingualText('DeepSeek-V3', 'DeepSeek-V3'),
   DeepSeekR1: createMultilingualText('DeepSeek-R1', 'DeepSeek-R1'),
 
