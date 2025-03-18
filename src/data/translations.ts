@@ -1,5 +1,6 @@
 
 import { MultilingualText, createMultilingualText } from '@/types/language';
+import { generateCategoricalChart } from 'recharts/types/chart/generateCategoricalChart';
 
 // UI translations for the entire application
 export const translations = {
@@ -25,7 +26,7 @@ export const translations = {
   conversationHint: createMultilingualText('输入消息开始对话', 'Start a conversation by typing a message below.'),
   doctorPlaceHolder: createMultilingualText('(无响应)', '(No response)'),
   resetMomery: createMultilingualText('重置记忆', 'Reset Momery'),
-  endConsultation: createMultilingualText('结束问诊', 'End Consultation'),
+  generateDiagonsis: createMultilingualText('生成诊断', 'Generate Diagonsis'),
   uploadFile: createMultilingualText('上传文件', 'Upload File'),
   featureNotImplemented: createMultilingualText('多模态交互功能尚未实现，敬请期待', 'Multi-modal interaction feature is not yet implemented, stay tuned'),
   

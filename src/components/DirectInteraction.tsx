@@ -11,7 +11,6 @@ import { useSpeechToText } from '@/hooks/use-speech-to-text';
 import { v4 as uuidv4 } from 'uuid';  // Generate unique IDs
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
-import { Prism as SyntaxHighlighter } from 'react-syntax-highlighter';
 
 interface DirectInteractionProps {
   onBack: () => void;
@@ -182,7 +181,11 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   };
 
   // Function to send request to the backend
-  const sendRequest = async (message: string, shouldDisplayMessage: boolean = true) => {
+  const sendRequest = async (
+    message: string, 
+    shouldDisplayMessage: boolean = true,
+    timeoutDuration: number = 30 // 默认 30 秒倒计时
+  ) => {
     if (isWaiting) return;
 
     // 收到第一个chunk时停止倒计时
@@ -203,7 +206,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     
     setInputText('');
     setIsWaiting(true);
-    setCountdown(100); // Set countdown to 100 seconds
+    setCountdown(timeoutDuration); // Set countdown to `timeoutDuration` seconds
 
     // Clear any existing countdown interval
     if (countdownIntervalRef.current) {
@@ -239,7 +242,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         });
         requestState.isAborted = true;
       }
-    }, 100000); // 100s timeout
+    }, timeoutDuration * 1000); // `timeoutDuration` seconds timeout
 
     try {
       console.log("Sending request to:", `${config.apiBaseUrl}/chat`);
@@ -363,7 +366,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
 
   const handleEndConsultation = () => {
     // Send special message "<结束>" to backend without displaying it in the UI
-    sendRequest("<结束>", false);
+    sendRequest("<结束>", false, 180); // 此时倒计时设为 180 s
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -545,7 +548,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               disabled={isWaiting}
             >
               <CheckSquare className="h-5 w-5" />
-              <span>{getText(translations.endConsultation, language)}</span>
+              <span>{getText(translations.generateDiagonsis, language)}</span>
             </button>
             {/* Upload File button */}
             <button
