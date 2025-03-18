@@ -29,6 +29,12 @@ export const translations = {
   uploadFile: createMultilingualText('上传文件', 'Upload File'),
   featureNotImplemented: createMultilingualText('多模态交互功能尚未实现，敬请期待', 'Multi-modal interaction feature is not yet implemented, stay tuned'),
   
+  // Doctor Selection
+  selectDoctor: createMultilingualText('医生模型', 'Doctor Model'),
+  QwenMax: createMultilingualText('通义千问-max', 'Qwen-max'),
+  DeepSeekV3: createMultilingualText('DeepSeek-V3', 'DeepSeek-V3'),
+  DeepSeekR1: createMultilingualText('DeepSeek-R1', 'DeepSeek-R1'),
+
   // Speech to text 
   startRecording: createMultilingualText('开始录音', 'Start recording'),
   stopRecording: createMultilingualText('停止录音', 'Stop recording'),

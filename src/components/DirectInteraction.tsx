@@ -41,10 +41,19 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
   const { toast } = useToast();
+  const [selectedDoctor, setSelectedDoctor] = useState("Qwen-max");
+  const [showDoctorDropdown, setShowDoctorDropdown] = useState(false);
 
   // Set speech recognition language based on app language
   const speechLanguage = language === 'zh' ? 'zh-CN' : 'en-US';
-  
+
+  // 定义 doctorMapping，将显示名称映射为后端识别的 doctor 参数
+  const doctorMapping: { [key: string]: string } = {
+    "Qwen-max": "qwen-max",
+    "DeepSeek-V3": "deepseek-chat",
+    "DeepSeek-R1": "deepseek-reasoner"
+  };  
+
   // Initialize speech to text
   const { 
     isListening,         // 是否正在监听语音
@@ -170,18 +179,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }));
   };
 
-  // // 滚动优化（使用 ref 存储消息ID）
-  // const currentMessageId = useRef<string>();
-
-  // useEffect(() => {
-  //   if (messagesEndRef.current) {
-  //     messagesEndRef.current.scrollIntoView({ 
-  //       behavior: "smooth",
-  //       block: "nearest"
-  //     });
-  //   }
-  // }, [messages]);
-
   // Function to send request to the backend
   const sendRequest = async (message: string, shouldDisplayMessage: boolean = true) => {
     if (isWaiting) return;
@@ -251,7 +248,8 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
           message, 
-          language: languageRef.current 
+          language: languageRef.current,
+          doctor: doctorMapping[selectedDoctor] // selected doctor
         }),
         signal
       });
@@ -350,7 +348,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       }
     } finally {
       if (!requestState.hasReceivedFirstChunk) {
-        setIsWaiting(false); // 未收到任何chunk时确保清除
+        setIsWaiting(false); // 未收到任何chunk时确保清除countdown
       }
       abortControllerRef.current = null;
     }
@@ -550,8 +548,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           {/* Show waiting message if waiting for response */}
           {isWaiting && (
             <div className="text-center py-4 text-gray-500">
-              <p>{getText(translations.waitingForResponse, language)}
-              {countdown !== null && <span>({countdown} s) ...</span>}
+              <p>
+                {getText(translations.waitingForResponse, language)}
+                {countdown !== null && <span>({countdown} s) ...</span>}
               </p>
             </div>
           )}
@@ -564,7 +563,41 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       {/* Input area */}
       <div className="bg-white border-t p-4">
         <div className="max-w-3xl mx-auto">
-          <div className="flex gap-2">
+          <div className="flex gap-4">
+              {/* Doctor selection button */}
+              <div className="relative">
+              <button
+                onClick={() => setShowDoctorDropdown(!showDoctorDropdown)}
+                className="px-3 py-3 bg-gray-200 rounded-l-lg hover:bg-gray-300 focus:outline-none"
+                aria-label={getText(translations.selectDoctor, language)}
+              >
+                {selectedDoctor}
+              </button>
+              {showDoctorDropdown && (
+                <div className="absolute left-0 bottom-full mb-2 w-40 bg-white shadow-md border rounded z-10">
+                  <div 
+                    className="cursor-pointer p-2 hover:bg-gray-100"
+                    onClick={() => { setSelectedDoctor("Qwen-max"); setShowDoctorDropdown(false); }}
+                  >
+                    {getText(translations.QwenMax, language)}
+                  </div>
+                  <div 
+                    className="cursor-pointer p-2 hover:bg-gray-100"
+                    onClick={() => { setSelectedDoctor("DeepSeek-V3"); setShowDoctorDropdown(false); }}
+                  >
+                    {getText(translations.DeepSeekV3, language)}
+                  </div>
+                  <div 
+                    className="cursor-pointer p-2 hover:bg-gray-100"
+                    onClick={() => { setSelectedDoctor("DeepSeek-R1"); setShowDoctorDropdown(false); }}
+                  >
+                    {getText(translations.DeepSeekR1, language)}
+                  </div>
+                </div>
+              )}
+            </div>
+            
+            {/*Input box*/}
             <div className="flex-grow relative">
               <textarea
                 ref={textareaRef}
