@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu } from 'lucide-react';
+import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Brain } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
@@ -522,7 +522,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               aria-label="Reset Dialogue"
               disabled={isWaiting}
             >
-              <Cpu className="h-5 w-5" />
+              <Brain className="h-5 w-5" />
               <span>{getText(translations.resetMomery, language)}</span>
             </button>
           </div>
@@ -560,106 +560,98 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         </div>
       </div>
 
-      {/* Input area */}
+      {/* Input area - Redesigned for better UI */}
       <div className="bg-white border-t p-4">
         <div className="max-w-3xl mx-auto">
-          <div className="flex gap-4">
-              {/* Doctor selection button */}
+          {/* Improved input area layout */}
+          <div className="relative rounded-lg border border-gray-300 overflow-hidden shadow-sm hover:shadow-md transition-shadow">
+            {/* Doctor selection dropdown */}
+            <div className="absolute left-3 top-3 z-20">
               <div className="relative">
-              <button
-                onClick={() => setShowDoctorDropdown(!showDoctorDropdown)}
-                className="px-3 py-3 bg-gray-200 rounded-l-lg hover:bg-gray-300 focus:outline-none"
-                aria-label={getText(translations.selectDoctor, language)}
-              >
-                {selectedDoctor}
-              </button>
-              {showDoctorDropdown && (
-                <div className="absolute left-0 bottom-full mb-2 w-40 bg-white shadow-md border rounded z-10">
-                  <div 
-                    className="cursor-pointer p-2 hover:bg-gray-100"
-                    onClick={() => { setSelectedDoctor("Qwen-max"); setShowDoctorDropdown(false); }}
-                  >
-                    {getText(translations.QwenMax, language)}
+                <button
+                  onClick={() => setShowDoctorDropdown(!showDoctorDropdown)}
+                  className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-medium transition-colors"
+                >
+                  <span className="text-medical-blue">{selectedDoctor}</span>
+                  <svg className={`w-4 h-4 transition-transform ${showDoctorDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                  </svg>
+                </button>
+                
+                {showDoctorDropdown && (
+                  <div className="absolute left-0 bottom-full mb-2 w-40 bg-white shadow-lg border rounded-lg z-50 overflow-hidden">
+                    {Object.keys(doctorMapping).map((doctor) => (
+                      <div 
+                        key={doctor}
+                        className={`cursor-pointer p-3 hover:bg-gray-100 transition-colors ${selectedDoctor === doctor ? 'bg-blue-50 text-medical-blue' : ''}`}
+                        onClick={() => { 
+                          setSelectedDoctor(doctor); 
+                          setShowDoctorDropdown(false); 
+                        }}
+                      >
+                        {doctor === "Qwen-max" 
+                          ? getText(translations.QwenMax, language)
+                          : doctor === "DeepSeek-V3" 
+                            ? getText(translations.DeepSeekV3, language)
+                            : getText(translations.DeepSeekR1, language)
+                        }
+                      </div>
+                    ))}
                   </div>
-                  <div 
-                    className="cursor-pointer p-2 hover:bg-gray-100"
-                    onClick={() => { setSelectedDoctor("DeepSeek-V3"); setShowDoctorDropdown(false); }}
-                  >
-                    {getText(translations.DeepSeekV3, language)}
-                  </div>
-                  <div 
-                    className="cursor-pointer p-2 hover:bg-gray-100"
-                    onClick={() => { setSelectedDoctor("DeepSeek-R1"); setShowDoctorDropdown(false); }}
-                  >
-                    {getText(translations.DeepSeekR1, language)}
-                  </div>
-                </div>
-              )}
-            </div>
-            
-            {/*Input box*/}
-            <div className="flex-grow relative">
-              <textarea
-                ref={textareaRef}
-                className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-medical-blue focus:border-medical-light-blue resize-none"
-                placeholder={getText(translations.typeMessage, language)}
-                rows={1}
-                value={inputText}
-                onChange={(e) => setInputText(e.target.value)}
-                onKeyDown={handleKeyDown}
-                maxLength={3000} // Character limit
-                style={{ minHeight: '48px', maxHeight: '200px' }}
-              />
-              <div className="absolute bottom-2 right-5 text-xs text-gray-300">
-                {inputText.length}/3000 {/* Character counter */}
+                )}
               </div>
             </div>
             
-            {/* Speech to text button */}
-            <button
-              onClick={toggleListening}
-              disabled={isWaiting || !isSupported}
-              className={`px-4 py-3 rounded-lg transition-colors duration-200 flex items-center gap-2 ${
-                isListening 
-                  ? 'bg-red-500 text-white hover:bg-red-600' 
-                  : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
-              } ${!isSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
-              aria-label={isListening 
-                ? getText(translations.stopRecording, language)
-                : getText(translations.startRecording, language)
-              }
-            >
-              {isListening ? (
-                <>
-                  <MicOff className="h-5 w-5" />
-                  <span className="hidden sm:inline">
-                    {getText(translations.stopRecording, language)}
-                  </span>
-                </>
-              ) : (
-                <>
-                  <Mic className="h-5 w-5" />
-                  <span className="hidden sm:inline">
-                    {getText(translations.startRecording, language)}
-                  </span>
-                </>
-              )}
-            </button>
+            {/* Textarea with proper spacing for doctor dropdown */}
+            <textarea
+              ref={textareaRef}
+              className="w-full px-4 py-3 pt-12 resize-none focus:outline-none focus:ring-2 focus:ring-medical-blue focus:border-transparent"
+              placeholder={getText(translations.typeMessage, language)}
+              rows={1}
+              value={inputText}
+              onChange={(e) => setInputText(e.target.value)}
+              onKeyDown={handleKeyDown}
+              maxLength={3000}
+              style={{ minHeight: '100px', maxHeight: '200px' }}
+            />
             
-            {/* Send button */}
-            <button
-              onClick={handleSendMessage}
-              disabled={inputText.trim() === '' || isWaiting}
-              className="bg-medical-blue text-white px-4 py-3 rounded-lg hover:bg-medical-dark-blue transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            >
-              <Send className="h-5 w-5" />
-              <span className="hidden sm:inline">
-                {getText(translations.sendMessage, language)}
-              </span>
-            </button>
+            {/* Character counter */}
+            <div className="absolute bottom-3 right-4 text-xs text-gray-400">
+              {inputText.length}/3000
+            </div>
+            
+            {/* Action buttons */}
+            <div className="flex justify-end border-t border-gray-200 p-2 bg-gray-50">
+              {/* Speech to text button */}
+              <button
+                onClick={toggleListening}
+                disabled={isWaiting || !isSupported}
+                className={`mr-2 p-2 rounded-lg transition-colors ${
+                  isListening 
+                    ? 'bg-red-500 text-white hover:bg-red-600' 
+                    : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                } ${!isSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
+                aria-label={isListening 
+                  ? getText(translations.stopRecording, language)
+                  : getText(translations.startRecording, language)
+                }
+              >
+                {isListening ? <MicOff className="h-5 w-5" /> : <Mic className="h-5 w-5" />}
+              </button>
+              
+              {/* Send button */}
+              <button
+                onClick={handleSendMessage}
+                disabled={inputText.trim() === '' || isWaiting}
+                className="bg-medical-blue text-white px-4 py-2 rounded-lg hover:bg-medical-dark-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+              >
+                <Send className="h-5 w-5" />
+                <span>{getText(translations.sendMessage, language)}</span>
+              </button>
+            </div>
           </div>
           
-          {/* Display recording information and duration */}
+          {/* Display recording information */}
           {isListening && (
             <div className="mt-3 text-sm p-2 bg-red-50 rounded-lg border border-red-100 flex items-center gap-2">
               <Timer className="h-4 w-4 text-red-500" />
