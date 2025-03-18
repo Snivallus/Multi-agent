@@ -1,3 +1,4 @@
+
 import React, { useState, useRef, useEffect } from 'react';
 import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu } from 'lucide-react';
 import { Language, getText } from '@/types/language';
@@ -578,6 +579,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
                   </svg>
                 </button>
                 
+                {/* Fixed dropdown positioning to appear above the button */}
                 {showDoctorDropdown && (
                   <div className="absolute left-0 bottom-full mb-2 w-40 bg-white shadow-lg border rounded-lg z-50 overflow-hidden">
                     {Object.keys(doctorMapping).map((doctor) => (
@@ -615,8 +617,8 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               style={{ minHeight: '100px', maxHeight: '200px' }}
             />
             
-            {/* Character counter */}
-            <div className="absolute bottom-3 right-4 text-xs text-gray-400">
+            {/* Character counter - moved to bottom-right inside the textarea area */}
+            <div className="absolute bottom-16 right-4 text-xs text-gray-400">
               {inputText.length}/3000
             </div>
             
