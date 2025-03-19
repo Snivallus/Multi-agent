@@ -190,9 +190,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const sendRequest = async (
     message: string, 
     shouldDisplayMessage: boolean = true,
-    timeoutDuration: number = 180 // 默认 30 秒倒计时
+    timeoutDuration: number = 30 // 默认 30 秒倒计时
   ) => {
-    if (isWaiting) return;  // 如果已经在等待状态，直接返回
+    if (isWaiting) return;
 
     // 重置请求状态
     requestStateRef.current = {
@@ -298,45 +298,34 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         }
       ]);
 
-      let retries = 0; // 重试次数
       while (true) {
-        try {
-          const { done, value } = await reader!.read();
-          if (done) break;
+        const { done, value } = await reader!.read();
+        if (done) break;
 
-          // 首次收到数据时停止倒计时
-          if (!requestStateRef.current.hasReceivedFirstChunk) {
-            requestStateRef.current.hasReceivedFirstChunk = true;
-            // 使用函数式更新确保获取最新状态
-            setCountdown((prevCountdown) => {
-              if (prevCountdown !== null) {
-                if (countdownIntervalRef.current) {
-                  clearInterval(countdownIntervalRef.current);
-                  countdownIntervalRef.current = null;
-                }
-                return null;
+        // 首次收到数据时停止倒计时
+        if (!requestStateRef.current.hasReceivedFirstChunk) {
+          requestStateRef.current.hasReceivedFirstChunk = true;
+          // 使用函数式更新确保获取最新状态
+          setCountdown((prevCountdown) => {
+            if (prevCountdown !== null) {
+              if (countdownIntervalRef.current) {
+                clearInterval(countdownIntervalRef.current);
+                countdownIntervalRef.current = null;
               }
-              return prevCountdown; // 已经是null则保持
-            });
-          }
-
-          // 更新流式消息
-          const chunk = decoder.decode(value);
-          processStreamingContent(chunk, currentMessageId);
-
-          // 添加滚动触发逻辑
-          requestAnimationFrame(() => {
-            messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+              return null;
+            }
+            return prevCountdown; // 已经是null则保持
           });
-        } catch (error) {
-          if (retries < 3) {
-            retries++;
-            console.log(`Retrying request (${retries})...`);
-            await new Promise(res => setTimeout(res, 1000 * retries));
-            continue;
-          }
-          break;
         }
+
+        // 更新流式消息
+        const chunk = decoder.decode(value);
+        processStreamingContent(chunk, currentMessageId);
+
+        // 添加滚动触发逻辑
+        requestAnimationFrame(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+        });
       }
 
       // 标记流式消息结束
@@ -369,10 +358,8 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   };
 
   const handleGenerateDiagnosis = () => {
-    console.log("Generating diagnosis...");
-    if (isWaiting) return; // 防止重复点击
     // Send special message "<生成诊断>" to backend without displaying it in the UI
-    sendRequest("<生成诊断>", false, 180); // 此时倒计时设为 180 s
+    sendRequest("<生成诊断>", false, 30); // 此时倒计时设为 30 s
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
