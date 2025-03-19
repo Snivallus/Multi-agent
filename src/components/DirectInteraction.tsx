@@ -180,6 +180,12 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }));
   };
 
+  // 收到第一个chunk时停止倒计时
+  const requestState = {
+    hasReceivedFirstChunk: false,
+    isAborted: false
+  };
+
   // Function to send request to the backend
   const sendRequest = async (
     message: string, 
@@ -187,12 +193,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     timeoutDuration: number = 30 // 默认 30 秒倒计时
   ) => {
     if (isWaiting) return;
-
-    // 收到第一个chunk时停止倒计时
-    const requestState = {
-      hasReceivedFirstChunk: false,
-      isAborted: false
-    };
 
     // Add user message to the conversation if it should be displayed
     if (shouldDisplayMessage) {
@@ -311,7 +311,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               }
               return prevCountdown; // 已经是null则保持
             });
-            setIsWaiting(false);
           }
 
           // 更新流式消息
@@ -352,9 +351,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         });
       }
     } finally {
-      if (!requestState.hasReceivedFirstChunk) {
-        setIsWaiting(false); // 未收到任何chunk时确保清除countdown
-      }
+      setIsWaiting(false);
       abortControllerRef.current = null;
     }
   };
@@ -364,9 +361,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     sendRequest(inputText);
   };
 
-  const handleEndConsultation = () => {
-    // Send special message "<结束>" to backend without displaying it in the UI
-    sendRequest("<结束>", false, 180); // 此时倒计时设为 180 s
+  const handleGeneratediagnosis = () => {
+    // Send special message "<生成诊断>" to backend without displaying it in the UI
+    sendRequest("<生成诊断>", false, 180); // 此时倒计时设为 180 s
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
@@ -542,13 +539,13 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           <div className="flex items-center gap-4">
             {/* End Consultation button */}
             <button
-              onClick={handleEndConsultation}
+              onClick={handleGeneratediagnosis}
               className="p-2 px-4 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               aria-label="End Consultation"
               disabled={isWaiting}
             >
               <CheckSquare className="h-5 w-5" />
-              <span>{getText(translations.generateDiagonsis, language)}</span>
+              <span>{getText(translations.generatediagnosis, language)}</span>
             </button>
             {/* Upload File button */}
             <button
@@ -591,7 +588,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
            ))}
 
           {/* Show waiting message if waiting for response */}
-          {isWaiting && (
+          {isWaiting && !requestState.hasReceivedFirstChunk && (
             <div className="text-center py-4 text-gray-500">
               <p>
                 {getText(translations.waitingForResponse, language)}
