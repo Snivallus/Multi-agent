@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu } from 'lucide-react';
+import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu, X } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
@@ -22,9 +22,13 @@ interface MessageType {
   role: DialogueRole;
   content?: string;
   reasoning_content?: string;
-  id?: string;         // 唯一标识
-  isStreaming?: boolean; // 流式状态
-  rawText?: string  // 原始文本，用于存储流式传输的中间状态
+  id?: string;  // 唯一标识
+  isStreaming?: boolean;  // 流式状态
+  rawText?: string; // 原始文本，用于存储流式传输的中间状态
+  file?: {         // 新增文件信息
+    url: string;   // 预览URL
+    name: string;  // 文件名
+  };
 }
 
 /**
@@ -36,7 +40,12 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const [inputText, setInputText] = useState('');
   const [isWaiting, setIsWaiting] = useState(false);
   const [countdown, setCountdown] = useState<number | null>(null); // countdown when waiting for response
+  const [isUploadModalOpen, setIsUploadModalOpen] = useState(false);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [fileDescription, setFileDescription] = useState('');
+  const [isUploading, setIsUploading] = useState(false);
   
+  const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
   const countdownIntervalRef = useRef<NodeJS.Timeout | null>(null);
@@ -401,11 +410,115 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
 
   // Add handler for the new "Upload File" button
   const handleUploadFile = () => {
-    toast({
-      title: getText(translations.uploadFile, language),
-      description: getText(translations.featureNotImplemented, language),
-      duration: 3000,
-    });
+    setIsUploadModalOpen(true);
+  };
+
+  // 添加文件选择处理函数
+  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      // 验证文件类型
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'webm'];
+      const extension = file.name.split('.').pop()?.toLowerCase();
+      if (!extension || !allowedExtensions.includes(extension)) {
+        toast({
+          title: getText(translations.errorTitle, language),
+          description: getText(translations.unsupportedFileType, language),
+          variant: 'destructive',
+        });
+        return;
+      }
+      setSelectedFile(file);
+    }
+  };
+
+  // 添加确认上传处理函数
+  const handleConfirmUpload = async () => {
+    if (!selectedFile) {
+      toast({
+        title: getText(translations.errorTitle, language),
+        description: getText(translations.noFileSelected, language),
+        variant: 'destructive',
+      });
+      return;
+    }
+
+    // 先添加用户消息
+    const userMessage: MessageType = {
+      role: 'patient',
+      content: fileDescription || getText(translations.noDescription, language),
+      id: uuidv4(),
+      file: {
+        url: URL.createObjectURL(selectedFile),
+        name: selectedFile.name
+      }
+    };
+    setMessages(prev => [...prev, userMessage]);
+
+    setIsUploading(true);
+    const formData = new FormData();
+    formData.append('file', selectedFile);
+    formData.append('description', fileDescription);
+    formData.append('language', language);
+    formData.append('doctor', doctorMapping[selectedDoctor]);
+
+    try {
+      const response = await fetch(`${config.apiBaseUrl}/exam`, {
+        method: 'POST',
+        body: formData,
+      });
+
+      if (!response.body) throw new Error('No response body');
+
+      // 添加医生消息并立即关闭弹窗
+      const messageId = uuidv4();
+      setMessages(prev => [...prev, {
+        role: 'doctor',
+        content: '',
+        reasoning_content: '',
+        isStreaming: true,
+        id: messageId,
+        rawText: ''
+      }]);
+      
+      // 关键修改：立即关闭弹窗
+      setIsUploadModalOpen(false);
+
+      // 流式处理逻辑
+      const reader = response.body.getReader();
+      const decoder = new TextDecoder();
+
+      while (true) {
+        const { done, value } = await reader.read();
+        if (done) break;
+
+        const chunk = decoder.decode(value, { stream: true });
+        processStreamingContent(chunk, messageId);
+        
+        // 滚动到底部
+        requestAnimationFrame(() => {
+          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        });
+      }
+
+      // 更新消息状态
+      setMessages(prev => prev.map(msg => 
+        msg.id === messageId ? { ...msg, isStreaming: false } : msg
+      ));
+
+    } catch (error) {
+      console.error('Upload failed:', error);
+      toast({
+        title: getText(translations.errorTitle, language),
+        description: getText(translations.uploadFailed, language),
+        variant: 'destructive',
+      });
+    } finally {
+      setIsUploading(false);
+      setIsUploadModalOpen(false);
+      setSelectedFile(null);
+      setFileDescription('');
+    }
   };
 
   // Render a message (user or AI response)
@@ -413,13 +526,44 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     if (message.role === 'patient') {
       // User message
       return (
-        <DialogueBubble
-        role={message.role}
-        text={createMultilingualText(message.content, message.content)}
-        isActive={true}
-        language={language}
-        isStreaming={message.isStreaming}
-        />
+        <div className="mb-4 flex flex-col items-end"> {/* 改为右对齐容器 */}
+          {/* 主内容容器 */}
+          <div className="max-w-[85%]"> {/* 限制最大宽度保持阅读舒适度 */}
+            <DialogueBubble
+              role={message.role}
+              text={createMultilingualText(message.content, message.content)}
+              isActive={true}
+              language={language}
+              isStreaming={message.isStreaming}
+            />
+            
+            {/* 文件展示区域 */}
+            {message.file && (
+              <div className="mt-2"> {/* 移除ml-12，通过父容器对齐 */}
+                <div className="relative group">
+                  {/* 图片预览 */}
+                  <img
+                    src={message.file.url}
+                    alt={message.file.name}
+                    className="rounded-lg border-2 border-medical-blue/20 object-contain bg-white shadow-sm transition-all
+                            hover:border-medical-blue/30 hover:shadow-md"
+                    style={{ 
+                      maxWidth: 'min(100%, 400px)', // 响应式宽度限制
+                      maxHeight: '400px',
+                    }}
+                  />
+                  
+                  {/* 文件信息 */}
+                  <div className="absolute bottom-2 left-2 right-2 bg-white/90 backdrop-blur-sm p-2 rounded-md 
+                                text-xs text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity
+                                flex justify-between items-center shadow-sm">
+                    <span className="truncate">{message.file.name}</span>
+                  </div>
+                </div>
+              </div>
+            )}
+          </div>
+        </div>
       );
     } else {
       // Doctor message with reasoning and content
@@ -532,6 +676,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               {getText(translations.directInteractionTitle, language)}
             </h2>
           </div>
+          
           <div className="flex items-center gap-4">
             {/* End Consultation button */}
             <button
@@ -717,6 +862,87 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           )}
         </div>
       </div>
+
+      {/* 弹窗结构 */}
+      {isUploadModalOpen && (
+      <div className="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50">
+        <div className="bg-white rounded-lg p-6 w-full max-w-md relative">
+          <div className="flex justify-between items-center mb-4">
+            <h3 className="text-lg font-semibold mb-4">
+              {getText(translations.uploadFile, language)}
+            </h3>
+            {/* 关闭按钮 */}
+            <button 
+              onClick={() => {
+                setIsUploadModalOpen(false);
+                setSelectedFile(null);
+                setFileDescription('');
+              }}
+              className="absolute top-4 right-4 text-gray-500 hover:text-gray-700"
+            >
+              <X className="h-6 w-6" />
+            </button>
+          </div>
+
+          <input
+            type="file"
+            hidden
+            ref={fileInputRef}
+            onChange={handleFileSelect}
+            accept=".jpg,.jpeg,.png,.webm"
+          />
+
+          <button
+            onClick={() => fileInputRef.current?.click()}
+            className="w-full mb-4 p-2 border-2 border-dashed border-gray-300 rounded-lg hover:border-blue-500 transition-colors"
+          >
+            {selectedFile ? (
+              <span className="text-blue-600">{selectedFile.name}</span>
+            ) : (
+              getText(translations.selectFile, language)
+            )}
+          </button>
+
+          <input
+            type="text"
+            placeholder={getText(translations.fileDescription, language)}
+            value={fileDescription}
+            onChange={(e) => setFileDescription(e.target.value)}
+            className="w-full mb-4 p-2 border rounded-lg"
+          />
+
+          <div className="flex justify-end gap-2">
+            <button
+              onClick={() => {
+                setIsUploadModalOpen(false);
+                setSelectedFile(null);
+                setFileDescription('');
+              }}
+              className="px-4 py-2 text-gray-600 hover:bg-gray-100 rounded-lg"
+            >
+              {getText(translations.cancel, language)}
+            </button>
+            <button
+              onClick={handleConfirmUpload}
+              disabled={isUploading}
+              className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              {isUploading ? (
+                <span className="flex items-center">
+                  <svg className="animate-spin h-4 w-4 mr-2" viewBox="0 0 24 24">
+                    <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none"/>
+                    <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"/>
+                  </svg>
+                  {getText(translations.uploading, language)}
+                </span>
+              ) : (
+                getText(translations.confirm, language)
+              )}
+            </button>
+          </div>
+        </div>
+      </div>
+    )}
     </div>
   );
 };

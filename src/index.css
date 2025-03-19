@@ -103,4 +103,19 @@
       transform: translateY(0);
     }
   }
+
+  /* 医疗主题图片过渡效果 */
+  img {
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+  }
+
+  /* 文件信息标签动画 */
+  @keyframes slide-up {
+    from { transform: translateY(4px); opacity: 0; }
+    to { transform: translateY(0); opacity: 1; }
+  }
+
+  .group:hover .file-info {
+    animation: slide-up 0.2s ease-out;
+  }
 }

@@ -28,7 +28,7 @@ export const translations = {
   resetMomery: createMultilingualText('重置记忆', 'Reset Momery'),
   generateDiagnosis: createMultilingualText('生成诊断', 'Generate Diagnosis'),
   uploadFile: createMultilingualText('上传文件', 'Upload File'),
-  featureNotImplemented: createMultilingualText('多模态交互功能尚未实现，敬请期待', 'Multi-modal interaction feature is not yet implemented, stay tuned'),
+  featureNotImplemented: createMultilingualText('功能尚未实现，敬请期待', 'This Feature is not yet implemented, stay tuned'),
   
   // Doctor Selection
   selectDoctor: createMultilingualText('医生模型', 'Doctor Model'),
@@ -85,4 +85,15 @@ export const translations = {
   errorTitle: createMultilingualText('错误', 'Error'),
   networkError: createMultilingualText('网络错误，请稍后再试或使用 VPN', 'Network error, please try again later or use a VPN'),
   apiError: createMultilingualText('服务器错误，请稍后再试', 'Server error, please try again later'),
+
+  // Upload files
+  selectFile: createMultilingualText('选择文件', 'Select File'),
+  fileDescription: createMultilingualText('文件描述', 'File Description'),
+  confirm: createMultilingualText('确认', 'Confirm'),
+  cancel: createMultilingualText('取消', 'Cancel'),
+  unsupportedFileType: createMultilingualText('不支持的文件类型', 'Unsupported file type'),
+  noFileSelected: createMultilingualText('请选择文件', 'Please select a file first'),
+  uploadFailed: createMultilingualText('文件上传失败', 'File upload failed'),
+  uploading: createMultilingualText('上传中...', 'Uploading...'),
+  noDescription: createMultilingualText('（无描述）', '(No description)'),
 };
