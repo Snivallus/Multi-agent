@@ -190,7 +190,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const sendRequest = async (
     message: string, 
     shouldDisplayMessage: boolean = true,
-    timeoutDuration: number = 30 // 默认 30 秒倒计时
+    timeoutDuration: number = 180 // 默认 30 秒倒计时
   ) => {
     if (isWaiting) return;  // 如果已经在等待状态，直接返回
 
