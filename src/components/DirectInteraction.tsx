@@ -192,7 +192,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     shouldDisplayMessage: boolean = true,
     timeoutDuration: number = 30 // 默认 30 秒倒计时
   ) => {
-    if (isWaiting) return;
+    if (isWaiting) return;  // 如果已经在等待状态，直接返回
 
     // 重置请求状态
     requestStateRef.current = {
@@ -368,7 +368,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     sendRequest(inputText);
   };
 
-  const handleGeneratediagnosis = () => {
+  const handleGenerateDiagnosis = () => {
+    console.log("Generating diagnosis...");
+    if (isWaiting) return; // 防止重复点击
     // Send special message "<生成诊断>" to backend without displaying it in the UI
     sendRequest("<生成诊断>", false, 180); // 此时倒计时设为 180 s
   };
@@ -546,13 +548,13 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           <div className="flex items-center gap-4">
             {/* End Consultation button */}
             <button
-              onClick={handleGeneratediagnosis}
+              onClick={handleGenerateDiagnosis}
               className="p-2 px-4 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
               aria-label="End Consultation"
               disabled={isWaiting}
             >
               <CheckSquare className="h-5 w-5" />
-              <span>{getText(translations.generatediagnosis, language)}</span>
+              <span>{getText(translations.generateDiagnosis, language)}</span>
             </button>
             {/* Upload File button */}
             <button
