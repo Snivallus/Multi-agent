@@ -180,11 +180,11 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }));
   };
 
-  // 收到第一个chunk时停止倒计时
-  const requestState = {
-    hasReceivedFirstChunk: false,
+  // 跟踪请求状态
+  const requestStateRef = useRef({
+    hasReceivedFirstChunk: false, // 收到第一个chunk时停止倒计时
     isAborted: false
-  };
+  });
 
   // Function to send request to the backend
   const sendRequest = async (
@@ -193,6 +193,12 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     timeoutDuration: number = 30 // 默认 30 秒倒计时
   ) => {
     if (isWaiting) return;
+
+    // 重置请求状态
+    requestStateRef.current = {
+      hasReceivedFirstChunk: false,
+      isAborted: false
+    };
 
     // Add user message to the conversation if it should be displayed
     if (shouldDisplayMessage) {
@@ -231,7 +237,8 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
 
     // Set up timeout for the request
     const timeoutId = setTimeout(() => {
-      if (!requestState.hasReceivedFirstChunk && !requestState.isAborted) {
+      if (!requestStateRef.current.hasReceivedFirstChunk 
+          && !requestStateRef.current.isAborted) {
         abortControllerRef.current.abort();
         setIsWaiting(false);
         setCountdown(null);
@@ -240,7 +247,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           description: '请求超时',
           variant: 'destructive'
         });
-        requestState.isAborted = true;
+        requestStateRef.current.isAborted = true;
       }
     }, timeoutDuration * 1000); // `timeoutDuration` seconds timeout
 
@@ -298,8 +305,8 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           if (done) break;
 
           // 首次收到数据时停止倒计时
-          if (!requestState.hasReceivedFirstChunk) {
-            requestState.hasReceivedFirstChunk = true;
+          if (!requestStateRef.current.hasReceivedFirstChunk) {
+            requestStateRef.current.hasReceivedFirstChunk = true;
             // 使用函数式更新确保获取最新状态
             setCountdown((prevCountdown) => {
               if (prevCountdown !== null) {
@@ -588,7 +595,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
            ))}
 
           {/* Show waiting message if waiting for response */}
-          {isWaiting && !requestState.hasReceivedFirstChunk && (
+          {isWaiting && !requestStateRef.current.hasReceivedFirstChunk && (
             <div className="text-center py-4 text-gray-500">
               <p>
                 {getText(translations.waitingForResponse, language)}
