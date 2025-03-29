@@ -95,5 +95,6 @@ export const translations = {
   noFileSelected: createMultilingualText('请选择文件', 'Please select a file first'),
   uploadFailed: createMultilingualText('文件上传失败', 'File upload failed'),
   uploading: createMultilingualText('上传中...', 'Uploading...'),
-  noDescription: createMultilingualText('（无描述）', '(No description)'),
+  noDescription: createMultilingualText('(无描述)', '(No description)'),
+  inspectionResult: createMultilingualText('检查结果', 'Inspection Result'), 
 };

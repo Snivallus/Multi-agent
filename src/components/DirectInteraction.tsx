@@ -29,6 +29,7 @@ interface MessageType {
     url: string;   // 预览URL
     name: string;  // 文件名
   };
+  images?: string[]; // 图片数组字段
 }
 
 /**
@@ -167,6 +168,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         const parsedData = tryParseJSON(rawText);
         let newReasoning = message.reasoning_content || ''
         let newContent = message.content || '';
+        let images = message.images || [];
 
         // 处理 reasoning_content 累加
         if (parsedData?.reasoning_content) {
@@ -176,14 +178,20 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         // 处理 content 直接替换（只在有更新时替换）
         if (parsedData?.content !== undefined) {
           newContent = parsedData.content;
-        }       
-          // JSON format with reasoning_content and content
-          return {
-            ...message,
-            reasoning_content: newReasoning,
-            content: newContent,
-            rawText: rawText
-          };
+        }
+
+        if (parsedData?.images) {
+          images = [...images, ...parsedData.images]; // 合并历史图片和新图片
+        }
+        
+        // JSON format with reasoning_content, content and images
+        return {
+          ...message,
+          reasoning_content: newReasoning,
+          content: newContent,
+          rawText: rawText,
+          images: images,
+        };
       }  
       return message;
     }));
@@ -418,7 +426,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     const file = e.target.files?.[0];
     if (file) {
       // 验证文件类型
-      const allowedExtensions = ['jpg', 'jpeg', 'png', 'webm'];
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'webm', 'npz'];
       const extension = file.name.split('.').pop()?.toLowerCase();
       if (!extension || !allowedExtensions.includes(extension)) {
         toast({
@@ -473,7 +481,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       // 添加医生消息并立即关闭弹窗
       const messageId = uuidv4();
       setMessages(prev => [...prev, {
-        role: 'doctor',
+        role: 'reporter',
         content: '',
         reasoning_content: '',
         isStreaming: true,
@@ -539,28 +547,25 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             
             {/* 文件展示区域 */}
             {message.file && (
-              <div className="mt-2"> {/* 移除ml-12，通过父容器对齐 */}
-                <div className="relative group">
-                  {/* 图片预览 */}
-                  <img
-                    src={message.file.url}
-                    alt={message.file.name}
-                    className="rounded-lg border-2 border-medical-blue/20 object-contain bg-white shadow-sm transition-all
-                            hover:border-medical-blue/30 hover:shadow-md"
-                    style={{ 
-                      maxWidth: 'min(100%, 400px)', // 响应式宽度限制
-                      maxHeight: '400px',
-                    }}
-                  />
-                  
-                  {/* 文件信息 */}
-                  <div className="absolute bottom-2 left-2 right-2 bg-white/90 backdrop-blur-sm p-2 rounded-md 
-                                text-xs text-gray-600 opacity-0 group-hover:opacity-100 transition-opacity
-                                flex justify-between items-center shadow-sm">
-                    <span className="truncate">{message.file.name}</span>
+            <div className="mt-2">
+              <div className="relative group">
+                {/* 增加文件类型判断 */}
+                {['jpg', 'jpeg', 'png', 'webm'].includes(message.file.name.split('.').pop()?.toLowerCase() || '')
+                ? (
+                    <img
+                      src={message.file.url}
+                      alt={message.file.name}
+                      className="rounded-lg border-2 border-medical-blue/20 object-contain bg-white shadow-sm transition-all hover:border-medical-blue/30 hover:shadow-md"
+                      style={{ maxWidth: 'min(100%, 400px)', maxHeight: '400px' }}
+                    />
+                  ) 
+                : (
+                  <div className="p-4 bg-gray-100 rounded-lg">
+                    <span className="text-sm text-gray-600">{message.file.name}</span>
                   </div>
-                </div>
+                  )}
               </div>
+            </div>
             )}
           </div>
         </div>
@@ -569,14 +574,33 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       // Doctor message with reasoning and content
       return (
         <div className="mb-8">
-          {/* Doctor Avatar and Name */}
+          {/* Doctor/Reporter Avatar and Name */}
           <div className="flex items-center mb-2">
-            <div className="h-8 w-8 rounded-full bg-medical-blue text-white flex items-center justify-center mr-2">
-              D
-            </div>
-            <div className="text-medical-blue font-medium">
-              {getText(translations.doctor, language)}
-            </div>
+            {message.role === 'reporter' 
+              ? (
+                <div className="h-8 w-8 rounded-full bg-medical-green 
+                  text-white flex items-center justify-center mr-2">
+                  R
+                </div>
+                ) 
+              : (
+                <div className="h-8 w-8 rounded-full bg-medical-blue text-white flex items-center justify-center mr-2">
+                  D
+                </div>
+            )}
+
+            {message.role === 'reporter' 
+              ? (
+                <div className="text-medical-green font-medium">
+                  {getText(translations.reporter, language)}
+                </div>
+                ) 
+              : (
+                <div className="text-medical-blue font-medium">
+                  {getText(translations.doctor, language)}
+                </div>
+            )}
+            
             {message.isStreaming && (
               <div className="flex space-x-1 ml-2">
                 <div className="h-2 w-2 bg-gray-400 rounded-full animate-pulse" />
@@ -585,6 +609,20 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               </div>
             )}
           </div>
+
+          {/* 图片渲染逻辑 */}
+          {message.images && message.images.length > 0 && (
+            <div className="mt-4 grid grid-cols-2 gap-4">
+              {message.images.map((imgUrl, index) => (
+                <img
+                  key={index}
+                  src={imgUrl}
+                  alt={`检查结果 ${index + 1}`}
+                  className="rounded-lg border-2 border-medical-green/20 object-cover"
+                />
+              ))}
+            </div>
+          )}
 
           {/* Reasoning Content (displayed as blockquote) */}
           {message.reasoning_content && (
@@ -889,7 +927,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             hidden
             ref={fileInputRef}
             onChange={handleFileSelect}
-            accept=".jpg,.jpeg,.png,.webm"
+            accept=".jpg,.jpeg,.png,.webm,.npz"
           />
 
           <button
