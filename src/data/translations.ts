@@ -97,4 +97,6 @@ export const translations = {
   uploading: createMultilingualText('上传中...', 'Uploading...'),
   noDescription: createMultilingualText('(无描述)', '(No description)'),
   inspectionResult: createMultilingualText('检查结果', 'Inspection Result'), 
+  scanResult: createMultilingualText('检查结果', 'Scan Result'),
+  medicalVolumeData: createMultilingualText('三维医学体数据', '3D Medical Volume Data'),
 };

@@ -1,5 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu, X } from 'lucide-react';
+import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu, X, Brain } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
@@ -119,11 +119,11 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   };
 
   // Auto-scroll to the bottom when messages change
-  useEffect(() => {
-    if (messagesEndRef.current) {
-      messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-    }
-  }, [messages]);
+  // useEffect(() => {
+  //   if (messagesEndRef.current) {
+  //     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
+  //   }
+  // }, [messages]);
 
   // Auto-resize textarea as content grows
   useEffect(() => {
@@ -340,9 +340,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         processStreamingContent(chunk, currentMessageId);
 
         // 添加滚动触发逻辑
-        requestAnimationFrame(() => {
-          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-        });
+        // requestAnimationFrame(() => {
+        //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
+        // });
       }
 
       // 标记流式消息结束
@@ -426,7 +426,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     const file = e.target.files?.[0];
     if (file) {
       // 验证文件类型
-      const allowedExtensions = ['jpg', 'jpeg', 'png', 'webm', 'npz'];
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'webm', 'npz', 'nii', 'gz'];
       const extension = file.name.split('.').pop()?.toLowerCase();
       if (!extension || !allowedExtensions.includes(extension)) {
         toast({
@@ -536,7 +536,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       return (
         <div className="mb-4 flex flex-col items-end"> {/* 改为右对齐容器 */}
           {/* 主内容容器 */}
-          <div className="max-w-[85%]"> {/* 限制最大宽度保持阅读舒适度 */}
+          <div className="max-w-[85%] w-fit min-w-[20%]"> {/* 新增 min-w 和 w-fit */}
             <DialogueBubble
               role={message.role}
               text={createMultilingualText(message.content, message.content)}
@@ -547,25 +547,30 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             
             {/* 文件展示区域 */}
             {message.file && (
-            <div className="mt-2">
-              <div className="relative group">
-                {/* 增加文件类型判断 */}
-                {['jpg', 'jpeg', 'png', 'webm'].includes(message.file.name.split('.').pop()?.toLowerCase() || '')
-                ? (
+              <div className="mt-2">
+                <div className="relative group">
+                  {['.nii', '.nii.gz'].some(ext => message.file?.name.endsWith(ext)) ? (
+                    <div className="p-4 bg-gradient-to-br from-blue-50 to-purple-50 rounded-lg border-2 border-dashed border-medical-blue/30">
+                      <div className="flex items-center gap-2">
+                        <Brain className="h-6 w-6 text-medical-blue"/>
+                        <span className="text-sm font-medium text-medical-blue">
+                          {getText(translations.medicalVolumeData, language)}
+                        </span>
+                      </div>
+                      <p className="mt-2 text-xs text-gray-600">
+                        {message.file.name}
+                      </p>
+                    </div>
+                  ) : (
                     <img
                       src={message.file.url}
                       alt={message.file.name}
                       className="rounded-lg border-2 border-medical-blue/20 object-contain bg-white shadow-sm transition-all hover:border-medical-blue/30 hover:shadow-md"
                       style={{ maxWidth: 'min(100%, 400px)', maxHeight: '400px' }}
                     />
-                  ) 
-                : (
-                  <div className="p-4 bg-gray-100 rounded-lg">
-                    <span className="text-sm text-gray-600">{message.file.name}</span>
-                  </div>
                   )}
+                </div>
               </div>
-            </div>
             )}
           </div>
         </div>
@@ -609,20 +614,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               </div>
             )}
           </div>
-
-          {/* 图片渲染逻辑 */}
-          {message.images && message.images.length > 0 && (
-            <div className="mt-4 grid grid-cols-2 gap-4">
-              {message.images.map((imgUrl, index) => (
-                <img
-                  key={index}
-                  src={imgUrl}
-                  alt={`检查结果 ${index + 1}`}
-                  className="rounded-lg border-2 border-medical-green/20 object-cover"
-                />
-              ))}
-            </div>
-          )}
 
           {/* Reasoning Content (displayed as blockquote) */}
           {message.reasoning_content && (
@@ -683,6 +674,38 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
                   {message.content}
                 </ReactMarkdown>
               </div>
+            </div>
+          )}
+
+          {/* 图片渲染逻辑 */}
+          {message.images && message.images.length > 0 && (
+            <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              {message.images.map((imgData, index) => {
+                // 自动识别图片类型
+                const isJPEG = imgData.startsWith("data:image/jpeg")
+                const isPNG = imgData.startsWith("data:image/png")
+                
+                return (
+                  <div 
+                    key={index}
+                    className="relative group aspect-square rounded-lg overflow-hidden shadow-md hover:shadow-lg transition-shadow"
+                  >
+                    <img
+                      src={imgData}
+                      alt={getText(translations.scanResult, language) + (index + 1)}
+                      className={`w-full h-full object-cover ${
+                        isJPEG ? 'bg-gray-100' : 'bg-white'
+                      }`}
+                      loading="lazy"
+                    />
+                    
+                    {/* 图片类型标识 */}
+                    <div className="absolute bottom-2 right-2 bg-black/80 text-white px-2 py-1 rounded-md text-xs">
+                      {isJPEG ? '3D' : isPNG ? '2D' : 'IMG'}
+                    </div>
+                  </div>
+                )
+              })}
             </div>
           )}
 
@@ -927,7 +950,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             hidden
             ref={fileInputRef}
             onChange={handleFileSelect}
-            accept=".jpg,.jpeg,.png,.webm,.npz"
+            accept=".jpg,.jpeg,.png,.webm,.npz,.nii,.gz"
           />
 
           <button
