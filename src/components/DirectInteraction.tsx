@@ -646,37 +646,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             </div>
           )}
 
-          {/* Main Content */}
-          {message.content && (
-            <div className="bg-white rounded-lg border border-gray-200 p-4">
-              <div className="prose prose-sm max-w-none">
-                <ReactMarkdown
-                  remarkPlugins={[remarkGfm]}  // 添加 GFM 支持
-                  components={{
-                    h2: ({ node, ...props }) => (
-                      <h2 className="text-xl font-bold mt-6 mb-3 border-b pb-1" {...props} />
-                    ),
-                    h3: ({ node, ...props }) => (
-                      <h3 className="text-lg font-semibold mt-4 mb-2" {...props} />
-                    ),
-                    hr: () => <hr className="border-t border-gray-300 my-4" />,
-                    ul: ({ node, ...props }) => (
-                      <ul className="list-disc pl-6 my-2" {...props} />
-                    ),
-                    ol: ({ node, ...props }) => (
-                      <ol className="list-decimal pl-6 my-2" {...props} />
-                    ),
-                    li: ({ node, ...props }) => (
-                      <li className="mb-1" {...props} />
-                    ),
-                  }}
-                >
-                  {message.content}
-                </ReactMarkdown>
-              </div>
-            </div>
-          )}
-
           {/* 图片渲染逻辑 */}
           {message.images && message.images.length > 0 && (
             <div className="mt-4 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
@@ -706,6 +675,37 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
                   </div>
                 )
               })}
+            </div>
+          )}
+
+          {/* Main Content */}
+          {message.content && (
+            <div className="bg-white rounded-lg border border-gray-200 p-4">
+              <div className="prose prose-sm max-w-none">
+                <ReactMarkdown
+                  remarkPlugins={[remarkGfm]}  // 添加 GFM 支持
+                  components={{
+                    h2: ({ node, ...props }) => (
+                      <h2 className="text-xl font-bold mt-6 mb-3 border-b pb-1" {...props} />
+                    ),
+                    h3: ({ node, ...props }) => (
+                      <h3 className="text-lg font-semibold mt-4 mb-2" {...props} />
+                    ),
+                    hr: () => <hr className="border-t border-gray-300 my-4" />,
+                    ul: ({ node, ...props }) => (
+                      <ul className="list-disc pl-6 my-2" {...props} />
+                    ),
+                    ol: ({ node, ...props }) => (
+                      <ol className="list-decimal pl-6 my-2" {...props} />
+                    ),
+                    li: ({ node, ...props }) => (
+                      <li className="mb-1" {...props} />
+                    ),
+                  }}
+                >
+                  {message.content}
+                </ReactMarkdown>
+              </div>
             </div>
           )}
 
