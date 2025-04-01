@@ -426,7 +426,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     const file = e.target.files?.[0];
     if (file) {
       // 验证文件类型
-      const allowedExtensions = ['jpg', 'jpeg', 'png', 'webm', 'npz', 'nii', 'gz'];
+      const allowedExtensions = ['jpg', 'jpeg', 'png', 'webp', 'npz', 'nii', 'gz'];
       const extension = file.name.split('.').pop()?.toLowerCase();
       if (!extension || !allowedExtensions.includes(extension)) {
         toast({
@@ -652,7 +652,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
               {message.images.map((imgData, index) => {
                 // 自动识别图片类型
                 const isJPEG = imgData.startsWith("data:image/jpeg")
-                const isPNG = imgData.startsWith("data:image/png")
+                const isWEBP = imgData.startsWith("data:image/webp")
                 
                 return (
                   <div 
@@ -670,7 +670,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
                     
                     {/* 图片类型标识 */}
                     <div className="absolute bottom-2 right-2 bg-black/80 text-white px-2 py-1 rounded-md text-xs">
-                      {isJPEG ? '3D' : isPNG ? '2D' : 'IMG'}
+                      {isJPEG ? '3D' : isWEBP ? '2D' : 'IMG'}
                     </div>
                   </div>
                 )
@@ -950,7 +950,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
             hidden
             ref={fileInputRef}
             onChange={handleFileSelect}
-            accept=".jpg,.jpeg,.png,.webm,.npz,.nii,.gz"
+            accept=".jpg,.jpeg,.png,.webp,.npz,.nii,.gz"
           />
 
           <button
