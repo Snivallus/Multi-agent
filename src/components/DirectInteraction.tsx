@@ -504,9 +504,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         processStreamingContent(chunk, messageId);
         
         // 滚动到底部
-        requestAnimationFrame(() => {
-          messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        });
+        // requestAnimationFrame(() => {
+        //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+        // });
       }
 
       // 更新消息状态
