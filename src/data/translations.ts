@@ -1,6 +1,5 @@
 
-import { MultilingualText, createMultilingualText } from '@/types/language';
-import { generateCategoricalChart } from 'recharts/types/chart/generateCategoricalChart';
+import { createMultilingualText } from '@/types/language';
 
 // UI translations for the entire application
 export const translations = {
@@ -15,7 +14,136 @@ export const translations = {
   ),
   selectCaseButton: createMultilingualText('选择案例', 'Select a Case Study'),
   directInteractionButton: createMultilingualText('直接交互', 'Direct Interaction'),
-  clickToStartHint: createMultilingualText('点击案例开始模拟', 'Click on a case to start the simulation'),
+  
+  // Case selection
+  selectCase: createMultilingualText('选择案例', 'Select a Case Study'),
+ clickToStartHint: createMultilingualText('点击案例开始模拟', 'Click on a case to start the simulation'),
+  searchCasesPlaceholder: createMultilingualText(
+    '按标题、描述和原始文本搜索案例...',
+    'Search cases by title, description and original text...'
+  ),
+  noCasesFound: createMultilingualText(
+    '未找到匹配您搜索条件的案例',
+    'No case found matching your search criteria'
+  ),
+  accuracyHead: createMultilingualText(
+    '准确率: ',
+    'Accuracy: '
+  ),
+  loadingCases: createMultilingualText(
+    '正在加载病例...',
+    'Loading cases...'
+  ),
+  prevPage: createMultilingualText(
+    '上一页',
+    'Previous'
+  ),
+  nextPage: createMultilingualText(
+    '下一页',
+    'Next'
+  ),
+  editablePagePrefix: createMultilingualText(
+    '第',
+    'Page'
+  ),
+  editablePageMidwords: createMultilingualText(
+    '页, 共 ',
+    'of '
+  ),
+  editablePageSuffix: createMultilingualText(
+    ' 页',
+    ' '
+  ),
+
+  // Question Type Mapping
+  questionType: createMultilingualText(
+    '问题类型',
+    'Question Type'
+  ),
+  allOptions: createMultilingualText(
+    '全部',
+    'All'
+  ),
+  questionTypeReasoning: createMultilingualText(
+    '推理',
+    'Reasoning'
+  ),
+  questionTypeUnderstanding: createMultilingualText(
+    '理解',
+    'Understanding'
+  ),
+
+  // Medical Task Mapping
+  medicalTask: createMultilingualText(
+    '医学任务',
+    'Medical Task'
+  ),
+  medicalTaskTreating: createMultilingualText(
+    '治疗',
+    'Treating'
+  ),
+  medicalTaskBasicScience: createMultilingualText(
+    '基础科学',
+    'Basic Science'
+  ),
+  medicalTaskDiagnosis: createMultilingualText(
+    '诊断',
+    'Diagnosis'
+  ),
+
+  // Body System Mapping
+  bodySystem: createMultilingualText(
+    '身体系统',
+    'Body System'
+  ),
+  bodySystemSkeletal: createMultilingualText(
+    '骨骼',
+    'Skeletal'
+  ),
+  bodySystemReproductive: createMultilingualText(
+    '生殖',
+    'Reproductive'
+  ),
+  bodySystemCardiovascular: createMultilingualText(
+    '心血管',
+    'Cardiovascular'
+  ),
+  bodySystemMuscular: createMultilingualText(
+    '肌肉',
+    'Muscular'
+  ),
+  bodySystemLymphatic: createMultilingualText(
+    '淋巴',
+    'Lymphatic'
+  ),
+  bodySystemNervous: createMultilingualText(
+    '神经',
+    'Nervous'
+  ),
+  bodySystemOtherNA: createMultilingualText(
+    '其他/缺失',
+    'Other/NA'
+  ),
+  bodySystemDigestive: createMultilingualText(
+    '消化',
+    'Digestive'
+  ),
+  bodySystemUrinary: createMultilingualText(
+    '泌尿',
+    'Urinary'
+  ),
+  bodySystemRespiratory: createMultilingualText(
+    '呼吸',
+    'Respiratory'
+  ),
+  bodySystemEndocrine: createMultilingualText(
+    '内分泌',
+    'Endocrine'
+  ),
+  bodySystemIntegumentary: createMultilingualText(
+    '皮肤',
+    'Integumentary'
+  ),
   
   // Direct Interaction
   directInteractionTitle: createMultilingualText('直接交互', 'Direct Interaction'),
@@ -46,17 +174,6 @@ export const translations = {
   browserNotSupported: createMultilingualText('您的浏览器不支持语音识别, 请使用 Chrome 浏览器', 'Your browser does not support speech recognition. Please use the Chrome browser.'),
   webSpeechAPIError: createMultilingualText('Web Speech API 通讯错误, 请更换 VPN 或使用 Chrome 浏览器', 'Web Speech API communication error, please change VPN or use the Chrome brower.'),
   genericError: createMultilingualText('发生未知错误, 请稍后再试', 'An unknown error occurred, please try again later'),
-
-  // Case selection
-  selectCase: createMultilingualText('选择案例', 'Select a Case Study'),
-  searchCasesPlaceholder: createMultilingualText(
-    '按标题、描述、类别或标签搜索案例...',
-    'Search cases by title, description, category, or tags...'
-  ),
-  noCasesFound: createMultilingualText(
-    '未找到匹配您搜索条件的案例',
-    'No cases found matching your search criteria'
-  ),
   
   // Dialogue simulation
   resetDialogue: createMultilingualText('重置对话', 'Reset dialogue'),
@@ -71,15 +188,12 @@ export const translations = {
   nextLine: createMultilingualText('&rarr;: 下一句', '&rarr;: Next'),
   copybutton: createMultilingualText('复制', 'Copy'),
   
-  // Difficulty levels
-  easy: createMultilingualText('简单', 'Easy'),
-  medium: createMultilingualText('中等', 'Medium'),
-  hard: createMultilingualText('困难', 'Hard'),
-  
   // Roles
   doctor: createMultilingualText('医生', 'Doctor'),
   patient: createMultilingualText('患者', 'Patient'),
   reporter: createMultilingualText('检查员', 'Reporter'),
+  monitor: createMultilingualText('监督员', 'Monitor'),
+  summary_doctor: createMultilingualText('总结医生', 'Summary Doctor'),
 
   // Error messages
   errorTitle: createMultilingualText('错误', 'Error'),
