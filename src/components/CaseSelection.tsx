@@ -7,8 +7,8 @@ import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import { cn } from '@/lib/utils';
 import config from '@/config'; // API base URL
-// Navigate to case simulation by clicking a case card
-import { useNavigate } from 'react-router-dom';
+// Navigate to dialogue simulation by clicking a case card
+import { useNavigate, useLocation } from 'react-router-dom';
 
 // Mapping
 const QUESTION_TYPE_MAP: Record<number, MultilingualText> = {
@@ -37,6 +37,15 @@ const BODY_SYSTEM_MAP: Record<number, MultilingualText> = {
   12: translations.bodySystemIntegumentary,
 };
 
+interface CaseSelectionLocationState {
+  // 这些字段会从上一次的 location.state 中恢复
+  searchQuery?: string;
+  page?: number;
+  selectedQuestionTypes?: number[];
+  selectedMedicalTasks?: number[];
+  selectedBodySystems?: number[];
+}
+
 interface CaseSelectionProps {
   onBack: () => void;
   language: Language;
@@ -44,24 +53,34 @@ interface CaseSelectionProps {
 
 /**
  * Component for displaying and selecting from available medical cases
- * Includes search functionality and displays cases in a grid
+ * Includes search functionality and displays cases in a grid.
+ * Click a card will navigate to DialogueSimulation page.
+ * 此时会把搜索框文字、页码、筛选条件、language 也一并放到 location.state 里.
+ * 当用户在 DialogueSimulation 点击 “Go back” 并 navigate(-1) 返回时,
+ * CaseSelection 会读一次 location.state 来还原 previous state,
+ * 从而实现“返回”后保留各项输入.
  */
 const CaseSelection: React.FC<CaseSelectionProps> = ({ onBack, language }) => {
-  const navigate = useNavigate(); // Navigate to case simulation by clicking a case card
-  const [searchQuery, setSearchQuery] = useState('');
-  const [cases, setCases] = useState<MedicalCase[]>([]);
-  const [page, setPage] = useState(1);
+  const navigate = useNavigate(); // Navigate to dialogue simulation by clicking a case card
+  const location = useLocation(); // Restore states when coming back from a dialogue simulation page 
+  // 如果是从 DialogueSimulation 返回, 这里能拿回上一轮存的那几个字段
+  const locState = (location.state || {}) as CaseSelectionLocationState;
+
+  // 在 useState 初始化时, 优先从 locState 里恢复, 否则用默认值
+  const [searchQuery, setSearchQuery] = useState<string>(locState.searchQuery ?? '');
+  const [page, setPage] = useState<number>(locState.page ?? 1);
   const [totalPages, setTotalPages] = useState(0);
   const [totalCases, setTotalCases] = useState(0);
+  const [cases, setCases] = useState<MedicalCase[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   // 用于可编辑页码的本地输入状态
-  const [inputPage, setInputPage] = useState<string>(String(page));
+  const [inputPage, setInputPage] = useState<string>(String(locState.page ?? 1));
 
   // 筛选条件状态
-  const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<number[]>([]);
-  const [selectedMedicalTasks, setSelectedMedicalTasks] = useState<number[]>([]);
-  const [selectedBodySystems, setSelectedBodySystems] = useState<number[]>([]);
+  const [selectedQuestionTypes, setSelectedQuestionTypes] = useState<number[]>(locState.selectedQuestionTypes ?? []);
+  const [selectedMedicalTasks, setSelectedMedicalTasks] = useState<number[]>(locState.selectedMedicalTasks ?? []);
+  const [selectedBodySystems, setSelectedBodySystems] = useState<number[]>(locState.selectedBodySystems ?? []);
 
   // 控制下拉菜单展开/收起
   const [qtOpen, setQtOpen] = useState(false);
@@ -151,7 +170,7 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onBack, language }) => {
     };
 
     fetchCases();
-    // 每次 page 改变时，也把输入框的值同步
+    // 每次 page 改变时, 也把输入框的值同步
     setInputPage(String(page));
   }, [
     searchQuery, 
@@ -223,11 +242,20 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onBack, language }) => {
   };
 
   // Handle dialogue selection
-  // 点击卡片时, 调用 navigate 跳转到 dialogue_simulation 页面, 并把 patient_id 传到 URL
+  // 点击卡片时, 调用 navigate 跳转到 dialogue_simulation 页面, 并把 patient_id 传到 URL.
   const handleCaseClick = (caseItem: MedicalCase) => {
     navigate(
       `/database/dialogue_simulation/${caseItem.patient_id}`,
-      { state: { language } }
+      { 
+        state: { 
+          language,
+          searchQuery,
+          page,
+          selectedQuestionTypes,
+          selectedMedicalTasks,
+          selectedBodySystems,
+        }
+      }
     );
   };
   
@@ -241,7 +269,7 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onBack, language }) => {
     if (page < totalPages) setPage(page + 1);
   };
 
-  // 当用户在输入框中敲回车或失去焦点时，验证并跳转
+  // 当用户在输入框中敲回车或失去焦点时, 验证并跳转
   const commitInputPage = () => {
     const num = Number(inputPage.trim());
     if (!Number.isNaN(num)) {
@@ -253,7 +281,7 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onBack, language }) => {
         setPage(num);
       }
     }
-    // 如果非数字，则保持当前 page，不做改变
+    // 如果非数字，则保持当前 page, 不做改变
     setInputPage(String(page));
   };
 
