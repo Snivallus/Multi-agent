@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DialogueBubble from './DialogueBubble';
-import { ArrowLeft, Play, Pause, FastForward, RotateCcw, Rewind, Menu, X } from 'lucide-react';
+import { ArrowLeft, Play, Pause, FastForward, RotateCcw, Rewind, Menu, X} from 'lucide-react';
 import { Language, getText, MultilingualText } from '@/types/language';
 import { translations } from '@/data/translations';
 import ReactMarkdown from 'react-markdown';
@@ -111,6 +111,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
   // Auto scroll
   const containerRef = useRef<HTMLDivElement>(null);
   const lastBubbleRef = useRef<HTMLDivElement>(null);
+  // 记录当前“放大”的图片索引 (null 代表没有放大任何图片)
+  const [zoomedIndex, setZoomedIndex] = useState<number | null>(null);
 
   // Fetch case + versions from backend on mount or when patient_id changes
   useEffect(() => {
@@ -365,7 +367,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
           <div className="max-w-3xl mx-auto space-y-4">
             {/* Original Question */}
             <div>
-              <h3 className="text-sm font-medium text-gray-700">
+              <h3 className="font-bold uppercase text-gray-700">
                 {getText(translations.originalQuestion, language)}
               </h3>
               <p className="mt-1 text-gray-800 whitespace-pre-wrap">
@@ -374,7 +376,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
             </div>
             {/* Question Background */}
             <div>
-              <h3 className="text-sm font-medium text-gray-700">
+              <h3 className="font-bold uppercase text-gray-700">
                 {getText(translations.questionBackground, language)}
               </h3>
               <p className="mt-1 text-gray-800 whitespace-pre-wrap">
@@ -383,7 +385,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
             </div>
             {/* Patient Profile */}
             <div>
-              <h3 className="text-sm font-medium text-gray-700">
+              <h3 className="font-bold uppercase text-gray-700">
                 {getText(translations.patientProfile, language)}
               </h3>
               <p className="mt-1 text-gray-800 whitespace-pre-wrap">
@@ -392,40 +394,68 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
             </div>
             {/* Examination */}
             <div>
-              <h3 className="text-sm font-medium text-gray-700">
+              <h3 className="font-bold uppercase text-gray-700">
                 {getText(translations.examination, language)}
               </h3>
               <p className="mt-1 text-gray-800 whitespace-pre-wrap">
                 {getText(examinationText, language)}
               </p>
             </div>
+            {/* 渲染 Base64 图片 (点击放大/恢复) */}
+            {imagesBase64.length > 0 && (
+              <div>
+                <h3 className="font-bold uppercase text-gray-700">
+                  {getText(translations.images, language)}
+                </h3>
+                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
+                  {imagesBase64.map((b64, idx) => {
+                    // 计算“A”、“B”等字母
+                    const letter = String.fromCharCode(65 + idx);
+                    const prefix = language === 'zh' ? '图' : 'Fig.';
+                    const caption = `${prefix} ${letter}`;
+
+                    return (
+                      <figure key={idx} className="space-y-1">
+                        <img
+                          // 点击图片时，如果当前就是这个索引，就收起 (置 null)，否则放大 (设为 idx)
+                          onClick={() => setZoomedIndex(idx === zoomedIndex ? null : idx)}
+                          src={`data:image/jpeg;base64,${b64}`}
+                          alt={`Image ${idx + 1}`}
+                          className="w-full h-auto rounded-md shadow-sm object-cover cursor-pointer"
+                        />
+                        <figcaption className="text-xs italic text-gray-600 text-center">
+                          {caption}
+                        </figcaption>
+                      </figure>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
+
+            {/* 如果 zoomedIndex !== null，就在最上层渲染一个“放大”层 */}
+            {zoomedIndex !== null && (
+              <div
+                className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50"
+                onClick={() => setZoomedIndex(null)} // 点击遮罩任意处都恢复
+              >
+                <img
+                  src={`data:image/jpeg;base64,${imagesBase64[zoomedIndex]}`}
+                  alt={`Zoomed Image ${zoomedIndex + 1}`}
+                  className="max-w-[90vw] max-h-[90vh] rounded-md shadow-lg object-contain"
+                />
+              </div>
+            )}
+
             {/* Images Description */}
             <div>
-              <h3 className="text-sm font-medium text-gray-700">
+              <h3 className="font-bold uppercase text-gray-700">
                 {getText(translations.imagesDescription, language)}
               </h3>
               <p className="mt-1 text-gray-800 whitespace-pre-wrap">
                 {getText(imagesDescriptionText, language)}
               </p>
             </div>
-            {/* 渲染 Base64 图片 */}
-            {imagesBase64.length > 0 && (
-              <div>
-                <h3 className="text-sm font-medium text-gray-700">
-                  {getText(translations.images, language)}
-                </h3>
-                <div className="mt-2 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-                  {imagesBase64.map((b64, idx) => (
-                    <img
-                      key={idx}
-                      src={`data:image/jpeg;base64,${b64}`}
-                      alt={`Image ${idx + 1}`}
-                      className="w-full max-w-full h-auto rounded-md shadow-sm object-cover"
-                    />
-                  ))}
-                </div>
-              </div>
-            )}
             {/* Options & Ground Truth */}
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {(['A','B','C','D','E'] as const).map((optKey) => (

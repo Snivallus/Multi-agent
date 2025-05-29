@@ -168,6 +168,7 @@ export const translations = {
   patientProfile: createMultilingualText('患者信息', 'Patient Profile'),
   examination: createMultilingualText('检查结果', 'Examination'),
   images: createMultilingualText('图片', 'Images'),
+  image_name: createMultilingualText('图', 'Fig.'),
   imagesDescription: createMultilingualText('图片描述', 'Images Description'),
   answer: createMultilingualText('正确答案', 'Ground Truth'),
   tags: createMultilingualText('标签', 'Tags'),
