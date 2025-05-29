@@ -34,11 +34,6 @@ const DialogueSimulationWrapper: React.FC<DialogueSimulationWrapperProps> = ({
     return null;
   }
 
-  // 先决定：到底当前应该用哪个 language？
-  // a) 如果 location.state 里已经带了 language，就优先用它。
-  // b) 否则就使用从父组件传进来的 language
-  const langToUse: Language = location.state?.language ?? language;
-
   // “返回”就调用 navigate(-1)。React Router 会沿用之前的 CaseSelection 实例，
   // 也会带回 location.state 里之前的筛选/分页/语言等字段。
   const onBack = () => {
@@ -51,7 +46,7 @@ const DialogueSimulationWrapper: React.FC<DialogueSimulationWrapperProps> = ({
       <DialogueSimulation
         patientId={patientId}
         onBack={onBack}
-        language={langToUse}
+        language={language}
         toggleLanguage={toggleLanguage}
       />
     </>
