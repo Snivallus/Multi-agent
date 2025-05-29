@@ -37,8 +37,8 @@ const BODY_SYSTEM_MAP: Record<number, MultilingualText> = {
   12: translations.bodySystemIntegumentary,
 };
 
+// TODO: 让 Dialogue Simulation 回退到的是 Case Selection 界面, 而不是 Index 界面
 interface CaseSelectionLocationState {
-  // 这些字段会从上一次的 location.state 中恢复
   searchQuery?: string;
   page?: number;
   selectedQuestionTypes?: number[];
@@ -144,7 +144,7 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onBack, language }) => {
 
       const whereCondition = buildWhereCondition(); // 筛选条件
       try {
-        const resp = await fetch(`${config.apiBaseUrl}/database/case_selection`, {
+        const resp = await fetch(`${config.apiBaseUrl_1}/database/case_selection`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
@@ -241,7 +241,7 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onBack, language }) => {
     setSelectedBodySystems(arr);
   };
 
-  // Handle dialogue selection
+  // Handle case selection
   // 点击卡片时, 调用 navigate 跳转到 dialogue_simulation 页面, 并把 patient_id 传到 URL.
   const handleCaseClick = (caseItem: MedicalCase) => {
     navigate(

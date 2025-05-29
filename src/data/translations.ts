@@ -1,5 +1,6 @@
 
 import { createMultilingualText } from '@/types/language';
+import { Description } from '@radix-ui/react-toast';
 
 // UI translations for the entire application
 export const translations = {
@@ -175,6 +176,12 @@ export const translations = {
   options: createMultilingualText('选项', 'Options'),
   answer: createMultilingualText('正确答案', 'Ground Truth'),
   tags: createMultilingualText('标签', 'Tags'),
+  save: createMultilingualText('保存', 'Save'),
+  edit: createMultilingualText('编辑', 'Edit'),
+  EN: createMultilingualText('英文', 'EN'),
+  ZH: createMultilingualText('中文', 'ZH'),
+  title: createMultilingualText('标题', 'Title'),
+  description: createMultilingualText('描述', 'Description'),
 
   // Direct Interaction
   directInteractionTitle: createMultilingualText('直接交互', 'Direct Interaction'),

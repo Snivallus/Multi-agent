@@ -13,7 +13,7 @@ enum Step {
 
 /**
  * Main application component that manages app state and language selection
- * Controls navigation between landing page, case selection, and dialogue simulation
+ * Controls navigation between landing page, case selection, and direct interaction
  */
 const Index: React.FC = () => {
   // 当前是哪个“步骤”：落地页、案例选择页，还是直接交互页

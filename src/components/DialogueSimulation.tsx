@@ -1,6 +1,6 @@
 import React, { useState, useEffect, useRef } from 'react';
 import DialogueBubble from './DialogueBubble';
-import { ArrowLeft, Play, Pause, FastForward, RotateCcw, Rewind, Menu, X, ChevronDown, ChevronUp, Languages } from 'lucide-react';
+import { ArrowLeft, Play, Pause, FastForward, RotateCcw, Rewind, Menu, X, ChevronDown, ChevronUp } from 'lucide-react';
 import { Language, getText, MultilingualText } from '@/types/language';
 import { translations } from '@/data/translations';
 import ReactMarkdown from 'react-markdown';
@@ -121,11 +121,53 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
     setLanguage(prev => prev === 'zh' ? 'en' : 'zh');
   };
 
+  // 折叠控制
+  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // —— “编辑/保存” 相关状态 —— 
+  const [isEditing, setIsEditing] = useState(false);
+  const [titleEn, setTitleEn] = useState('');
+  const [titleZh, setTitleZh] = useState('');
+  const [descriptionEn, setDescriptionEn] = useState('');
+  const [descriptionZh, setDescriptionZh] = useState('');
+  const [originalQuestionEn, setOriginalQuestionEn] = useState('');
+  const [originalQuestionZh, setOriginalQuestionZh] = useState('');
+  const [questionBackgroundEn, setQuestionBackgroundEn] = useState('');
+  const [questionBackgroundZh, setQuestionBackgroundZh] = useState('');
+  const [patientProfileEn, setPatientProfileEn] = useState('');
+  const [patientProfileZh, setPatientProfileZh] = useState('');
+  const [examinationEn, setExaminationEn] = useState('');
+  const [examinationZh, setExaminationZh] = useState('');
+  const [imagesDescriptionEn, setImagesDescriptionEn] = useState('');
+  const [imagesDescriptionZh, setImagesDescriptionZh] = useState('');
+
+  // 当 fetchedCase 第一次拉回或变化时，初始化所有可编辑字段
+  useEffect(() => {
+    if (fetchedCase) {
+      const c = fetchedCase.case;
+      setTitleEn(c.title.en);
+      setTitleZh(c.title.zh);
+      setDescriptionEn(c.description.en);
+      setDescriptionZh(c.description.zh);
+      setOriginalQuestionEn(c.original_question.en);
+      setOriginalQuestionZh(c.original_question.zh);
+      setQuestionBackgroundEn(c.question_background.en);
+      setQuestionBackgroundZh(c.question_background.zh);
+      setPatientProfileEn(c.patient_profile.en);
+      setPatientProfileZh(c.patient_profile.zh);
+      setExaminationEn(c.examination.en);
+      setExaminationZh(c.examination.zh);
+      setImagesDescriptionEn(c.images_description.en);
+      setImagesDescriptionZh(c.images_description.zh);
+    }
+  }, [fetchedCase]);
+
   // Fetch case + versions from backend on mount or when patient_id changes
   useEffect(() => {
     const fetchCase = async () => {
       try {
-        const resp = await fetch(`${config.apiBaseUrl}/database/dialogue_simulation`, {
+        const resp = await fetch(`${config.apiBaseUrl_1}/database/dialogue_simulation`, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ patient_id: patientId }),
@@ -251,10 +293,6 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
     setIsPlaying(true);
   }, [selectedVersionIndex]);
 
-  // 折叠控制
-  const [detailsCollapsed, setDetailsCollapsed] = useState(false);
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
-
   // ———— 页面顶部要展示后端返回的各个字段 ————
   const caseInfo = fetchedCase?.case;
   // 防止 fetchedCase 还没回来时访问为 undefined
@@ -276,6 +314,46 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
   };
   const groundTruth = caseInfo?.ground_truth || '';
   const imagesBase64: string[] = caseInfo?.images || []; // 从后端拿到的 base64 数组
+
+  // —— 点击“保存”按钮：将所有可编辑字段发给后端 `${config.apiBaseUrl_1}/database/update` —— 
+  const handleSave = async () => {
+    if (!caseInfo) return;
+    const payload = {
+      patient_id: caseInfo.patient_id,
+      title: { en: titleEn, zh: titleZh },
+      description: { en: descriptionEn, zh: descriptionZh },
+      original_question: { en: originalQuestionEn, zh: originalQuestionZh },
+      question_background: { en: questionBackgroundEn, zh: questionBackgroundZh },
+      patient_profile: { en: patientProfileEn, zh: patientProfileZh },
+      examination: { en: examinationEn, zh: examinationZh },
+      images_description: { en: imagesDescriptionEn, zh: imagesDescriptionZh },
+    };
+
+    try {
+      const resp = await fetch(`${config.apiBaseUrl_1}/database/update`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+      if (!resp.ok) {
+        throw new Error(`HTTP ${resp.status}`);
+      }
+      // 保存成功后, 退出编辑模式, 并重新拉取最新数据
+      setIsEditing(false);
+
+      // 再次调用 dialogue_simulation 接口刷新
+      const fresh = await fetch(`${config.apiBaseUrl_1}/database/dialogue_simulation`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ patient_id: patientId }),
+      });
+      const freshData: FetchedCaseData = await fresh.json();
+      setFetchedCase(freshData);
+    } catch (err) {
+      console.error('保存失败：', err);
+      // TODO: 在此处显示错误提示给用户
+    }
+  };
 
   return (
     <div className="flex h-screen">
@@ -364,13 +442,77 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
               </button>
               <div className="min-w-0 flex-1">
                 {/* Title */}
-                <h2 className="text-xl font-semibold text-gray-800 truncate">
-                  {getText(titleText, language)}
-                </h2>
+                {isEditing ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        {getText(translations.title, language) 
+                        + 
+                        ` (${getText(translations.EN, language)})`}
+                      </label>
+                      <textarea
+                        value={titleEn}
+                        onChange={(e) => setTitleEn(e.target.value)}
+                        className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                        rows={1}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        {getText(translations.title, language) 
+                        + 
+                        ` (${getText(translations.ZH, language)})`}
+                      </label>
+                      <textarea
+                        value={titleZh}
+                        onChange={(e) => setTitleZh(e.target.value)}
+                        className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                        rows={1}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <h2 className="text-xl font-semibold text-gray-800 truncate">
+                    {getText(titleText, language)}
+                  </h2>
+                )}
+
                 {/* Description */}
-                <p className="mt-1 text-sm text-gray-600 line-clamp-2">
-                  {getText(descriptionText, language)}
-                </p>
+                {isEditing ? (
+                  <div className="mt-2 grid grid-cols-1 md:grid-cols-2 gap-2">
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        {getText(translations.description, language) 
+                        + 
+                        ` (${getText(translations.EN, language)})`}
+                      </label>
+                      <textarea
+                        value={descriptionEn}
+                        onChange={(e) => setDescriptionEn(e.target.value)}
+                        className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                        rows={2}
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs font-medium text-gray-700 mb-1">
+                        {getText(translations.description, language) 
+                        + 
+                        ` (${getText(translations.ZH, language)})`}
+                      </label>
+                      <textarea
+                        value={descriptionZh}
+                        onChange={(e) => setDescriptionZh(e.target.value)}
+                        className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                        rows={2}
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <p className="mt-2 text-sm text-gray-600 line-clamp-2">
+                    {getText(descriptionText, language)}
+                  </p>
+                )}
+
                 {/* Body System and Tags */}
                 <div className="mt-1 flex flex-wrap gap-4 text-sm text-gray-500">
                   <span>
@@ -400,6 +542,28 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                           mr-4"
               >
                 {getText(translations.toggleLanguage, language)}
+              </button>
+
+                            {/* 编辑/保存 按钮 */}
+              <button
+                onClick={() => {
+                  if (isEditing) {
+                    handleSave();
+                  } else {
+                    setIsEditing(true);
+                  }
+                }}
+                className={`
+                  px-4 py-2 rounded-full font-medium transition-colors duration-200
+                  ${isEditing
+                    ? 'bg-green-600 text-white hover:bg-green-700'
+                    : 'bg-blue-600 text-white hover:bg-blue-700'}
+                `}
+                title={
+                  isEditing ? getText(translations.save, language) : getText(translations.edit, language)
+                }
+              >
+                {isEditing ? getText(translations.save, language) : getText(translations.edit, language)}
               </button>
             </div>
           </div>
@@ -439,9 +603,36 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                     <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
                       {getText(translations.originalQuestion, language)}
                     </h3>
+                    {isEditing ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            {getText(translations.EN, language)}
+                          </label>
+                          <textarea
+                            value={originalQuestionEn}
+                            onChange={(e) => setOriginalQuestionEn(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                            rows={3}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            {getText(translations.ZH, language)}
+                          </label>
+                          <textarea
+                            value={originalQuestionZh}
+                            onChange={(e) => setOriginalQuestionZh(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                    ) : (
                     <p className="text-gray-800 whitespace-pre-wrap text-sm">
                       {getText(originalQuestionText, language)}
                     </p>
+                    )}
                   </div>
                   
                   {/* Question Background */}
@@ -449,9 +640,36 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                     <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
                       {getText(translations.questionBackground, language)}
                     </h3>
-                    <p className="text-gray-800 whitespace-pre-wrap text-sm">
-                      {getText(questionBackgroundText, language)}
-                    </p>
+                    {isEditing ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            {getText(translations.EN, language)}
+                          </label>
+                          <textarea
+                            value={questionBackgroundEn}
+                            onChange={(e) => setQuestionBackgroundEn(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                            rows={3}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            {getText(translations.ZH, language)}
+                          </label>
+                          <textarea
+                            value={questionBackgroundZh}
+                            onChange={(e) => setQuestionBackgroundZh(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-gray-800 whitespace-pre-wrap text-sm">
+                        {getText(questionBackgroundText, language)}
+                      </p>
+                    )}
                   </div>
                   
                   {/* Patient Profile */}
@@ -459,9 +677,36 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                     <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
                       {getText(translations.patientProfile, language)}
                     </h3>
-                    <p className="text-gray-800 whitespace-pre-wrap text-sm">
-                      {getText(patientProfileText, language)}
-                    </p>
+                    {isEditing ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            {getText(translations.EN, language)}
+                          </label>
+                          <textarea
+                            value={patientProfileEn}
+                            onChange={(e) => setPatientProfileEn(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                            rows={3}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            {getText(translations.ZH, language)}
+                          </label>
+                          <textarea
+                            value={patientProfileZh}
+                            onChange={(e) => setPatientProfileZh(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-gray-800 whitespace-pre-wrap text-sm">
+                        {getText(patientProfileText, language)}
+                      </p>
+                    )}
                   </div>
                   
                   {/* Examination */}
@@ -469,11 +714,75 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                     <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
                       {getText(translations.examination, language)}
                     </h3>
-                    <p className="text-gray-800 whitespace-pre-wrap text-sm">
-                      {getText(examinationText, language)}
-                    </p>
+                    {isEditing ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            {getText(translations.EN, language)}
+                          </label>
+                          <textarea
+                            value={examinationEn}
+                            onChange={(e) => setExaminationEn(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                            rows={3}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            {getText(translations.ZH, language)}
+                          </label>
+                          <textarea
+                            value={examinationZh}
+                            onChange={(e) => setExaminationZh(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                            rows={3}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-gray-800 whitespace-pre-wrap text-sm">
+                        {getText(examinationText, language)}
+                      </p>
+                    )}
                   </div>
-                  
+
+                  {/* Images Description */}
+                  <div>
+                    <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
+                      {getText(translations.imagesDescription, language)}
+                    </h3>
+                    {isEditing ? (
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            {getText(translations.EN, language)}
+                          </label>
+                          <textarea
+                            value={imagesDescriptionEn}
+                            onChange={(e) => setImagesDescriptionEn(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                            rows={2}
+                          />
+                        </div>
+                        <div>
+                          <label className="block text-xs font-medium text-gray-700 mb-1">
+                            {getText(translations.ZH, language)}
+                          </label>
+                          <textarea
+                            value={imagesDescriptionZh}
+                            onChange={(e) => setImagesDescriptionZh(e.target.value)}
+                            className="w-full border border-gray-300 rounded-md p-2 text-sm"
+                            rows={2}
+                          />
+                        </div>
+                      </div>
+                    ) : (
+                      <p className="text-gray-800 whitespace-pre-wrap text-sm">
+                        {getText(imagesDescriptionText, language)}
+                      </p>
+                    )}
+                  </div>
+
                   {/* 渲染 Base64 图片 (点击放大/恢复) */}
                   {imagesBase64.length > 0 && (
                     <div>
@@ -506,16 +815,6 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                       </div>
                     </div>
                   )}
-
-                  {/* Images Description */}
-                  <div>
-                    <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
-                      {getText(translations.imagesDescription, language)}
-                    </h3>
-                    <p className="text-gray-800 whitespace-pre-wrap text-sm">
-                      {getText(imagesDescriptionText, language)}
-                    </p>
-                  </div>
                   
                   {/* Options & Ground Truth */}
                   <div>

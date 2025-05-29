@@ -269,10 +269,10 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }, timeoutDuration * 1000); // `timeoutDuration` seconds timeout
 
     try {
-      console.log("Sending request to:", `${config.apiBaseUrl}/chat`);
+      console.log("Sending request to:", `${config.apiBaseUrl_2}/chat`);
       console.log("Request payload:", { message, language: languageRef.current });
       
-      const response = await fetch(`${config.apiBaseUrl}/chat`, {
+      const response = await fetch(`${config.apiBaseUrl_2}/chat`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -389,7 +389,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   // Reset the dialogue memory
   const handleResetDialogue = async () => {
     try {
-      const response = await fetch(`${config.apiBaseUrl}/reset`, {
+      const response = await fetch(`${config.apiBaseUrl_2}/reset`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' }
       });
@@ -471,7 +471,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     formData.append('doctor', doctorMapping[selectedDoctor]);
 
     try {
-      const response = await fetch(`${config.apiBaseUrl}/exam`, {
+      const response = await fetch(`${config.apiBaseUrl_2}/exam`, {
         method: 'POST',
         body: formData,
       });

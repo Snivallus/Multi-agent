@@ -5,6 +5,7 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { HashRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
+import CaseSelection from '@/components/CaseSelection';
 import DialogueSimulationWrapper from "@/components/DialogueSimulationWrapper";
 import DirectInteractionWrapper from "@/components/DirectInteractionWrapper";
 
@@ -21,6 +22,12 @@ const App = () => (
           <Route 
             path="/" 
             element={<Index />} 
+          />
+
+          {/* Case Selection */}
+          <Route
+            path="/database/case_selection"
+            element={<CaseSelection onBack={() => window.history.back()} language="zh" />}
           />
 
           {/* Dialogue Simulation */}
