@@ -84,7 +84,7 @@ interface FetchedCaseData {
 interface DialogueSimulationProps {
   patientId: string;
   onBack: () => void;
-  language: Language;
+  initialLanguage: Language;
 }
 
 /**
@@ -95,10 +95,8 @@ interface DialogueSimulationProps {
 const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ 
   patientId, 
   onBack, 
-  language 
+  initialLanguage 
 }) => {
-  // sidebar open/close state
-  const [sidebarOpen, setSidebarOpen] = useState(false);
   // fetched data from backend
   const [fetchedCase, setFetchedCase] = useState<FetchedCaseData | null>(null);
   // list of versions
@@ -114,6 +112,14 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
   const lastBubbleRef = useRef<HTMLDivElement>(null);
   // 记录当前“放大”的图片索引 (null 代表没有放大任何图片)
   const [zoomedIndex, setZoomedIndex] = useState<number | null>(null);
+
+  // 维护语言状态
+  const [language, setLanguage] = useState<Language>(initialLanguage);
+
+  // Toggle between Chinese and English
+  const toggleLanguage = () => {
+    setLanguage(prev => prev === 'zh' ? 'en' : 'zh');
+  };
 
   // Fetch case + versions from backend on mount or when patient_id changes
   useEffect(() => {
@@ -245,8 +251,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
     setIsPlaying(true);
   }, [selectedVersionIndex]);
 
-  // 新增状态控制
-  const [currentLanguage, setCurrentLanguage] = useState<Language>(language);
+  // 折叠控制
   const [detailsCollapsed, setDetailsCollapsed] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
 
@@ -286,12 +291,12 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
           <>
             <div className="flex items-center justify-between p-4 border-b bg-gray-50">
               <h3 className="text-lg font-semibold text-gray-800">
-                {getText(translations.versionList, currentLanguage)}
+                {getText(translations.versionList, language)}
               </h3>
               <button
                 onClick={() => setSidebarCollapsed(true)}
                 className="p-1 hover:bg-gray-200 rounded transition-colors"
-                aria-label={getText(translations.closeSidebar, currentLanguage)}
+                aria-label={getText(translations.closeSidebar, language)}
               >
                 <X className="h-5 w-5 text-gray-600" />
               </button>
@@ -308,7 +313,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                 >
                   <div className="flex justify-between items-center">
                     <span className="font-medium text-gray-800">
-                      {getText(translations.version, currentLanguage)} {ver.version_id}
+                      {getText(translations.version, language)} {ver.version_id}
                     </span>
                     <span
                       className={`text-xs font-medium px-2 py-1 rounded ${
@@ -316,12 +321,12 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                       }`}
                     >
                       {ver.accuracy
-                        ? getText(translations.correct, currentLanguage)
-                        : getText(translations.incorrect, currentLanguage)}
+                        ? getText(translations.correct, language)
+                        : getText(translations.incorrect, language)}
                     </span>
                   </div>
                   <div className="mt-1 text-sm text-gray-600">
-                    {getText(translations.predicted, currentLanguage)}: {ver.predicted}
+                    {getText(translations.predicted, language)}: {ver.predicted}
                   </div>
                 </button>
               ))}
@@ -360,21 +365,21 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
               <div className="min-w-0 flex-1">
                 {/* Title */}
                 <h2 className="text-xl font-semibold text-gray-800 truncate">
-                  {getText(titleText, currentLanguage)}
+                  {getText(titleText, language)}
                 </h2>
                 {/* Description */}
                 <p className="mt-1 text-sm text-gray-600 line-clamp-2">
-                  {getText(descriptionText, currentLanguage)}
+                  {getText(descriptionText, language)}
                 </p>
                 {/* Body System and Tags */}
                 <div className="mt-1 flex flex-wrap gap-4 text-sm text-gray-500">
                   <span>
-                    <span className="font-medium">{getText(translations.bodySystem, currentLanguage)}: </span>
-                    {getText(bodySystemText, currentLanguage)}
+                    <span className="font-medium">{getText(translations.bodySystem, language)}: </span>
+                    {getText(bodySystemText, language)}
                   </span>
                   <span>
-                    <span className="font-medium">{getText(translations.tags, currentLanguage)}: </span>
-                    {tagsText[currentLanguage].join(' / ')}
+                    <span className="font-medium">{getText(translations.tags, language)}: </span>
+                    {tagsText[language].join(' / ')}
                   </span>
                 </div>
               </div>
@@ -385,42 +390,39 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
               {/* 语言切换按钮 */}
               <button
                 onClick={toggleLanguage}
-                className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 flex items-center gap-1"
-                aria-label="Toggle language"
+                className="px-4 py-2 bg-white shadow-md rounded-full 
+                          hover:bg-gray-50 transition-colors duration-200 
+                          font-medium text-medical-blue border border-medical-light-blue
+                          mr-4"
               >
-                <Languages className="h-4 w-4 text-gray-600" />
-                <span className="text-sm text-gray-600 font-medium">
-                  {currentLanguage === 'zh' ? 'EN' : '中文'}
-                </span>
+                {getText(translations.toggleLanguage, language)}
               </button>
-              
-              {/* 版本列表切换按钮 */}
-              {sidebarCollapsed && (
-                <button
-                  onClick={() => setSidebarCollapsed(false)}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-                  aria-label="Open versions sidebar"
-                >
-                  <Menu className="h-5 w-5 text-gray-600" />
-                </button>
-              )}
             </div>
-          </div>
-
-          {/* 折叠按钮 */}
-          <div className="px-4 py-2 bg-gray-50 border-b">
-            <Collapsible open={!detailsCollapsed} onOpenChange={() => setDetailsCollapsed(!detailsCollapsed)}>
-              <CollapsibleTrigger className="flex items-center justify-center w-full py-2 hover:bg-gray-100 rounded transition-colors">
-                <span className="text-sm font-medium text-gray-700 mr-2">
-                  {detailsCollapsed ? '展开问题详情' : '折叠问题详情'}
-                </span>
-                {detailsCollapsed ? (
-                  <ChevronDown className="h-4 w-4 text-gray-600" />
-                ) : (
-                  <ChevronUp className="h-4 w-4 text-gray-600" />
-                )}
-              </CollapsibleTrigger>
-            </Collapsible>
+            
+            {/* 问题详情折叠按钮 */}
+            <div className="px-4 py-2 bg-gray-50 border-b">
+              <Collapsible open={!detailsCollapsed} onOpenChange={() => setDetailsCollapsed(!detailsCollapsed)}>
+                <CollapsibleTrigger className="flex items-center justify-center w-full py-2 hover:bg-gray-100 rounded transition-colors">
+                  <span className="text-sm font-medium text-gray-700 mr-2">
+                    {/*
+                      detailsCollapsed 
+                      ? '展开问题详情' 
+                      : '折叠问题详情'
+                    */}
+                    {
+                      detailsCollapsed 
+                      ? getText(translations.showQuestionDetails, language)
+                      : getText(translations.collapseQuestionDetails, language)
+                    }
+                  </span>
+                  {detailsCollapsed ? (
+                    <ChevronDown className="h-4 w-4 text-gray-600" />
+                  ) : (
+                    <ChevronUp className="h-4 w-4 text-gray-600" />
+                  )}
+                </CollapsibleTrigger>
+              </Collapsible>
+            </div>
           </div>
 
           {/* 可折叠的问题详情区域 */}
@@ -431,40 +433,40 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                   {/* Original Question */}
                   <div>
                     <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
-                      {getText(translations.originalQuestion, currentLanguage)}
+                      {getText(translations.originalQuestion, language)}
                     </h3>
                     <p className="text-gray-800 whitespace-pre-wrap text-sm">
-                      {getText(originalQuestionText, currentLanguage)}
+                      {getText(originalQuestionText, language)}
                     </p>
                   </div>
                   
                   {/* Question Background */}
                   <div>
                     <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
-                      {getText(translations.questionBackground, currentLanguage)}
+                      {getText(translations.questionBackground, language)}
                     </h3>
                     <p className="text-gray-800 whitespace-pre-wrap text-sm">
-                      {getText(questionBackgroundText, currentLanguage)}
+                      {getText(questionBackgroundText, language)}
                     </p>
                   </div>
                   
                   {/* Patient Profile */}
                   <div>
                     <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
-                      {getText(translations.patientProfile, currentLanguage)}
+                      {getText(translations.patientProfile, language)}
                     </h3>
                     <p className="text-gray-800 whitespace-pre-wrap text-sm">
-                      {getText(patientProfileText, currentLanguage)}
+                      {getText(patientProfileText, language)}
                     </p>
                   </div>
                   
                   {/* Examination */}
                   <div>
                     <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
-                      {getText(translations.examination, currentLanguage)}
+                      {getText(translations.examination, language)}
                     </h3>
                     <p className="text-gray-800 whitespace-pre-wrap text-sm">
-                      {getText(examinationText, currentLanguage)}
+                      {getText(examinationText, language)}
                     </p>
                   </div>
                   
@@ -472,25 +474,26 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                   {imagesBase64.length > 0 && (
                     <div>
                       <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
-                        {getText(translations.images, currentLanguage)}
+                        {getText(translations.images, language)}
                       </h3>
                       <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-3">
                         {imagesBase64.map((b64, idx) => {
                           // 计算"A"、"B"等字母
                           const letter = String.fromCharCode(65 + idx);
-                          const prefix = currentLanguage === 'zh' ? '图' : 'Fig.';
+                          // const prefix = language === 'zh' ? '图' : 'Fig.';
+                          const prefix = getText(translations.image_name, language);
                           const caption = `${prefix} ${letter}`;
 
                           return (
                             <figure key={idx} className="space-y-1">
                               <img
-                                // 点击图片时，如果当前就是这个索引，就收起 (置 null)，否则放大 (设为 idx)
+                                // 点击图片时, 如果当前就是这个索引, 就收起 (置 null), 否则放大 (设为 idx)
                                 onClick={() => setZoomedIndex(idx === zoomedIndex ? null : idx)}
                                 src={`data:image/jpeg;base64,${b64}`}
                                 alt={`Image ${idx + 1}`}
-                                className="w-full h-20 rounded-md shadow-sm object-cover cursor-pointer hover:opacity-80 transition-opacity"
+                                className="w-full h-auto rounded-md shadow-sm object-cover cursor-pointer hover:opacity-80 transition-opacity"
                               />
-                              <figcaption className="text-xs italic text-gray-600 text-center">
+                              <figcaption className="text-xs text-gray-600 text-center">
                                 {caption}
                               </figcaption>
                             </figure>
@@ -503,10 +506,10 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                   {/* Images Description */}
                   <div>
                     <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
-                      {getText(translations.imagesDescription, currentLanguage)}
+                      {getText(translations.imagesDescription, language)}
                     </h3>
                     <p className="text-gray-800 whitespace-pre-wrap text-sm">
-                      {getText(imagesDescriptionText, currentLanguage)}
+                      {getText(imagesDescriptionText, language)}
                     </p>
                   </div>
                   
@@ -518,10 +521,10 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                         <div key={optKey} className="bg-white p-3 rounded-lg shadow-sm border">
                           <p className="text-sm text-gray-700">
                             <span className="font-medium">{optKey}. </span>
-                            {getText(optionsMap[optKey], currentLanguage)}
+                            {getText(optionsMap[optKey], language)}
                             {groundTruth === optKey && (
                               <span className="ml-2 px-2 py-0.5 text-xs font-semibold rounded bg-green-100 text-green-800">
-                                {getText(translations.answer, currentLanguage)}
+                                {getText(translations.answer, language)}
                               </span>
                             )}
                           </p>
@@ -550,7 +553,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                   role={line.role as any}
                   text={line.text}
                   isActive={index <= currentDialogueIndex}
-                  language={currentLanguage}
+                  language={language}
                   turn_id={line.turn_id}
                 />
               </div>
@@ -566,8 +569,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
               <button
                 onClick={resetDialogue}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
-                aria-label={getText(translations.resetDialogue, currentLanguage)}
-                title={getText(translations.resetDialogue, currentLanguage)}
+                aria-label={getText(translations.resetDialogue, language)}
+                title={getText(translations.resetDialogue, language)}
               >
                 <RotateCcw className="h-5 w-5 text-gray-600" />
               </button>
@@ -576,8 +579,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                 onClick={previousDialogue}
                 disabled={currentDialogueIndex <= 0}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label={getText(translations.previousDialogue, currentLanguage)}
-                title={getText(translations.previousDialogue, currentLanguage)}
+                aria-label={getText(translations.previousDialogue, language)}
+                title={getText(translations.previousDialogue, language)}
               >
                 <Rewind className="h-5 w-5 text-gray-600" />
               </button>
@@ -586,10 +589,10 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                 onClick={togglePlayPause}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
                 aria-label={
-                  isPlaying ? getText(translations.pause, currentLanguage) : getText(translations.play, currentLanguage)
+                  isPlaying ? getText(translations.pause, language) : getText(translations.play, language)
                 }
                 title={
-                  isPlaying ? getText(translations.pause, currentLanguage) : getText(translations.play, currentLanguage)
+                  isPlaying ? getText(translations.pause, language) : getText(translations.play, language)
                 }
               >
                 {isPlaying ? (
@@ -603,8 +606,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                 onClick={advanceDialogue}
                 disabled={currentDialogueIndex >= dialogueLines.length - 1}
                 className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
-                aria-label={getText(translations.nextDialogue, currentLanguage)}
-                title={getText(translations.nextDialogue, currentLanguage)}
+                aria-label={getText(translations.nextDialogue, language)}
+                title={getText(translations.nextDialogue, language)}
               >
                 <FastForward className="h-5 w-5 text-gray-600" />
               </button>
@@ -615,7 +618,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
               <div
                 className="h-2 bg-gray-200 rounded-full overflow-hidden cursor-pointer"
                 onClick={handleProgressClick}
-                title={getText(translations.jumpToPosition, currentLanguage)}
+                title={getText(translations.jumpToPosition, language)}
               >
                 <div
                   className="h-full bg-medical-blue transition-all duration-500 ease-out"
@@ -625,11 +628,11 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                 />
               </div>
               <div className="flex justify-between mt-2 text-xs text-gray-500">
-                <span>{getText(translations.progress, currentLanguage)}</span>
+                <span>{getText(translations.progress, language)}</span>
                 <span>
                   {dialogueLines.length > 0
-                    ? `${currentDialogueIndex + 1} ${getText(translations.of, currentLanguage)} ${dialogueLines.length}`
-                    : `0 ${getText(translations.of, currentLanguage)} 0`}
+                    ? `${currentDialogueIndex + 1} ${getText(translations.of, language)} ${dialogueLines.length}`
+                    : `0 ${getText(translations.of, language)} 0`}
                 </span>
               </div>
             </div>
@@ -638,11 +641,11 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
           {/* Keyboard shortcuts help */}
           <div className="mt-3 text-xs text-gray-500 flex flex-wrap gap-4 justify-center">
             <div className="flex gap-3">
-              <span>{getText(translations.playPause, currentLanguage)}</span>
+              <span>{getText(translations.playPause, language)}</span>
               <span>|</span>
-              <ReactMarkdown>{getText(translations.previousLine, currentLanguage)}</ReactMarkdown>
+              <ReactMarkdown>{getText(translations.previousLine, language)}</ReactMarkdown>
               <span>|</span>
-              <ReactMarkdown>{getText(translations.nextLine, currentLanguage)}</ReactMarkdown>
+              <ReactMarkdown>{getText(translations.nextLine, language)}</ReactMarkdown>
             </div>
           </div>
         </div>

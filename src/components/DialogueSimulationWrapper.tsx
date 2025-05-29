@@ -38,7 +38,7 @@ const DialogueSimulationWrapper: React.FC = () => {
     <DialogueSimulation
       patientId={patientId}
       onBack={handleBack}
-      language={language}
+      initialLanguage={language}
     />
   );
 };

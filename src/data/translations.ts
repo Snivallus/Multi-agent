@@ -163,6 +163,8 @@ export const translations = {
   correct: createMultilingualText('正确', 'Correct'),
   incorrect: createMultilingualText('错误', 'Incorrect'),
   predicted: createMultilingualText('预测选项', 'Predicted Option'),
+  showQuestionDetails: createMultilingualText('显示问题详情', 'Show Question Details'),
+  collapseQuestionDetails: createMultilingualText('折叠问题详情', 'Collapse Question Details'),
   originalQuestion: createMultilingualText('原始问题', 'Original Question'),
   questionBackground: createMultilingualText('问题背景', 'Question Background'),
   patientProfile: createMultilingualText('患者信息', 'Patient Profile'),
