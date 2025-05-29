@@ -172,6 +172,7 @@ export const translations = {
   images: createMultilingualText('图片', 'Images'),
   image_name: createMultilingualText('图', 'Fig.'),
   imagesDescription: createMultilingualText('图片描述', 'Images Description'),
+  options: createMultilingualText('选项', 'Options'),
   answer: createMultilingualText('正确答案', 'Ground Truth'),
   tags: createMultilingualText('标签', 'Tags'),
 

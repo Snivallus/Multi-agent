@@ -110,7 +110,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
   // Auto scroll
   const containerRef = useRef<HTMLDivElement>(null);
   const lastBubbleRef = useRef<HTMLDivElement>(null);
-  // 记录当前"放大"的图片索引 (null 代表没有放大任何图片)
+  // 记录当前“放大”的图片索引 (null 代表没有放大任何图片)
   const [zoomedIndex, setZoomedIndex] = useState<number | null>(null);
 
   // 维护语言状态
@@ -352,83 +352,79 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
       <div className="flex flex-col flex-1 min-w-0">
         {/* 固定标题区域 */}
         <div className="bg-white shadow-sm border-b sticky top-0 z-20">
-          {/* 顶部标题栏 - 重新设计布局 */}
-          <div className="p-4 border-b">
-            <div className="flex items-start justify-between gap-4">
-              {/* 左侧：返回按钮和案例信息 */}
-              <div className="flex items-start gap-4 flex-1 min-w-0">
-                <button
-                  onClick={onBack}
-                  className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 flex-shrink-0 mt-1"
-                  aria-label="Go back"
-                >
-                  <ArrowLeft className="h-5 w-5 text-gray-600" />
-                </button>
-                
-                <div className="min-w-0 flex-1">
-                  {/* Title */}
-                  <h2 className="text-xl font-semibold text-gray-800 mb-2">
-                    {getText(titleText, language)}
-                  </h2>
-                  
-                  {/* Description */}
-                  <p className="text-sm text-gray-600 mb-3 line-clamp-2">
-                    {getText(descriptionText, language)}
-                  </p>
-                  
-                  {/* Body System and Tags */}
-                  <div className="flex flex-wrap gap-4 text-sm text-gray-500">
-                    <span className="inline-flex items-center">
-                      <span className="font-medium mr-1">{getText(translations.bodySystem, language)}:</span>
-                      <span className="px-2 py-1 bg-blue-50 text-blue-700 rounded-full text-xs">
-                        {getText(bodySystemText, language)}
-                      </span>
+          {/* 顶部标题栏 */}
+          <div className="p-4 flex items-center justify-between border-b">
+            <div className="flex items-center gap-4 flex-1 min-w-0">
+              <button
+                onClick={onBack}
+                className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200 flex-shrink-0"
+                aria-label="Go back"
+              >
+                <ArrowLeft className="h-5 w-5 text-gray-600" />
+              </button>
+              <div className="min-w-0 flex-1">
+                {/* Title */}
+                <h2 className="text-xl font-semibold text-gray-800 truncate">
+                  {getText(titleText, language)}
+                </h2>
+                {/* Description */}
+                <p className="mt-1 text-sm text-gray-600 line-clamp-2">
+                  {getText(descriptionText, language)}
+                </p>
+                {/* Body System and Tags */}
+                <div className="mt-1 flex flex-wrap gap-4 text-sm text-gray-500">
+                  <span>
+                    <span className="font-bold uppercase">
+                      {`[` + getText(translations.bodySystem, language) + `] `}
                     </span>
-                    <span className="inline-flex items-center">
-                      <span className="font-medium mr-1">{getText(translations.tags, language)}:</span>
-                      <div className="flex gap-1">
-                        {tagsText[language].map((tag, idx) => (
-                          <span key={idx} className="px-2 py-1 bg-gray-100 text-gray-700 rounded-full text-xs">
-                            {tag}
-                          </span>
-                        ))}
-                      </div>
+                    {getText(bodySystemText, language)}
+                  </span>
+                  <span>
+                    <span className="font-bold uppercase">
+                      {`[` + getText(translations.tags, language) + `] `} 
                     </span>
-                  </div>
+                    {tagsText[language].join(' / ')}
+                  </span>
                 </div>
-              </div>
-              
-              {/* 右侧：语言切换按钮 */}
-              <div className="flex items-center gap-2 flex-shrink-0">
-                <button
-                  onClick={toggleLanguage}
-                  className="inline-flex items-center gap-2 px-4 py-2 bg-white shadow-md rounded-lg 
-                            hover:bg-gray-50 transition-colors duration-200 
-                            font-medium text-medical-blue border border-medical-light-blue"
-                >
-                  <Languages className="h-4 w-4" />
-                  {getText(translations.toggleLanguage, language)}
-                </button>
               </div>
             </div>
+            
+            {/* 右侧控制按钮 */}
+            <div className="flex items-center gap-2 flex-shrink-0">
+              {/* 语言切换按钮 */}
+              <button
+                onClick={toggleLanguage}
+                className="px-4 py-2 bg-white shadow-md rounded-full 
+                          hover:bg-gray-50 transition-colors duration-200 
+                          font-medium text-medical-blue border border-medical-light-blue
+                          mr-4"
+              >
+                {getText(translations.toggleLanguage, language)}
+              </button>
+            </div>
           </div>
-          
-          {/* 问题详情折叠控制区域 - 美化布局 */}
-          <div className="bg-gray-50/50 border-b">
+
+          {/* 问题详情折叠按钮 */}
+          <div className="px-4 py-2 bg-gray-50 border-b">
             <Collapsible open={!detailsCollapsed} onOpenChange={() => setDetailsCollapsed(!detailsCollapsed)}>
-              <CollapsibleTrigger className="w-full flex items-center justify-center py-3 hover:bg-gray-100/50 transition-colors group">
-                <div className="flex items-center gap-2 text-sm font-medium text-gray-700">
-                  <span>
-                    {detailsCollapsed 
-                      ? getText(translations.showQuestionDetails, language)
-                      : getText(translations.collapseQuestionDetails, language)}
-                  </span>
-                  {detailsCollapsed ? (
-                    <ChevronDown className="h-4 w-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
-                  ) : (
-                    <ChevronUp className="h-4 w-4 text-gray-500 group-hover:text-gray-700 transition-colors" />
-                  )}
-                </div>
+              <CollapsibleTrigger className="flex items-center justify-center w-full py-2 hover:bg-gray-100 rounded transition-colors">
+                <span className="text-sm font-medium text-gray-700 mr-2">
+                  {/*
+                    detailsCollapsed 
+                    ? '展开问题详情' 
+                    : '折叠问题详情'
+                  */}
+                  {
+                    detailsCollapsed 
+                    ? getText(translations.showQuestionDetails, language)
+                    : getText(translations.collapseQuestionDetails, language)
+                  }
+                </span>
+                {detailsCollapsed ? (
+                  <ChevronDown className="h-4 w-4 text-gray-600" />
+                ) : (
+                  <ChevronUp className="h-4 w-4 text-gray-600" />
+                )}
               </CollapsibleTrigger>
             </Collapsible>
           </div>
@@ -438,8 +434,6 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
             <CollapsibleContent>
               <div className="bg-gray-50 p-4 border-b max-h-96 overflow-y-auto">
                 <div className="max-w-4xl mx-auto space-y-4">
-                  {/* ... keep existing code (question details content) the same ... */}
-                  
                   {/* Original Question */}
                   <div>
                     <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">
@@ -525,7 +519,10 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                   
                   {/* Options & Ground Truth */}
                   <div>
-                    <h3 className="font-bold uppercase text-gray-700 text-sm mb-2">选项 / Options</h3>
+                    <h3 
+                      className="font-bold uppercase text-gray-700 text-sm mb-2">
+                      {getText(translations.options, language)}
+                    </h3>
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-2">
                       {(['A','B','C','D','E'] as const).map((optKey) => (
                         <div key={optKey} className="bg-white p-3 rounded-lg shadow-sm border">
