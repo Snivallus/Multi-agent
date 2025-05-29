@@ -1,6 +1,6 @@
 import React from 'react';
 import { useNavigate, useLocation, Location } from 'react-router-dom';
-import DirectInteraction from '@/components/DirectInteraction';
+import CaseSelection from '@/components/CaseSelection';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 
@@ -8,19 +8,19 @@ interface LocationState {
   language?: Language;
 }
 
-interface DirectInteractionWrapperProps {
+interface CaseSelectionWrapperProps {
   language: Language;
   toggleLanguage: () => void;
 }
 
-const DirectInteractionWrapper: React.FC<DirectInteractionWrapperProps> = ({
+const CaseSelectionWrapper: React.FC<CaseSelectionWrapperProps> = ({
   language,
   toggleLanguage,
 }) => {
   const navigate = useNavigate();
   const location = useLocation() as Location & { state: LocationState };
 
-  // onBack 直接回到 Index (因为 "直接交互" 是从 Index 进来的)
+  // onBack 直接回到 Index (因为 "选择案例" 是从 Index 进来的)
   const handleBack = () => {
     navigate(-1);
   };
@@ -31,18 +31,19 @@ const DirectInteractionWrapper: React.FC<DirectInteractionWrapperProps> = ({
   return (
     <>
       {/* 右上角语言切换按钮 */}
-      <div className="absolute top-20 right-4 z-10">
+      <div className="sticky top-20 right-4 z-10 flex justify-end">
         <button
           onClick={toggleLanguage}
           className="px-4 py-2 bg-white shadow-md rounded-full 
                     hover:bg-gray-50 transition-colors duration-200 
-                    font-medium text-medical-blue border border-medical-light-blue"
+                    font-medium text-medical-blue border border-medical-light-blue
+                    mr-4"
         >
           {getText(translations.toggleLanguage, language)}
         </button>
       </div>
 
-      <DirectInteraction
+      <CaseSelection
         onBack={handleBack}
         language={langToUse}
       />
@@ -50,4 +51,4 @@ const DirectInteractionWrapper: React.FC<DirectInteractionWrapperProps> = ({
   );
 };
 
-export default DirectInteractionWrapper;
+export default CaseSelectionWrapper;

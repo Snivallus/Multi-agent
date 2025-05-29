@@ -39,6 +39,7 @@ const BODY_SYSTEM_MAP: Record<number, MultilingualText> = {
 
 // TODO: 让 Dialogue Simulation 回退到的是 Case Selection 界面, 而不是 Index 界面
 interface CaseSelectionLocationState {
+  language?: Language;
   searchQuery?: string;
   page?: number;
   selectedQuestionTypes?: number[];

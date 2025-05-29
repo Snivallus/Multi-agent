@@ -84,7 +84,8 @@ interface FetchedCaseData {
 interface DialogueSimulationProps {
   patientId: string;
   onBack: () => void;
-  initialLanguage: Language;
+  language: Language;           // 父组件当前的语言状态
+  toggleLanguage: () => void;   // 父组件用于切换语言的方法
 }
 
 /**
@@ -95,7 +96,8 @@ interface DialogueSimulationProps {
 const DialogueSimulation: React.FC<DialogueSimulationProps> = ({ 
   patientId, 
   onBack, 
-  initialLanguage 
+  language,
+  toggleLanguage,
 }) => {
   // fetched data from backend
   const [fetchedCase, setFetchedCase] = useState<FetchedCaseData | null>(null);
@@ -112,14 +114,6 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
   const lastBubbleRef = useRef<HTMLDivElement>(null);
   // 记录当前“放大”的图片索引 (null 代表没有放大任何图片)
   const [zoomedIndex, setZoomedIndex] = useState<number | null>(null);
-
-  // 维护语言状态
-  const [language, setLanguage] = useState<Language>(initialLanguage);
-
-  // Toggle between Chinese and English
-  const toggleLanguage = () => {
-    setLanguage(prev => prev === 'zh' ? 'en' : 'zh');
-  };
 
   // 折叠控制
   const [detailsCollapsed, setDetailsCollapsed] = useState(false);
@@ -543,8 +537,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
               >
                 {getText(translations.toggleLanguage, language)}
               </button>
-
-                            {/* 编辑/保存 按钮 */}
+              
+              {/* 编辑/保存 按钮 */}
               <button
                 onClick={() => {
                   if (isEditing) {

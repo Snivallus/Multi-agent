@@ -1,57 +1,58 @@
-import { Toaster } from "@/components/ui/toaster";
-import { Toaster as Sonner } from "@/components/ui/sonner";
-import { TooltipProvider } from "@/components/ui/tooltip";
-import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { HashRouter, Routes, Route } from "react-router-dom";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
-import CaseSelection from '@/components/CaseSelection';
+import CaseSelectionWrapper from "@/components/CaseSelectionWrapper";
 import DialogueSimulationWrapper from "@/components/DialogueSimulationWrapper";
 import DirectInteractionWrapper from "@/components/DirectInteractionWrapper";
+import { Language } from '@/types/language';
+import { useState } from 'react';
 
-const queryClient = new QueryClient();
+/**
+ * 使用 BrowserRouter 定义整个 App 的路由
+ */
+const App: React.FC = () => {
+  // 维护全局语言状态
+  const [language, setLanguage] = useState<Language>('zh');
+  const toggleLanguage = () => {
+    setLanguage((prev) => (prev === 'zh' ? 'en' : 'zh'));
+  };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <HashRouter>
-        <Routes>
-          {/* Index Page */}
-          <Route 
-            path="/" 
-            element={<Index />} 
-          />
+  return (
+    <BrowserRouter>
+      <Routes>
+        {/* Index Page */}
+        <Route 
+          path="/" 
+          element={<Index language={language} toggleLanguage={toggleLanguage}/>} 
+        />
 
-          {/* Case Selection */}
-          <Route
-            path="/database/case_selection"
-            element={<CaseSelection onBack={() => window.history.back()} language="zh" />}
-          />
+        {/* Case Selection */}
+        <Route
+          path="/database/case_selection"
+          element={<CaseSelectionWrapper language={language} toggleLanguage={toggleLanguage} />}
+        />
 
-          {/* Dialogue Simulation */}
-          <Route 
-            path="/database/dialogue_simulation/:patientId" 
-            element={<DialogueSimulationWrapper />} 
-          />
-          
-          {/* Direct Interaction */}
-          <Route 
-            path="/direct_interaction" 
-            element={<DirectInteractionWrapper />}
-          />
+        {/* Dialogue Simulation */}
+        <Route 
+          path="/database/dialogue_simulation/:patientId" 
+          element={<DialogueSimulationWrapper language={language} toggleLanguage={toggleLanguage}/>} 
+        />
 
-          {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-          <Route 
-            path="*" 
-            element={<NotFound />} 
-          />
-          {/* 测试时只需访问 http://localhost:8080/#/non-existent-path 即可看到效果*/}
-        </Routes>
-      </HashRouter>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+        {/* Direct Interaction */}
+        <Route 
+          path="/direct_interaction" 
+          element={<DirectInteractionWrapper language={language} toggleLanguage={toggleLanguage}/>}
+        />
+
+        {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+        <Route 
+          path="*" 
+          element={<NotFound />} 
+        />
+        {/* 测试时只需访问 http://localhost:8080/#/non-existent-path 即可看到效果*/}
+      </Routes>
+    </BrowserRouter>
+  );
+};
 
 export default App;
