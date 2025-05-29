@@ -78,7 +78,7 @@ const Index: React.FC<{ language: Language; toggleLanguage: () => void }> = ({
             className="border-medical-blue text-medical-blue hover:bg-medical-blue hover:text-white"
           >
             <LogIn className="mr-2 h-4 w-4" />
-            登录
+            {getText(translations.login, language)}
           </Button>
         )}
         

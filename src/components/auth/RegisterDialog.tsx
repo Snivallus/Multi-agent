@@ -62,14 +62,14 @@ const RegisterDialog: React.FC<RegisterDialogProps> = ({
     if (success) {
       toast({
         title: '注册成功',
-        description: '账户创建成功，欢迎使用 AI Hospital！',
+        description: '账户创建成功, 欢迎使用 AI Hospital!',
       });
       onOpenChange(false);
       form.reset();
     } else {
       toast({
         title: '注册失败',
-        description: '用户名可能已被使用，请尝试其他用户名。',
+        description: '用户名可能已被使用, 请尝试其他用户名.',
         variant: 'destructive',
       });
     }

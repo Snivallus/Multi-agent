@@ -15,6 +15,7 @@ export const translations = {
   ),
   selectCaseButton: createMultilingualText('选择案例', 'Select a Case Study'),
   directInteractionButton: createMultilingualText('直接交互', 'Direct Interaction'),
+  login: createMultilingualText('登录', 'Login'),
   
   // Case selection
   selectCase: createMultilingualText('选择案例', 'Select a Case Study'),
@@ -182,6 +183,7 @@ export const translations = {
   ZH: createMultilingualText('中文', 'ZH'),
   title: createMultilingualText('标题', 'Title'),
   description: createMultilingualText('描述', 'Description'),
+  noPermission: createMultilingualText('无权限', 'No Permisson'),
 
   // Direct Interaction
   directInteractionTitle: createMultilingualText('直接交互', 'Direct Interaction'),

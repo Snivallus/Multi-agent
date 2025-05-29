@@ -51,14 +51,14 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
     if (success) {
       toast({
         title: '登录成功',
-        description: '欢迎回来！',
+        description: '欢迎回来!',
       });
       onOpenChange(false);
       form.reset();
     } else {
       toast({
         title: '登录失败',
-        description: '用户名或密码错误，请重试。',
+        description: '用户名或密码错误, 请重试.',
         variant: 'destructive',
       });
     }
@@ -152,7 +152,7 @@ const LoginDialog: React.FC<LoginDialogProps> = ({
               </Button>
 
               <div className="text-center text-sm text-gray-600">
-                还没有账户？{' '}
+                还没有账户? {' '}
                 <button
                   type="button"
                   onClick={onSwitchToRegister}

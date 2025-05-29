@@ -6,6 +6,7 @@ import { translations } from '@/data/translations';
 import ReactMarkdown from 'react-markdown';
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from '@/components/ui/collapsible';
 import config from '@/config'; // API base URL
+import { useAuth } from '@/contexts/AuthContext'; 
 
 interface DialogueLine {
   line_id: number;
@@ -118,6 +119,11 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
   // 折叠控制
   const [detailsCollapsed, setDetailsCollapsed] = useState(false);
   const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  // 从 AuthContext 中拿到 user 对象
+  const { user } = useAuth();
+  // user 可能为 null (未登录) 或 { user_id, username, canModifyDialogue }
+  const canModify = user?.canModifyDialogue ?? false;
 
   // —— “编辑/保存” 相关状态 —— 
   const [isEditing, setIsEditing] = useState(false);
@@ -556,26 +562,38 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
               </button>
               
               {/* 编辑/保存 按钮 */}
-              <button
-                onClick={() => {
-                  if (isEditing) {
-                    handleSave();
-                  } else {
-                    setIsEditing(true);
+              {/* 只有当 canModify 为 true 时，才渲染“编辑/保存”按钮，否则渲染一个禁用态 */}
+              {canModify ? (
+                <button
+                  onClick={() => {
+                    if (isEditing) {
+                      handleSave();
+                    } else {
+                      setIsEditing(true);
+                    }
+                  }}
+                  className={`
+                    px-4 py-2 rounded-full font-medium transition-colors duration-200
+                    ${isEditing
+                      ? 'bg-green-600 text-white hover:bg-green-700'
+                      : 'bg-blue-600 text-white hover:bg-blue-700'}
+                  `}
+                  title={
+                    isEditing ? getText(translations.save, language) : getText(translations.edit, language)
                   }
-                }}
-                className={`
-                  px-4 py-2 rounded-full font-medium transition-colors duration-200
-                  ${isEditing
-                    ? 'bg-green-600 text-white hover:bg-green-700'
-                    : 'bg-blue-600 text-white hover:bg-blue-700'}
-                `}
-                title={
-                  isEditing ? getText(translations.save, language) : getText(translations.edit, language)
-                }
-              >
-                {isEditing ? getText(translations.save, language) : getText(translations.edit, language)}
-              </button>
+                >
+                  {isEditing ? getText(translations.save, language) : getText(translations.edit, language)}
+                </button>
+              ) : (
+                <button
+                  disabled
+                  className="px-4 py-2 rounded-full bg-gray-300 text-gray-500 cursor-not-allowed"
+                  title={getText(translations.noPermission, language)}
+                >
+                  {getText(translations.edit, language)}
+                </button>
+              )
+              }
             </div>
           </div>
 
