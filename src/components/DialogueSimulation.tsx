@@ -584,6 +584,11 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
             <Collapsible open={!detailsCollapsed} onOpenChange={() => setDetailsCollapsed(!detailsCollapsed)}>
               <CollapsibleTrigger className="flex items-center justify-center w-full py-2 hover:bg-gray-100 rounded transition-colors">
                 <span className="text-sm font-medium text-gray-700 mr-2">
+                  {/*
+                    detailsCollapsed 
+                    ? '展开问题详情' 
+                    : '折叠问题详情'
+                  */}
                   {
                     detailsCollapsed 
                     ? getText(translations.showQuestionDetails, language)

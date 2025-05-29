@@ -1,8 +1,7 @@
 import React from 'react';
 import { useParams, useNavigate, useLocation, Location } from 'react-router-dom';
 import DialogueSimulation from './DialogueSimulation';
-import { Language, getText } from '@/types/language';
-import { translations } from '@/data/translations';
+import { Language } from '@/types/language';
 
 // 从 CaseSelection 传过来的 location.state 会包含这些字段
 interface LocationState {
