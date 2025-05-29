@@ -1,17 +1,13 @@
 import React, { useState } from 'react';
-import { MedicalCase } from '@/data/medicalCases';
 import CaseSelection from '@/components/CaseSelection';
-import DialogueSimulation from '@/components/DialogueSimulation';
 import DirectInteraction from '@/components/DirectInteraction';
 import { ArrowRight } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 
-// Application state enum
-enum AppState {
+enum Step {
   LANDING,
   CASE_SELECTION,
-  DIALOGUE_SIMULATION,
   DIRECT_INTERACTION,
 }
 
@@ -20,126 +16,129 @@ enum AppState {
  * Controls navigation between landing page, case selection, and dialogue simulation
  */
 const Index: React.FC = () => {
-  const [appState, setAppState] = useState<AppState>(AppState.LANDING);
-  const [selectedCase, setSelectedCase] = useState<MedicalCase | null>(null);
+  // 当前是哪个“步骤”：落地页、案例选择页，还是直接交互页
+  const [step, setStep] = useState<Step>(Step.LANDING);
+  // 统一维护语言状态
   const [language, setLanguage] = useState<Language>('zh');
-
-  // Navigation handlers
-  const handleStartClick = () => {
-    setAppState(AppState.CASE_SELECTION);
-  };
-
-  const handleDirectInteractionClick = () => {
-    setAppState(AppState.DIRECT_INTERACTION);
-  };
-
-  const handleCaseSelect = (caseData: MedicalCase) => {
-    setSelectedCase(caseData);
-    setAppState(AppState.DIALOGUE_SIMULATION);
-  };
-
-  const handleBackToLanding = () => {
-    setAppState(AppState.LANDING);
-  };
-
-  const handleBackToSelection = () => {
-    setAppState(AppState.CASE_SELECTION);
-  };
 
   // Toggle between Chinese and English
   const toggleLanguage = () => {
     setLanguage(prev => prev === 'zh' ? 'en' : 'zh');
   };
 
+  // Landing 页面里的两个按钮: 开始选择案例／直接交互
+  const LandingPage: React.FC = () => (
+    <div className="min-h-screen flex flex-col justify-center items-center px-4 py-20 text-center animate-fade-in">
+      <div className="max-w-3xl mx-auto">
+        <h1
+          className="text-5xl md:text-6xl font-bold mb-6 
+                     bg-clip-text text-transparent bg-gradient-to-r 
+                     from-medical-blue to-medical-dark-blue animate-fade-in"
+          style={{ animationDelay: '100ms', lineHeight: '1.25' }}
+        >
+          {/* language == 'zh' ? 'AI 医院' : 'AI Hospital' */}
+          {getText(translations.appTitle, language)}
+        </h1>
+        <p
+          className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto animate-fade-in"
+          style={{ animationDelay: '200ms' }}
+        >
+          {/* 
+            language == 'zh'
+            ? '多模态医学诊断大模型'
+            : 'Multi-modality Large Model for Medical Diagnosis'
+          */}
+          {getText(translations.appDescription, language)}
+        </p>
+        <div className="space-y-4 animate-fade-in" style={{ animationDelay: '300ms' }}>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            {/* 点击“选择案例”，切换到 CASE_SELECTION 步骤 */}
+            <button
+              onClick={() => setStep(Step.CASE_SELECTION)}
+              className="btn-primary group inline-flex items-center"
+            >
+              {/* language == 'zh' ? '选择案例' : 'Select a Case Study' */}
+              {getText(translations.selectCaseButton, language)}
+              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </button>
+            <button
+              onClick={() => setStep(Step.DIRECT_INTERACTION)}
+              className="btn-primary group inline-flex items-center"
+            >
+              {/* language == 'zh' ? '直接交互' : 'Direct Interaction' */}
+              {getText(translations.directInteractionButton, language)}
+              <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+
+  // 如果处于 CASE_SELECTION，渲染 CaseSelection
+  if (step === Step.CASE_SELECTION) {
+    return (
+      <>
+        {/* 右上角语言切换按钮 */}
+        <div className="sticky top-20 right-4 z-10 flex justify-end">
+          <button
+            onClick={toggleLanguage}
+            className="px-4 py-2 bg-white shadow-md rounded-full 
+                      hover:bg-gray-50 transition-colors duration-200 
+                      font-medium text-medical-blue border border-medical-light-blue
+                      mr-4"
+          >
+            {getText(translations.toggleLanguage, language)}
+          </button>
+        </div>
+
+        <CaseSelection
+          onBack={() => setStep(Step.LANDING)}
+          language={language}
+        />
+      </>
+    );
+  }
+
+  // 如果是“直接交互”步骤
+  if (step === Step.DIRECT_INTERACTION) {
+    return (
+      <>
+        {/* 右上角语言切换按钮 */}
+        <div className="absolute top-20 right-4 z-10">
+          <button
+            onClick={toggleLanguage}
+            className="px-4 py-2 bg-white shadow-md rounded-full hover:bg-gray-50 transition-colors duration-200 font-medium text-medical-blue border border-medical-light-blue"
+          >
+            {getText(translations.toggleLanguage, language)}
+          </button>
+        </div>
+        
+        <DirectInteraction
+          onBack={() => setStep(Step.LANDING)}
+          language={language}
+        />
+      </>
+    );
+  }
+
+  // 默认渲染 Landing 页面，并显示右上角的语言切换按钮
   return (
-    <div className="min-h-screen bg-gradient-to-b from-white to-gray-50">
-      {/* Language toggle - appears on all screens */}
-      <div className="absolute top-20 right-4 z-10">
+    <>
+      {/* 右上角语言切换按钮 */}
+      <div className="sticky top-20 right-4 z-10 flex justify-end">
         <button
           onClick={toggleLanguage}
-          className="px-4 py-2 bg-white shadow-md rounded-full hover:bg-gray-50 transition-colors duration-200 font-medium text-medical-blue border border-medical-light-blue"
+          className="px-4 py-2 bg-white shadow-md rounded-full 
+                     hover:bg-gray-50 transition-colors duration-200 
+                     font-medium text-medical-blue border border-medical-light-blue
+                     mr-4"
         >
           {getText(translations.toggleLanguage, language)}
         </button>
       </div>
-
-      {appState === AppState.LANDING && (
-        <div className="min-h-screen flex flex-col justify-center items-center px-4 py-20 text-center animate-fade-in">
-          <div className="max-w-3xl mx-auto">
-            
-            <h1 className="text-5xl md:text-6xl font-bold mb-6 bg-clip-text text-transparent bg-gradient-to-r from-medical-blue to-medical-dark-blue animate-fade-in" style={{ animationDelay: '100ms', lineHeight: '1.25'}}>
-              {getText(translations.appTitle, language)}
-            </h1>
-            
-            <p className="text-xl text-gray-600 mb-10 max-w-3xl mx-auto animate-fade-in" style={{ animationDelay: '200ms' }}>
-              {getText(translations.appDescription, language)}
-            </p>
-            
-            <div className="space-y-4 animate-fade-in" style={{ animationDelay: '300ms' }}>
-              <div className="flex flex-col sm:flex-row gap-4 justify-center">
-                <button 
-                  onClick={handleStartClick}
-                  className="btn-primary group inline-flex items-center"
-                >
-                  {getText(translations.selectCaseButton, language)}
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </button>
-                
-                <button 
-                  onClick={handleDirectInteractionClick}
-                  className="btn-primary group inline-flex items-center"
-                >
-                  {getText(translations.directInteractionButton, language)}
-                  <ArrowRight className="ml-2 h-5 w-5 transition-transform group-hover:translate-x-1" />
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-      )}
-
-      {appState === AppState.CASE_SELECTION && (
-        <CaseSelection 
-          onSelect={handleCaseSelect}
-          onBack={handleBackToLanding}
-          language={language}
-        />
-      )}
-
-      {appState === AppState.DIALOGUE_SIMULATION && selectedCase && (
-        <DialogueSimulation 
-          caseData={selectedCase}
-          onBack={handleBackToSelection}
-          language={language}
-        />
-      )}
-
-      {appState === AppState.DIRECT_INTERACTION && (
-        <DirectInteraction 
-          onBack={handleBackToLanding}
-          language={language}
-        />
-      )}
-    </div>
-  );
-};
-
-/**
- * Component for displaying feature cards on the landing page
- */
-interface FeatureCardProps {
-  icon: string;
-  title: string;
-  description: string;
-}
-
-const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) => {
-  return (
-    <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-100 hover:shadow-md transition-shadow duration-300">
-      <div className="text-4xl mb-4">{icon}</div>
-      <h3 className="text-xl font-semibold mb-2 text-gray-800">{title}</h3>
-      <p className="text-gray-600">{description}</p>
-    </div>
+      <LandingPage />
+    </>
   );
 };
 

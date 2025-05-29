@@ -7,6 +7,8 @@ import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import { cn } from '@/lib/utils';
 import config from '@/config'; // API base URL
+// Navigate to case simulation by clicking a case card
+import { useNavigate } from 'react-router-dom';
 
 // Mapping
 const QUESTION_TYPE_MAP: Record<number, MultilingualText> = {
@@ -36,7 +38,6 @@ const BODY_SYSTEM_MAP: Record<number, MultilingualText> = {
 };
 
 interface CaseSelectionProps {
-  onSelect: (caseData: MedicalCase) => void;
   onBack: () => void;
   language: Language;
 }
@@ -45,7 +46,8 @@ interface CaseSelectionProps {
  * Component for displaying and selecting from available medical cases
  * Includes search functionality and displays cases in a grid
  */
-const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack, language }) => {
+const CaseSelection: React.FC<CaseSelectionProps> = ({ onBack, language }) => {
+  const navigate = useNavigate(); // Navigate to case simulation by clicking a case card
   const [searchQuery, setSearchQuery] = useState('');
   const [cases, setCases] = useState<MedicalCase[]>([]);
   const [page, setPage] = useState(1);
@@ -161,6 +163,8 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack, languag
 
   // 切换 question_type 选项
   const toggleQuestionType = (val: number | 'all') => {
+    setPage(1); // 每次切换选项时重置页码
+
     if (val === 'all') {
       setSelectedQuestionTypes([]);
       return;
@@ -180,6 +184,8 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack, languag
 
   // 切换 medical_task 选项
   const toggleMedicalTask = (val: number | 'all') => {
+    setPage(1); // 每次切换选项时重置页码
+
     if (val === 'all') {
       setSelectedMedicalTasks([]);
       return;
@@ -198,6 +204,8 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack, languag
 
   // 切换 body_system 选项
   const toggleBodySystem = (val: number | 'all') => {
+    setPage(1); // 每次切换选项时重置页码
+    
     if (val === 'all') {
       setSelectedBodySystems([]);
       return;
@@ -214,11 +222,15 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack, languag
     setSelectedBodySystems(arr);
   };
 
-  // Handle case selection
-  const handleCaseClick = (caseData: MedicalCase) => {
-    onSelect(caseData);
+  // Handle dialogue selection
+  // 点击卡片时, 调用 navigate 跳转到 dialogue_simulation 页面, 并把 patient_id 传到 URL
+  const handleCaseClick = (caseItem: MedicalCase) => {
+    navigate(
+      `/database/dialogue_simulation/${caseItem.patient_id}`,
+      { state: { language } }
+    );
   };
-
+  
   // Handle prev page
   const handlePrevPage = () => {
     if (page > 1) setPage(page - 1);
@@ -248,14 +260,16 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack, languag
   return (
     <div className="max-w-7xl mx-auto px-4 py-12 animate-fade-in">
       {/* Header with back button */}
-      <div className="flex items-center gap-4 mb-8">
+      <div className="flex items-center gap-4 mb-4">
+        {/* back button */}
         <button
           onClick={onBack}
-          className="p-2 rounded-full hover:bg-gray-100 transition-colors duration-200"
+          className="p-4 rounded-full hover:bg-gray-100 transition-colors duration-200"
           aria-label="Go back"
         >
           <ArrowLeft className="h-6 w-6 text-gray-600" />
         </button>
+        
         <h2 className="text-3xl font-semibold text-gray-800">
           {/*
             language === 'zh'
@@ -381,6 +395,7 @@ const CaseSelection: React.FC<CaseSelectionProps> = ({ onSelect, onBack, languag
                       )}
                       onClick={() => toggleMedicalTask(val)}
                     >
+                      {/* language === 'zh' ? '标签' : 'Tags' */}
                       {getText(label, language)}
                     </div>
                   );

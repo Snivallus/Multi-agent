@@ -1,7 +1,7 @@
 import { MultilingualText, createMultilingualText, Language } from '@/types/language';
 
 // Types of speakers in the dialogue
-export type DialogueRole = 'doctor' | 'patient' | 'reporter' | 'monitor' | 'summary doctor';
+export type DialogueRole = 'doctor' | 'patient' | 'reporter' | 'monitor' | 'summary_doctor';
 
 // Define the structure of a dialogue line
 export interface DialogueLine {

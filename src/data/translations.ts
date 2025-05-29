@@ -144,7 +144,34 @@ export const translations = {
     '皮肤',
     'Integumentary'
   ),
-  
+
+  // Dialogue simulation
+  resetDialogue: createMultilingualText('重置对话', 'Reset dialogue'),
+  pause: createMultilingualText('暂停', 'Pause'),
+  play: createMultilingualText('播放', 'Play'),
+  nextDialogue: createMultilingualText('下一段对话', 'Next dialogue'),
+  previousDialogue: createMultilingualText('上一段对话', 'Previous dialogue'),
+  progress: createMultilingualText('进度', 'Progress'),
+  of: createMultilingualText('共', 'of'),
+  playPause: createMultilingualText('空格键: 播放/暂停', 'Space: Play/Pause'),
+  previousLine: createMultilingualText('&larr;: 上一句', '&larr;: Previous'),
+  nextLine: createMultilingualText('&rarr;: 下一句', '&rarr;: Next'),
+  copybutton: createMultilingualText('复制', 'Copy'),
+  versionList: createMultilingualText('版本列表', 'Version List'),
+  closeSidebar: createMultilingualText('折叠侧栏', 'Close Sidebar'),
+  version: createMultilingualText('版本', 'Version'),
+  correct: createMultilingualText('正确', 'Correct'),
+  incorrect: createMultilingualText('错误', 'Incorrect'),
+  predicted: createMultilingualText('预测选项', 'Predicted Option'),
+  originalQuestion: createMultilingualText('原始问题', 'Original Question'),
+  questionBackground: createMultilingualText('问题背景', 'Question Background'),
+  patientProfile: createMultilingualText('患者信息', 'Patient Profile'),
+  examination: createMultilingualText('检查结果', 'Examination'),
+  images: createMultilingualText('图片', 'Images'),
+  imagesDescription: createMultilingualText('图片描述', 'Images Description'),
+  answer: createMultilingualText('正确答案', 'Ground Truth'),
+  tags: createMultilingualText('标签', 'Tags'),
+
   // Direct Interaction
   directInteractionTitle: createMultilingualText('直接交互', 'Direct Interaction'),
   typeMessage: createMultilingualText('在此输入您的消息...', 'Type your message here...'),
@@ -174,19 +201,6 @@ export const translations = {
   browserNotSupported: createMultilingualText('您的浏览器不支持语音识别, 请使用 Chrome 浏览器', 'Your browser does not support speech recognition. Please use the Chrome browser.'),
   webSpeechAPIError: createMultilingualText('Web Speech API 通讯错误, 请更换 VPN 或使用 Chrome 浏览器', 'Web Speech API communication error, please change VPN or use the Chrome brower.'),
   genericError: createMultilingualText('发生未知错误, 请稍后再试', 'An unknown error occurred, please try again later'),
-  
-  // Dialogue simulation
-  resetDialogue: createMultilingualText('重置对话', 'Reset dialogue'),
-  pause: createMultilingualText('暂停', 'Pause'),
-  play: createMultilingualText('播放', 'Play'),
-  nextDialogue: createMultilingualText('下一段对话', 'Next dialogue'),
-  previousDialogue: createMultilingualText('上一段对话', 'Previous dialogue'),
-  progress: createMultilingualText('进度', 'Progress'),
-  of: createMultilingualText('共', 'of'),
-  playPause: createMultilingualText('空格键: 播放/暂停', 'Space: Play/Pause'),
-  previousLine: createMultilingualText('&larr;: 上一句', '&larr;: Previous'),
-  nextLine: createMultilingualText('&rarr;: 下一句', '&rarr;: Next'),
-  copybutton: createMultilingualText('复制', 'Copy'),
   
   // Roles
   doctor: createMultilingualText('医生', 'Doctor'),
