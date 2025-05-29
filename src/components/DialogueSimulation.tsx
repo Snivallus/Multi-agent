@@ -136,6 +136,9 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
   const [imagesDescriptionEn, setImagesDescriptionEn] = useState('');
   const [imagesDescriptionZh, setImagesDescriptionZh] = useState('');
 
+  // 添加焦点状态追踪，用于判断是否在编辑文本框内
+  const [isInputFocused, setIsInputFocused] = useState(false);
+
   // 当 fetchedCase 第一次拉回或变化时，初始化所有可编辑字段
   useEffect(() => {
     if (fetchedCase) {
@@ -228,16 +231,20 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
     setCurrentDialogueIndex(newIndex);
   };
 
-  // Handle keyboard shortcuts
+  // 修改键盘事件处理逻辑，当在编辑状态且焦点在输入框时停止监听
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      // Prevent default behavior for these keys
+      // 如果正在编辑且输入框有焦点，不处理键盘快捷键
+      if (isEditing && isInputFocused) {
+        return;
+      }
+
       if (e.key === ' ' || e.key === 'ArrowLeft' || e.key === 'ArrowRight') {
         e.preventDefault();
       }
       
       switch (e.key) {
-        case ' ': // Space bar
+        case ' ':
           togglePlayPause();
           break;
         case 'ArrowRight':
@@ -249,14 +256,12 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
       }
     };
 
-    // Add event listener
     window.addEventListener('keydown', handleKeyDown);
 
-    // Cleanup function
     return () => {
       window.removeEventListener('keydown', handleKeyDown);
     };
-  }, [currentDialogueIndex, isPlaying, dialogueLines.length]); // Re-attach when these state values change
+  }, [currentDialogueIndex, isPlaying, dialogueLines.length, isEditing, isInputFocused]);
 
   // Auto-scroll to the latest dialogue bubble when it appears
   useEffect(() => {
@@ -348,6 +353,10 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
       // TODO: 在此处显示错误提示给用户
     }
   };
+
+  // 添加通用的输入框焦点处理函数
+  const handleInputFocus = () => setIsInputFocused(true);
+  const handleInputBlur = () => setIsInputFocused(false);
 
   return (
     <div className="flex h-screen">
@@ -447,6 +456,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                       <textarea
                         value={titleEn}
                         onChange={(e) => setTitleEn(e.target.value)}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                         className="w-full border border-gray-300 rounded-md p-2 text-sm"
                         rows={1}
                       />
@@ -460,6 +471,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                       <textarea
                         value={titleZh}
                         onChange={(e) => setTitleZh(e.target.value)}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                         className="w-full border border-gray-300 rounded-md p-2 text-sm"
                         rows={1}
                       />
@@ -483,6 +496,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                       <textarea
                         value={descriptionEn}
                         onChange={(e) => setDescriptionEn(e.target.value)}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                         className="w-full border border-gray-300 rounded-md p-2 text-sm"
                         rows={2}
                       />
@@ -496,6 +511,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                       <textarea
                         value={descriptionZh}
                         onChange={(e) => setDescriptionZh(e.target.value)}
+                        onFocus={handleInputFocus}
+                        onBlur={handleInputBlur}
                         className="w-full border border-gray-300 rounded-md p-2 text-sm"
                         rows={2}
                       />
@@ -567,11 +584,6 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
             <Collapsible open={!detailsCollapsed} onOpenChange={() => setDetailsCollapsed(!detailsCollapsed)}>
               <CollapsibleTrigger className="flex items-center justify-center w-full py-2 hover:bg-gray-100 rounded transition-colors">
                 <span className="text-sm font-medium text-gray-700 mr-2">
-                  {/*
-                    detailsCollapsed 
-                    ? '展开问题详情' 
-                    : '折叠问题详情'
-                  */}
                   {
                     detailsCollapsed 
                     ? getText(translations.showQuestionDetails, language)
@@ -606,6 +618,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                           <textarea
                             value={originalQuestionEn}
                             onChange={(e) => setOriginalQuestionEn(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             className="w-full border border-gray-300 rounded-md p-2 text-sm"
                             rows={3}
                           />
@@ -617,6 +631,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                           <textarea
                             value={originalQuestionZh}
                             onChange={(e) => setOriginalQuestionZh(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             className="w-full border border-gray-300 rounded-md p-2 text-sm"
                             rows={3}
                           />
@@ -643,6 +659,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                           <textarea
                             value={questionBackgroundEn}
                             onChange={(e) => setQuestionBackgroundEn(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             className="w-full border border-gray-300 rounded-md p-2 text-sm"
                             rows={3}
                           />
@@ -654,6 +672,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                           <textarea
                             value={questionBackgroundZh}
                             onChange={(e) => setQuestionBackgroundZh(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             className="w-full border border-gray-300 rounded-md p-2 text-sm"
                             rows={3}
                           />
@@ -680,6 +700,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                           <textarea
                             value={patientProfileEn}
                             onChange={(e) => setPatientProfileEn(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             className="w-full border border-gray-300 rounded-md p-2 text-sm"
                             rows={3}
                           />
@@ -691,6 +713,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                           <textarea
                             value={patientProfileZh}
                             onChange={(e) => setPatientProfileZh(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             className="w-full border border-gray-300 rounded-md p-2 text-sm"
                             rows={3}
                           />
@@ -717,6 +741,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                           <textarea
                             value={examinationEn}
                             onChange={(e) => setExaminationEn(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             className="w-full border border-gray-300 rounded-md p-2 text-sm"
                             rows={3}
                           />
@@ -728,6 +754,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                           <textarea
                             value={examinationZh}
                             onChange={(e) => setExaminationZh(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             className="w-full border border-gray-300 rounded-md p-2 text-sm"
                             rows={3}
                           />
@@ -754,6 +782,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                           <textarea
                             value={imagesDescriptionEn}
                             onChange={(e) => setImagesDescriptionEn(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             className="w-full border border-gray-300 rounded-md p-2 text-sm"
                             rows={2}
                           />
@@ -765,6 +795,8 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
                           <textarea
                             value={imagesDescriptionZh}
                             onChange={(e) => setImagesDescriptionZh(e.target.value)}
+                            onFocus={handleInputFocus}
+                            onBlur={handleInputBlur}
                             className="w-full border border-gray-300 rounded-md p-2 text-sm"
                             rows={2}
                           />
@@ -955,7 +987,7 @@ const DialogueSimulation: React.FC<DialogueSimulationProps> = ({
       {zoomedIndex !== null && (
         <div
           className="fixed inset-0 bg-black bg-opacity-60 flex items-center justify-center z-50"
-          onClick={() => setZoomedIndex(null)} // 点击遮罩任意处都恢复
+          onClick={() => setZoomedIndex(null)}
         >
           <img
             src={`data:image/jpeg;base64,${imagesBase64[zoomedIndex]}`}
