@@ -22,17 +22,21 @@ import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 import { RegisterRequest } from '@/types/auth';
 import { useToast } from '@/hooks/use-toast';
+import { Language, getText } from '@/types/language';
+import { translations } from '@/data/translations';
 
 interface RegisterDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   onSwitchToLogin: () => void;
+  language: Language;
 }
 
 const RegisterDialog: React.FC<RegisterDialogProps> = ({
   open,
   onOpenChange,
   onSwitchToLogin,
+  language,
 }) => {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -50,8 +54,8 @@ const RegisterDialog: React.FC<RegisterDialogProps> = ({
   const onSubmit = async (data: RegisterRequest) => {
     if (data.password !== data.confirmPassword) {
       toast({
-        title: '注册失败',
-        description: '两次输入的密码不一致',
+        title: getText(translations.registerFailed, language),
+        description: getText(translations.passwordMismatch, language),
         variant: 'destructive',
       });
       return;
@@ -61,15 +65,15 @@ const RegisterDialog: React.FC<RegisterDialogProps> = ({
     
     if (success) {
       toast({
-        title: '注册成功',
-        description: '账户创建成功, 欢迎使用 AI Hospital!',
+        title: getText(translations.registerSuccess, language),
+        description: getText(translations.registerSuccessDescription, language),
       });
       onOpenChange(false);
       form.reset();
     } else {
       toast({
-        title: '注册失败',
-        description: '用户名可能已被使用, 请尝试其他用户名.',
+        title: getText(translations.registerFailed, language),
+        description: getText(translations.registerFailedDescription, language),
         variant: 'destructive',
       });
     }
@@ -80,10 +84,10 @@ const RegisterDialog: React.FC<RegisterDialogProps> = ({
       <DialogContent className="sm:max-w-[425px]">
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold text-center text-medical-blue">
-            用户注册
+            {getText(translations.userRegister, language)}
           </DialogTitle>
           <DialogDescription className="text-center text-gray-600">
-            创建您的 AI Hospital 账户
+            {getText(translations.createAccount, language)}
           </DialogDescription>
         </DialogHeader>
 
@@ -93,24 +97,24 @@ const RegisterDialog: React.FC<RegisterDialogProps> = ({
               control={form.control}
               name="username"
               rules={{
-                required: '请输入用户名',
+                required: getText(translations.usernameRequired, language),
                 minLength: {
                   value: 3,
-                  message: '用户名至少需要3个字符',
+                  message: getText(translations.usernameMinLength, language),
                 },
                 pattern: {
                   value: /^[a-zA-Z0-9_]+$/,
-                  message: '用户名只能包含字母、数字和下划线',
+                  message: getText(translations.usernamePattern, language),
                 },
               }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>用户名</FormLabel>
+                  <FormLabel>{getText(translations.username, language)}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <User className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
-                        placeholder="请输入用户名"
+                        placeholder={getText(translations.usernamePlaceholder, language)}
                         className="pl-10"
                         {...field}
                       />
@@ -125,21 +129,21 @@ const RegisterDialog: React.FC<RegisterDialogProps> = ({
               control={form.control}
               name="password"
               rules={{
-                required: '请输入密码',
+                required: getText(translations.passwordRequired, language),
                 minLength: {
                   value: 6,
-                  message: '密码至少需要6个字符',
+                  message: getText(translations.passwordMinLength, language),
                 },
               }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>密码</FormLabel>
+                  <FormLabel>{getText(translations.password, language)}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <Lock className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
                         type={showPassword ? 'text' : 'password'}
-                        placeholder="请输入密码"
+                        placeholder={getText(translations.passwordPlaceholder, language)}
                         className="pl-10 pr-10"
                         {...field}
                       />
@@ -161,19 +165,19 @@ const RegisterDialog: React.FC<RegisterDialogProps> = ({
               control={form.control}
               name="confirmPassword"
               rules={{
-                required: '请确认密码',
+                required: getText(translations.confirmPasswordRequired, language),
                 validate: (value) =>
-                  value === form.getValues('password') || '两次输入的密码不一致',
+                  value === form.getValues('password') || getText(translations.passwordMismatch, language),
               }}
               render={({ field }) => (
                 <FormItem>
-                  <FormLabel>确认密码</FormLabel>
+                  <FormLabel>{getText(translations.confirmPassword, language)}</FormLabel>
                   <FormControl>
                     <div className="relative">
                       <CheckCircle2 className="absolute left-3 top-3 h-4 w-4 text-gray-400" />
                       <Input
                         type={showConfirmPassword ? 'text' : 'password'}
-                        placeholder="请再次输入密码"
+                        placeholder={getText(translations.confirmPasswordPlaceholder, language)}
                         className="pl-10 pr-10"
                         {...field}
                       />
@@ -197,17 +201,17 @@ const RegisterDialog: React.FC<RegisterDialogProps> = ({
                 className="w-full bg-medical-blue hover:bg-medical-dark-blue"
                 disabled={isLoading}
               >
-                {isLoading ? '注册中...' : '注册账户'}
+                {isLoading ? getText(translations.registering, language) : getText(translations.registerAccount, language)}
               </Button>
 
               <div className="text-center text-sm text-gray-600">
-                已有账户？{' '}
+                {getText(translations.haveAccount, language)}{' '}
                 <button
                   type="button"
                   onClick={onSwitchToLogin}
                   className="text-medical-blue hover:text-medical-dark-blue font-medium"
                 >
-                  立即登录
+                  {getText(translations.loginNow, language)}
                 </button>
               </div>
             </div>

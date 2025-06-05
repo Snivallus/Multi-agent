@@ -96,6 +96,7 @@ const Index: React.FC<{ language: Language; toggleLanguage: () => void }> = ({
         open={authDialogOpen}
         onOpenChange={setAuthDialogOpen}
         defaultMode="login"
+        language={language}
       />
     </div>
   );
