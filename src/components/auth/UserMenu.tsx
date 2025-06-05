@@ -10,6 +10,7 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
@@ -22,6 +23,15 @@ const UserMenu: React.FC<UserMenuProps> = ({
   language,
 }) => {
   const { user, logout } = useAuth();
+  const { toast } = useToast();
+
+  // 点击 Settings 时调用的函数
+  const handleSettingsClick = () => {
+    toast({
+      description: getText(translations.featureNotImplemented, language), // 功能尚未实现，敬请期待!
+      variant: 'destructive',
+    });
+  };
 
   if (!user) return null;
 
@@ -46,10 +56,14 @@ const UserMenu: React.FC<UserMenuProps> = ({
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer">
-          <Settings className="mr-2 h-4 w-4" />
-          <span>{getText(translations.settings, language)}</span> {/* 设置 */}
-        </DropdownMenuItem>
+          {/* 点击 Settings 弹窗项, 弹出 “功能尚未实现，敬请期待!” */}
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onClick={handleSettingsClick}
+          >
+            <Settings className="mr-2 h-4 w-4" />
+            <span>{getText(translations.settings, language)}</span>
+          </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer" onClick={logout}>
           <LogOut className="mr-2 h-4 w-4" />
