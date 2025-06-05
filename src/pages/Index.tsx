@@ -70,7 +70,9 @@ const Index: React.FC<{ language: Language; toggleLanguage: () => void }> = ({
       <div className="fixed top-4 right-4 z-10 flex items-center gap-3">
         {/* 用户认证状态 */}
         {isAuthenticated ? (
-          <UserMenu />
+          <UserMenu
+            language={language}
+          />
         ) : (
           <Button
             onClick={() => setAuthDialogOpen(true)}

@@ -11,8 +11,16 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import { useAuth } from '@/contexts/AuthContext';
+import { Language, getText } from '@/types/language';
+import { translations } from '@/data/translations';
 
-const UserMenu: React.FC = () => {
+interface UserMenuProps {
+  language: Language;
+}
+
+const UserMenu: React.FC<UserMenuProps> = ({
+  language,
+}) => {
   const { user, logout } = useAuth();
 
   if (!user) return null;
@@ -29,19 +37,23 @@ const UserMenu: React.FC = () => {
           <div className="flex flex-col space-y-1">
             <p className="text-sm font-medium leading-none">{user.username}</p>
             <p className="text-xs leading-none text-muted-foreground">
-              {user.canModifyDialogue ? '高级权限' : '标准权限'}
+              {
+                user.canModifyDialogue 
+                ? getText(translations.administer, language)  // 管理员
+                : getText(translations.regularUser, language) // 普通用户
+              } 
             </p>
           </div>
         </DropdownMenuLabel>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer">
           <Settings className="mr-2 h-4 w-4" />
-          <span>设置</span>
+          <span>{getText(translations.settings, language)}</span> {/* 设置 */}
         </DropdownMenuItem>
         <DropdownMenuSeparator />
         <DropdownMenuItem className="cursor-pointer" onClick={logout}>
           <LogOut className="mr-2 h-4 w-4" />
-          <span>退出登录</span>
+          <span>{getText(translations.logout, language)}</span> {/* 退出登录 */}
         </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>

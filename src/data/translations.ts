@@ -1,5 +1,6 @@
 import { createMultilingualText } from '@/types/language';
 import { Description } from '@radix-ui/react-toast';
+import { LogOut } from 'lucide-react';
 
 // UI translations for the entire application
 export const translations = {
@@ -49,6 +50,12 @@ export const translations = {
   registerSuccessDescription: createMultilingualText('账户创建成功, 欢迎使用 AI Hospital!', 'Account created successfully, welcome to AI Hospital!'),
   registerFailed: createMultilingualText('注册失败', 'Registration failed'),
   registerFailedDescription: createMultilingualText('用户名可能已被使用, 请尝试其他用户名.', 'Username may already be taken, please try another username.'),
+
+  // User Menu
+  administer: createMultilingualText('管理员', 'Admin'),
+  regularUser: createMultilingualText('普通用户', 'Regular User'),
+  settings: createMultilingualText('设置', 'Settings'),
+  logout: createMultilingualText('退出登录', 'Logout'),
 
   // Case selection
   selectCase: createMultilingualText('选择案例', 'Select a Case Study'),
