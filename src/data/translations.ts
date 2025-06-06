@@ -1,6 +1,4 @@
 import { createMultilingualText } from '@/types/language';
-import { Description } from '@radix-ui/react-toast';
-import { LogOut } from 'lucide-react';
 
 // UI translations for the entire application
 export const translations = {
@@ -56,10 +54,40 @@ export const translations = {
   regularUser: createMultilingualText('普通用户', 'Regular User'),
   settings: createMultilingualText('设置', 'Settings'),
   logout: createMultilingualText('退出登录', 'Logout'),
-
+  usernamePassword: createMultilingualText('用户名和密码', 'Username & Password'),
+  usernamePasswordUpdate: createMultilingualText('更新用户名和密码', 'Update Username & Password'),
+  usernamePasswordUpdateSuccess: createMultilingualText(
+    '用户名和密码更新成功, 请重新登录!', 
+    'Username and password updated successfully, please log in again!'
+  ),
+  usernamePasswordUpdateFailure: createMultilingualText(
+    '更新失败, 请重试!', 
+    'Update failed, please try again!'
+  ),
+  currentUsername: createMultilingualText('当前用户名', 'Current Username'),
+  newUsername: createMultilingualText('新用户名', 'New Username'),
+  newPassword: createMultilingualText('新密码', 'New Password'),
+  confirmNewPassword: createMultilingualText('确认新密码', 'Confirm New Password'),
+  personalProfile: createMultilingualText('个人信息', 'Personal Profile'),
+  personalProfileUpdate: createMultilingualText('更新个人信息', 'Update Personal Profile'),
+  personalProfileUpdateSuccess: createMultilingualText(
+    '个人信息更新成功!',
+    'Personal profile updated successfully!'
+  ),
+  personalProfileUpdateFailure: createMultilingualText(
+    '更新失败, 请重试!', 
+    'Update failed, please try again!'
+  ),
+  gender: createMultilingualText('性别', 'Gender'),
+  male: createMultilingualText('男', 'Male'),
+  female: createMultilingualText('女', 'Female'),
+  birthDate: createMultilingualText('出生日期', 'Birth Date'),
+  currentAge: createMultilingualText('当前年龄: ', 'Current Age: '),
+  updating: createMultilingualText('更新中...', 'Updating...'),
+  
   // Case selection
   selectCase: createMultilingualText('选择案例', 'Select a Case Study'),
- clickToStartHint: createMultilingualText('点击案例开始模拟', 'Click on a case to start the simulation'),
+  clickToStartHint: createMultilingualText('点击案例开始模拟', 'Click on a case to start the simulation'),
   searchCasesPlaceholder: createMultilingualText(
     '按标题、描述和原始文本搜索案例...',
     'Search cases by title, description and original text...'

@@ -1,5 +1,5 @@
 
-import React, { useState } from 'react';
+import React from 'react';
 import { Settings } from 'lucide-react';
 import {
   Dialog,
@@ -35,6 +35,7 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Settings className="h-5 w-5" />
+            {/* '设置' / 'Settings' */}
             {getText(translations.settings, language)}
           </DialogTitle>
         </DialogHeader>
@@ -42,10 +43,12 @@ const SettingsDialog: React.FC<SettingsDialogProps> = ({
         <Tabs defaultValue="username-password" className="w-full">
           <TabsList className="grid w-full grid-cols-2">
             <TabsTrigger value="username-password">
-              {language === 'zh' ? '修改用户名和密码' : 'Username & Password'}
+              {/* '修改用户名和密码' / 'Username & Password' */}
+              {getText(translations.usernamePassword, language)}
             </TabsTrigger>
             <TabsTrigger value="personal-info">
-              {language === 'zh' ? '修改个人信息' : 'Personal Info'}
+              {/* '修改个人信息' / 'Personal Profile' */}
+              {getText(translations.personalProfile, language)}
             </TabsTrigger>
           </TabsList>
           

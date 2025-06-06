@@ -5,7 +5,8 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { useAuth } from '@/contexts/AuthContext';
-import { Language } from '@/types/language';
+import { Language, getText } from '@/types/language';
+import { translations } from '@/data/translations';
 import config from '@/config';
 
 interface EditUsernamePasswordFormProps {
@@ -33,7 +34,8 @@ const EditUsernamePasswordForm: React.FC<EditUsernamePasswordFormProps> = ({
     
     if (formData.newPassword !== formData.confirmPassword) {
       toast({
-        description: language === 'zh' ? '密码确认不匹配' : 'Password confirmation does not match',
+        // '两次输入的密码不一致!' / 'Passwords do not match'
+        description: getText(translations.passwordMismatch, language),
         variant: 'destructive',
       });
       return;
@@ -41,7 +43,8 @@ const EditUsernamePasswordForm: React.FC<EditUsernamePasswordFormProps> = ({
 
     if (formData.newPassword.length < 6) {
       toast({
-        description: language === 'zh' ? '密码至少需要6个字符' : 'Password must be at least 6 characters',
+        // '密码至少需要6个字符' / 'Password must be at least 6 characters'
+        description: getText(translations.passwordMinLength, language),
         variant: 'destructive',
       });
       return;
@@ -70,7 +73,8 @@ const EditUsernamePasswordForm: React.FC<EditUsernamePasswordFormProps> = ({
       
       if (data.success) {
         toast({
-          description: language === 'zh' ? '用户名和密码更新成功，请重新登录' : 'Username and password updated successfully, please log in again',
+          // '用户名和密码更新成功, 请重新登录' / 'Username and password updated successfully, please log in again'
+          description: getText(translations.usernamePasswordUpdateSuccess, language),
         });
         
         // 由于用户名和密码都变了，需要重新登录
@@ -82,7 +86,8 @@ const EditUsernamePasswordForm: React.FC<EditUsernamePasswordFormProps> = ({
     } catch (error) {
       console.error('Edit username/password error:', error);
       toast({
-        description: language === 'zh' ? '更新失败，请重试' : 'Update failed, please try again',
+        // '更新失败, 请重试' / 'Update failed, please try again'
+        description: getText(translations.usernamePasswordUpdateFailure, language),
         variant: 'destructive',
       });
     } finally {
@@ -94,7 +99,8 @@ const EditUsernamePasswordForm: React.FC<EditUsernamePasswordFormProps> = ({
     <form onSubmit={handleSubmit} className="space-y-4">
       <div className="space-y-2">
         <Label htmlFor="current-username">
-          {language === 'zh' ? '当前用户名' : 'Current Username'}
+          {/* language === 'zh' ? '当前用户名' : 'Current Username' */}
+          {getText(translations.currentUsername, language)}
         </Label>
         <Input
           id="current-username"
@@ -106,7 +112,8 @@ const EditUsernamePasswordForm: React.FC<EditUsernamePasswordFormProps> = ({
       
       <div className="space-y-2">
         <Label htmlFor="new-username">
-          {language === 'zh' ? '新用户名' : 'New Username'}
+          {/* language === 'zh' ? '新用户名' : 'New Username' */}
+          {getText(translations.newUsername, language)}
         </Label>
         <Input
           id="new-username"
@@ -118,7 +125,8 @@ const EditUsernamePasswordForm: React.FC<EditUsernamePasswordFormProps> = ({
       
       <div className="space-y-2">
         <Label htmlFor="new-password">
-          {language === 'zh' ? '新密码' : 'New Password'}
+          {/* language === 'zh' ? '新密码' : 'New Password' */}
+          {getText(translations.newPassword, language)}
         </Label>
         <Input
           id="new-password"
@@ -131,7 +139,8 @@ const EditUsernamePasswordForm: React.FC<EditUsernamePasswordFormProps> = ({
       
       <div className="space-y-2">
         <Label htmlFor="confirm-password">
-          {language === 'zh' ? '确认新密码' : 'Confirm New Password'}
+          {/* language === 'zh' ? '确认新密码' : 'Confirm New Password' */}
+          {getText(translations.confirmNewPassword, language)}
         </Label>
         <Input
           id="confirm-password"
@@ -143,9 +152,13 @@ const EditUsernamePasswordForm: React.FC<EditUsernamePasswordFormProps> = ({
       </div>
       
       <Button type="submit" className="w-full" disabled={isLoading}>
-        {isLoading 
+        {/* isLoading 
           ? (language === 'zh' ? '更新中...' : 'Updating...') 
           : (language === 'zh' ? '更新用户名和密码' : 'Update Username & Password')
+        */}
+        {isLoading 
+          ? getText(translations.updating, language) 
+          : getText(translations.usernamePasswordUpdate, language)
         }
       </Button>
     </form>
