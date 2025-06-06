@@ -1,3 +1,4 @@
+
 import { createMultilingualText } from '@/types/language';
 
 // UI translations for the entire application
@@ -271,6 +272,18 @@ export const translations = {
   QwenMax: createMultilingualText('Qwen2.5-Max', 'Qwen2.5-Max'),
   DeepSeekV3: createMultilingualText('DeepSeek-V3', 'DeepSeek-V3'),
   DeepSeekR1: createMultilingualText('DeepSeek-R1', 'DeepSeek-R1'),
+
+  // Session History
+  sessionHistory: createMultilingualText('会话历史', 'Session History'),
+  newSession: createMultilingualText('新会话', 'New Session'),
+  saveSession: createMultilingualText('保存会话', 'Save Session'),
+  sessionSaved: createMultilingualText('会话已保存', 'Session Saved'),
+  loadingHistory: createMultilingualText('加载历史中...', 'Loading History...'),
+  noSessionsFound: createMultilingualText('暂无会话记录', 'No Sessions Found'),
+  lines: createMultilingualText('条对话', 'lines'),
+  today: createMultilingualText('今天', 'Today'),
+  yesterday: createMultilingualText('昨天', 'Yesterday'),
+  daysAgo: createMultilingualText('天前', 'days ago'),
 
   // Speech to text 
   startRecording: createMultilingualText('开始录音', 'Start recording'),
