@@ -1,3 +1,4 @@
+
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '@/types/auth';
 import config from '@/config'; // API base URL
@@ -8,6 +9,7 @@ interface AuthContextType {
   login: (username: string, password: string) => Promise<boolean>;
   register: (username: string, password: string) => Promise<boolean>;
   logout: () => void;
+  updateUserProfile: (updatedUser: User) => void;
   isLoading: boolean;
 }
 
@@ -47,6 +49,18 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     setIsLoading(false);
   }, []);
 
+  // 映射后端用户数据到前端User接口
+  const mapBackendUserToFrontend = (backendUser: any): User => {
+    return {
+      id: backendUser.user_id,
+      username: backendUser.username,
+      canModifyDialogue: backendUser.can_modify,
+      gender: backendUser.gender,
+      birthDate: backendUser.birth_date,
+      age: backendUser.age,
+    };
+  };
+
   // 登录
   const login = async (username: string, password: string): Promise<boolean> => {
     setIsLoading(true);
@@ -58,23 +72,14 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       });
 
       if (!response.ok) {
-        // 例如 401 或 400 都会进这里
         return false;
       }
 
       const data = await response.json();
-      // 后端返回 { success: true, user: {...}, token: "<jwt>" }
       if (data.success && data.user && data.token) {
-        // 把后端的 user 对象映射到前端的 User 接口
-        const mappedUser: User = {
-          id: data.user.user_id,
-          username: data.user.username,
-          canModifyDialogue: data.user.can_modify,
-        };
-        // 1) 存到 state 和 localStorage
+        const mappedUser = mapBackendUserToFrontend(data.user);
         setUser(mappedUser);
         localStorage.setItem('user', JSON.stringify(mappedUser));
-        // 2) 存 token
         localStorage.setItem('token', data.token);
         return true;
       }
@@ -102,13 +107,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       }
 
       const data = await response.json();
-      // 后端返回 { success: true, user: {...}, token: "<jwt>" }
       if (data.success && data.user && data.token) {
-        const mappedUser: User = {
-          id: data.user.user_id,
-          username: data.user.username,
-          canModifyDialogue: data.user.can_modify,
-        };
+        const mappedUser = mapBackendUserToFrontend(data.user);
         setUser(mappedUser);
         localStorage.setItem('user', JSON.stringify(mappedUser));
         localStorage.setItem('token', data.token);
@@ -121,6 +121,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     } finally {
       setIsLoading(false);
     }
+  };
+
+  // 更新用户资料
+  const updateUserProfile = (updatedUser: User) => {
+    setUser(updatedUser);
+    localStorage.setItem('user', JSON.stringify(updatedUser));
   };
 
   // 注销
@@ -136,6 +142,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     login,
     register,
     logout,
+    updateUserProfile,
     isLoading,
   };
 
