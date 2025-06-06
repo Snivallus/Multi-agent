@@ -52,7 +52,8 @@ const MessageInput: React.FC<MessageInputProps> = ({
       if (result === '__GET_CURRENT_TEXT__') {
         return;
       }
-      setInputText((prevText) => prevText ? `${prevText} ${result}` : result);
+      const newText = inputText ? `${inputText} ${result}` : result;
+      setInputText(newText);
     },
     onError: (error) => {
       console.error('Speech recognition error:', error);
