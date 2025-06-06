@@ -1,5 +1,6 @@
+
 import React, { useState, useRef, useEffect } from 'react';
-import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu, X, Brain } from 'lucide-react';
+import { ArrowLeft, Send, Mic, MicOff, Timer, CheckSquare, Upload, Cpu, X, Brain, Plus, Save } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 import DialogueBubble from './DialogueBubble';
@@ -11,6 +12,7 @@ import { useSpeechToText } from '@/hooks/use-speech-to-text';
 import { v4 as uuidv4 } from 'uuid';  // Generate unique IDs
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
+import SessionHistoryPanel from './SessionHistoryPanel';
 
 interface DirectInteractionProps {
   onBack: () => void;
@@ -30,6 +32,7 @@ interface MessageType {
     name: string;  // 文件名
   };
   images?: string[]; // 图片数组字段
+  line_id?: number; // 添加 line_id 用于保存会话
 }
 
 /**
@@ -45,6 +48,9 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [fileDescription, setFileDescription] = useState('');
   const [isUploading, setIsUploading] = useState(false);
+  const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(false);
+  const [currentDialogueId, setCurrentDialogueId] = useState<number | undefined>(undefined);
+  const [nextLineId, setNextLineId] = useState(1); // Track line_id for messages
   
   const fileInputRef = useRef<HTMLInputElement>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -117,13 +123,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     const secs = seconds % 60;
     return `${mins > 0 ? `${mins}:` : ''}${secs.toString().padStart(2, '0')}`;
   };
-
-  // Auto-scroll to the bottom when messages change
-  // useEffect(() => {
-  //   if (messagesEndRef.current) {
-  //     messagesEndRef.current.scrollIntoView({ behavior: 'smooth' });
-  //   }
-  // }, [messages]);
 
   // Auto-resize textarea as content grows
   useEffect(() => {
@@ -222,9 +221,11 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       const userMessage: MessageType = {
         role: 'patient',
         content: message,  // 使用 content 字段
-        id: uuidv4()       // 添加唯一ID
+        id: uuidv4(),      // 添加唯一ID
+        line_id: nextLineId
       };
       setMessages(prevMessages => [...prevMessages, userMessage]);
+      setNextLineId(prev => prev + 1);
     }
     
     setInputText('');
@@ -311,9 +312,11 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           reasoning_content: '',
           isStreaming: true,
           id: currentMessageId,
-          rawText: ''
+          rawText: '',
+          line_id: nextLineId
         }
       ]);
+      setNextLineId(prev => prev + 1);
 
       while (true) {
         const { done, value } = await reader!.read();
@@ -338,11 +341,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         // 更新流式消息
         const chunk = decoder.decode(value);
         processStreamingContent(chunk, currentMessageId);
-
-        // 添加滚动触发逻辑
-        // requestAnimationFrame(() => {
-        //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" })
-        // });
       }
 
       // 标记流式消息结束
@@ -386,8 +384,8 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }
   };
 
-  // Reset the dialogue memory
-  const handleResetDialogue = async () => {
+  // Start new session
+  const handleNewSession = async () => {
     try {
       const response = await fetch(`${config.apiBaseUrl_2}/reset`, {
         method: 'POST',
@@ -397,23 +395,149 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       if (response.ok) {
         const data = await response.json();
         toast({
-          title: "Memory Reset",
-          description: data.message || "Memory reset successfully",
+          title: getText(translations.newSession, language),
+          description: data.message || "New session started successfully",
           variant: "default"
         });
-        // Clear the conversation messages after resetting memory
+        // Clear the conversation messages and reset dialogue ID
         setMessages([]);
+        setCurrentDialogueId(undefined);
+        setNextLineId(1);
       } else {
-        throw new Error('Failed to reset memory');
+        throw new Error('Failed to start new session');
       }
     } catch (error) {
-      console.error('Error resetting dialogue:', error);
+      console.error('Error starting new session:', error);
       toast({
         title: getText(translations.errorTitle, language),
         description: getText(translations.apiError, language),
         variant: "destructive"
       });
     }
+  };
+
+  // Save current session
+  const handleSaveSession = async () => {
+    if (messages.length === 0) {
+      toast({
+        title: getText(translations.errorTitle, language),
+        description: getText(translations.noMessagesToSave, language),
+        variant: "destructive"
+      });
+      return;
+    }
+
+    try {
+      // Get user_id from localStorage
+      const userStr = localStorage.getItem('user');
+      if (!userStr) {
+        throw new Error('User not found');
+      }
+      
+      const user = JSON.parse(userStr);
+      
+      // Prepare the data according to the API structure
+      const userMessages = messages
+        .filter(msg => msg.role === 'patient')
+        .map(msg => ({
+          line_id: msg.line_id || 0,
+          upload_file: !!msg.file,
+          content: msg.content || ''
+        }));
+
+      const userFiles = messages
+        .filter(msg => msg.role === 'patient' && msg.file)
+        .map(msg => {
+          // Extract file type from file name
+          const fileName = msg.file!.name;
+          const extension = fileName.split('.').pop()?.toLowerCase();
+          let fileType: 'PNG' | 'JPEG' | 'WebP' | 'NifTI' = 'PNG';
+          
+          if (extension === 'jpg' || extension === 'jpeg') fileType = 'JPEG';
+          else if (extension === 'webp') fileType = 'WebP';
+          else if (extension === 'nii' || extension === 'gz') fileType = 'NifTI';
+          else if (extension === 'png') fileType = 'PNG';
+
+          // Convert file to base64 (this is a simplified approach)
+          // In a real implementation, you'd need to properly convert the file
+          return {
+            line_id: msg.line_id || 0,
+            file_type: fileType,
+            file_name: fileName,
+            file_content: "" // This would need proper base64 conversion
+          };
+        });
+
+      const agentMessages = messages
+        .filter(msg => msg.role === 'doctor' || msg.role === 'reporter')
+        .map(msg => ({
+          line_id: msg.line_id || 0,
+          role_type: msg.role as 'doctor' | 'reporter',
+          reasoning: msg.reasoning_content || '',
+          content: msg.content || ''
+        }));
+
+      const reporterFiles = messages
+        .filter(msg => msg.role === 'reporter' && msg.images)
+        .map(msg => ({
+          line_id: msg.line_id || 0,
+          JPEG_files: msg.images?.filter(img => img.startsWith("data:image/jpeg")) || [],
+          WebP_files: msg.images?.filter(img => img.startsWith("data:image/webp")) || []
+        }));
+
+      const requestBody = {
+        user_id: user.id,
+        new_dialogue: currentDialogueId === undefined,
+        dialogue_id: currentDialogueId || 0,
+        user_messages: userMessages,
+        user_files: userFiles,
+        agent_messages: agentMessages,
+        reporter_files: reporterFiles
+      };
+
+      const response = await fetch(`${config.apiBaseUrl_1}/interaction/save_dialogue`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(requestBody)
+      });
+
+      if (!response.ok) {
+        throw new Error('Failed to save session');
+      }
+
+      const data = await response.json();
+      if (data.success) {
+        setCurrentDialogueId(data.dialogue_id);
+        toast({
+          title: getText(translations.sessionSaved, language),
+          description: `Session ${data.dialogue_id} saved successfully`,
+          variant: "default"
+        });
+      } else {
+        throw new Error('Failed to save session');
+      }
+    } catch (error) {
+      console.error('Error saving session:', error);
+      toast({
+        title: getText(translations.errorTitle, language),
+        description: getText(translations.saveFailed, language),
+        variant: "destructive"
+      });
+    }
+  };
+
+  // Handle dialogue selection from history
+  const handleDialogueSelect = (dialogueId: number) => {
+    setCurrentDialogueId(dialogueId);
+    // Here you would typically load the dialogue content
+    // For now, we'll just clear the current messages and show a placeholder
+    setMessages([]);
+    setNextLineId(1);
+    toast({
+      title: getText(translations.dialogueLoaded, language),
+      description: `Session ${dialogueId} selected`,
+      variant: "default"
+    });
   };
 
   // Add handler for the new "Upload File" button
@@ -456,12 +580,14 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       role: 'patient',
       content: fileDescription || getText(translations.noDescription, language),
       id: uuidv4(),
+      line_id: nextLineId,
       file: {
         url: URL.createObjectURL(selectedFile),
         name: selectedFile.name
       }
     };
     setMessages(prev => [...prev, userMessage]);
+    setNextLineId(prev => prev + 1);
 
     setIsUploading(true);
     const formData = new FormData();
@@ -486,8 +612,10 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         reasoning_content: '',
         isStreaming: true,
         id: messageId,
-        rawText: ''
+        rawText: '',
+        line_id: nextLineId
       }]);
+      setNextLineId(prev => prev + 1);
       
       // 关键修改：立即关闭弹窗
       setIsUploadModalOpen(false);
@@ -502,11 +630,6 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
 
         const chunk = decoder.decode(value, { stream: true });
         processStreamingContent(chunk, messageId);
-        
-        // 滚动到底部
-        // requestAnimationFrame(() => {
-        //   messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
-        // });
       }
 
       // 更新消息状态
@@ -721,54 +844,232 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   };
 
   return (
-    <div className="flex flex-col h-screen animate-fade-in">
-      {/* Header */}
-      <div className="bg-white shadow-sm border-b p-4">
-        <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={onBack}
-              className="p-3 rounded-full hover:bg-gray-100 transition-colors duration-200"
-              aria-label="Go back"
-            >
-              <ArrowLeft className="h-5 w-5 text-gray-600" />
-            </button>
-            <h2 className="text-xl font-semibold text-gray-800">
-              {getText(translations.directInteractionTitle, language)}
-            </h2>
+    <div className="flex h-screen animate-fade-in">
+      {/* Session History Panel */}
+      <SessionHistoryPanel
+        language={language}
+        isCollapsed={isHistoryCollapsed}
+        onToggle={() => setIsHistoryCollapsed(!isHistoryCollapsed)}
+        currentDialogueId={currentDialogueId}
+        onDialogueSelect={handleDialogueSelect}
+      />
+
+      {/* Main Content */}
+      <div className="flex flex-col flex-1">
+        {/* Header */}
+        <div className="bg-white shadow-sm border-b p-4">
+          <div className="max-w-7xl mx-auto flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div className="flex items-center gap-4">
+              <button
+                onClick={onBack}
+                className="p-3 rounded-full hover:bg-gray-100 transition-colors duration-200"
+                aria-label="Go back"
+              >
+                <ArrowLeft className="h-5 w-5 text-gray-600" />
+              </button>
+              <h2 className="text-xl font-semibold text-gray-800">
+                {getText(translations.directInteractionTitle, language)}
+              </h2>
+              {currentDialogueId && (
+                <span className="text-sm text-gray-500">
+                  - {getText(translations.session, language)} {currentDialogueId}
+                </span>
+              )}
+            </div>
+            
+            <div className="flex items-center gap-4">
+              {/* End Consultation button */}
+              <button
+                onClick={handleGenerateDiagnosis}
+                className="p-2 px-4 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                aria-label="End Consultation"
+                disabled={isWaiting}
+              >
+                <CheckSquare className="h-5 w-5" />
+                <span>{getText(translations.generateDiagnosis, language)}</span>
+              </button>
+              {/* Upload File button */}
+              <button
+                onClick={handleUploadFile}
+                className="p-2 px-4 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                aria-label="Upload File"
+                disabled={isWaiting}
+              >
+                <Upload className="h-5 w-5" />
+                <span>{getText(translations.uploadFile, language)}</span>
+              </button>
+              {/* Save Session button */}
+              <button
+                onClick={handleSaveSession}
+                className="p-2 px-4 rounded-full bg-purple-500 hover:bg-purple-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                aria-label="Save Session"
+                disabled={isWaiting}
+              >
+                <Save className="h-5 w-5" />
+                <span>{getText(translations.saveSession, language)}</span>
+              </button>
+              {/* New Session button (replaces Reset dialogue) */}
+              <button
+                onClick={handleNewSession}
+                className="p-2 px-4 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                aria-label="New Session"
+                disabled={isWaiting}
+              >
+                <Plus className="h-5 w-5" />
+                <span>{getText(translations.newSession, language)}</span>
+              </button>
+            </div>
           </div>
-          
-          <div className="flex items-center gap-4">
-            {/* End Consultation button */}
-            <button
-              onClick={handleGenerateDiagnosis}
-              className="p-2 px-4 rounded-full bg-green-500 hover:bg-green-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              aria-label="End Consultation"
-              disabled={isWaiting}
+        </div>
+
+        {/* Messages area */}
+        <div className="flex-grow overflow-y-auto p-4 bg-gradient-to-b from-gray-50 to-white">
+          <div className="max-w-3xl mx-auto space-y-2 pb-20">
+            {messages.length === 0 && (
+              <div className="text-center my-20 text-gray-500">
+                <p>{getText(translations.conversationHint, language)}</p>
+              </div>
+            )}
+
+            {/* Render messages */}
+            {messages.map((message, index) => (
+               <div key={message.id || index}>
+                 {renderMessage(message)}
+               </div>
+             ))}
+
+            {/* Show waiting message if waiting for response */}
+            {isWaiting && !requestStateRef.current.hasReceivedFirstChunk && (
+              <div className="text-center py-4 text-gray-500">
+                <p>
+                  {getText(translations.waitingForResponse, language)}
+                  {countdown !== null && <span>({countdown} s) ...</span>}
+                </p>
+              </div>
+            )}
+
+            {/* This empty div helps us scroll to the bottom */}
+            <div ref={messagesEndRef} />
+          </div>
+        </div>
+
+        {/* Input area */}
+        <div className="bg-white border-t p-4">
+          <div className="max-w-3xl mx-auto">
+            {/* Input area layout */}
+            {/* 使用伪元素保持圆角效果 */}
+            <div className="relative [&_:where(.dropdown-menu)]:overflow-visible
+              before:content-[''] before:absolute before:inset-0 before:rounded-lg before:shadow-sm
+              before:border before:border-gray-300 before:hover:shadow-md before:transition-shadow"
             >
-              <CheckSquare className="h-5 w-5" />
-              <span>{getText(translations.generateDiagnosis, language)}</span>
-            </button>
-            {/* Upload File button */}
-            <button
-              onClick={handleUploadFile}
-              className="p-2 px-4 rounded-full bg-blue-500 hover:bg-blue-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              aria-label="Upload File"
-              disabled={isWaiting}
-            >
-              <Upload className="h-5 w-5" />
-              <span>{getText(translations.uploadFile, language)}</span>
-            </button>
-            {/* Reset dialogue button */}
-            <button
-              onClick={handleResetDialogue}
-              className="p-2 px-4 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-              aria-label="Reset Dialogue"
-              disabled={isWaiting}
-            >
-              <Cpu className="h-5 w-5" />
-              <span>{getText(translations.resetMomery, language)}</span>
-            </button>
+              {/* 真实容器（需要保持透明背景） */}
+              <div className="relative bg-transparent">
+                {/* Doctor selection dropdown */}
+                <div className="absolute left-3 bottom-3 z-20">
+                  <div className="relative">
+                    <button
+                      onClick={() => setShowDoctorDropdown(!showDoctorDropdown)}
+                      className="flex items-center gap-2 px-3 py-2 bg-gray-100 hover:bg-gray-200 rounded-lg text-gray-700 text-sm font-medium transition-colors"
+                      style={{ fontSize: '0.875rem'}}
+                    >
+                      <span className="text-medical-blue">{selectedDoctor}</span>
+                      <svg className={`w-4 h-4 transition-transform ${showDoctorDropdown ? 'rotate-180' : ''}`} fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M19 9l-7 7-7-7" />
+                      </svg>
+                    </button>
+                  
+                    {showDoctorDropdown && (
+                      <div className="absolute left-0 bottom-full mb-2 w-40 bg-white shadow-lg border rounded-lg z-50 overflow-hidden text-sm">
+                        {Object.keys(doctorMapping).map((doctor) => (
+                          <div 
+                            key={doctor}
+                            className={`p-2 hover:bg-gray-100 transition-colors cursor-pointer ${selectedDoctor === doctor ? 'bg-blue-50 text-medical-blue' : ''}`}
+                            onClick={() => { 
+                              setSelectedDoctor(doctor); 
+                              setShowDoctorDropdown(false); 
+                            }}
+                          >
+                            {doctor === "Qwen2.5-Max" 
+                              ? getText(translations.QwenMax, language)
+                              : doctor === "DeepSeek-V3" 
+                                ? getText(translations.DeepSeekV3, language)
+                                : getText(translations.DeepSeekR1, language)
+                            }
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              
+                {/* Textarea with proper spacing for doctor dropdown */}
+                <textarea
+                  ref={textareaRef}
+                  className="w-full px-4 py-2 resize-none focus:outline-none bg-transparent"
+                  placeholder={getText(translations.typeMessage, language)}
+                  rows={1}
+                  value={inputText}
+                  onChange={(e) => setInputText(e.target.value)}
+                  onKeyDown={handleKeyDown}
+                  maxLength={3000}
+                  style={{ 
+                    minHeight: '48px', 
+                    maxHeight: '128px',
+                    paddingBottom: '1rem'
+                  }}
+                />
+              
+                {/* Character counter - moved to bottom-right inside the textarea area */}
+                <div className="absolute bottom-16 right-4 text-xs text-gray-400">
+                  {inputText.length}/3000
+                </div>
+              
+                {/* Action buttons */}
+                <div className="flex justify-end border-t border-gray-200 p-2 bg-gray-50">
+                  {/* Speech to text button */}
+                  <button
+                    onClick={toggleListening}
+                    disabled={isWaiting || !isSupported}
+                    className={`mr-2 p-2 rounded-lg transition-colors ${
+                      isListening 
+                        ? 'bg-red-500 text-white hover:bg-red-600' 
+                        : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                    } ${!isSupported ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    aria-label={isListening 
+                      ? getText(translations.stopRecording, language)
+                      : getText(translations.startRecording, language)
+                    }
+                  >
+                    {isListening 
+                      ? <MicOff className="h-5 w-5" /> 
+                      : <Mic className="h-5 w-5" />}
+                  </button>
+                  
+                  {/* Send button */}
+                  <button
+                    onClick={handleSendMessage}
+                    disabled={inputText.trim() === '' || isWaiting}
+                    className="bg-medical-blue text-white px-4 py-2 rounded-lg hover:bg-medical-dark-blue transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+                  >
+                    <Send className="h-5 w-5" />
+                    <span>{getText(translations.sendMessage, language)}</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+              
+            {/* Display recording information */}
+            {isListening && (
+              <div className="mt-3 text-sm p-2 bg-red-50 rounded-lg border border-red-100 flex items-center gap-2">
+                <Timer className="h-4 w-4 text-red-500" />
+                <span className="text-red-600">
+                  {getText(translations.recordingInProgress, language)} 
+                  <span className="font-medium ml-2">
+                    {formatDuration(recordingDuration)} {getText(translations.seconds, language)}
+                  </span>
+                </span>
+              </div>
+            )}
           </div>
         </div>
       </div>

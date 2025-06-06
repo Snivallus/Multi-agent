@@ -308,4 +308,60 @@ export const translations = {
   inspectionResult: createMultilingualText('检查结果', 'Inspection Result'), 
   scanResult: createMultilingualText('检查结果', 'Scan Result'),
   medicalVolumeData: createMultilingualText('三维医学体数据', '3D Medical Volume Data'),
+  
+  // New translations for session history
+  session: {
+    zh: '会话',
+    en: 'Session'
+  } as MultilingualText,
+  
+  sessionHistory: {
+    zh: '会话历史',
+    en: 'Session History'
+  } as MultilingualText,
+  
+  messages: {
+    zh: '条消息',
+    en: 'messages'
+  } as MultilingualText,
+  
+  noDialogueHistory: {
+    zh: '暂无会话历史',
+    en: 'No dialogue history'
+  } as MultilingualText,
+  
+  newSession: {
+    zh: '新会话',
+    en: 'New Session'
+  } as MultilingualText,
+  
+  saveSession: {
+    zh: '保存会话',
+    en: 'Save Session'
+  } as MultilingualText,
+  
+  sessionSaved: {
+    zh: '会话已保存',
+    en: 'Session Saved'
+  } as MultilingualText,
+  
+  noMessagesToSave: {
+    zh: '没有消息可以保存',
+    en: 'No messages to save'
+  } as MultilingualText,
+  
+  saveFailed: {
+    zh: '保存失败',
+    en: 'Save failed'
+  } as MultilingualText,
+  
+  dialogueLoaded: {
+    zh: '会话已加载',
+    en: 'Dialogue Loaded'
+  } as MultilingualText,
+  
+  loading: {
+    zh: '加载中...',
+    en: 'Loading...'
+  } as MultilingualText,
 };
