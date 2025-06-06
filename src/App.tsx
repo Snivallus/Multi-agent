@@ -29,11 +29,19 @@ const App: React.FC = () => {
             path="/" 
             element={<Index language={language} toggleLanguage={toggleLanguage}/>} 
           />
+          <Route
+            path="/Multi-agent"
+            element={<Index language={language} toggleLanguage={toggleLanguage} />}
+          />
 
           {/* Case Selection */}
           <Route
             path="/database/case_selection"
             element={<CaseSelectionWrapper language={language} toggleLanguage={toggleLanguage} />}
+          />
+          <Route
+            path="/Multi-agent/database/case_selection"
+            element={<Index language={language} toggleLanguage={toggleLanguage} />}
           />
 
           {/* Dialogue Simulation */}
@@ -41,10 +49,18 @@ const App: React.FC = () => {
             path="/database/dialogue_simulation/:patientId" 
             element={<DialogueSimulationWrapper language={language} toggleLanguage={toggleLanguage}/>} 
           />
-
+          <Route
+            path="/Multi-agent/database/dialogue_simulation/:patientId"
+            element={<Index language={language} toggleLanguage={toggleLanguage} />}
+          />
+          
           {/* Direct Interaction */}
           <Route 
             path="/direct_interaction" 
+            element={<DirectInteractionWrapper language={language} toggleLanguage={toggleLanguage}/>}
+          />
+          <Route 
+            path="/Multi-agent/direct_interaction" 
             element={<DirectInteractionWrapper language={language} toggleLanguage={toggleLanguage}/>}
           />
 
