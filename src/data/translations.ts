@@ -292,8 +292,8 @@ export const translations = {
 
   // Error messages
   errorTitle: createMultilingualText('错误', 'Error'),
-  networkError: createMultilingualText('网络错误，请稍后再试或使用 VPN', 'Network error, please try again later or use a VPN'),
-  apiError: createMultilingualText('服务器错误，请稍后再试', 'Server error, please try again later'),
+  networkError: createMultilingualText('网络错误, 请稍后再试或使用 VPN', 'Network error, please try again later or use a VPN'),
+  apiError: createMultilingualText('服务器错误, 请稍后再试', 'Server error, please try again later'),
 
   // Upload files
   selectFile: createMultilingualText('选择文件', 'Select File'),
@@ -309,6 +309,13 @@ export const translations = {
   scanResult: createMultilingualText('检查结果', 'Scan Result'),
   medicalVolumeData: createMultilingualText('三维医学体数据', '3D Medical Volume Data'),
 
-  sessionHistory: createMultilingualText("Session History", "会话历史"),
-  saveSession: createMultilingualText("Save Session", "保存会话"),
+  // Session History
+  sessionHistory: createMultilingualText("会话历史", "Session History"),
+  saveSession: createMultilingualText("保存会话", "Save Session"),
+  messages: createMultilingualText("条消息", " messages"),
+  noMessageToSave: createMultilingualText("空会话无法保存!", "No messages to save!"),
+  sessionSaved: createMultilingualText("会话已保存!", "Your session has been saved successfully!"),
+  saveSessionFailed: createMultilingualText("会话保存失败!", "Failed to save session!"),
+  loadingSession: createMultilingualText("加载中...", "Loading sessions..."),
+  noSessionsYet: createMultilingualText("空空如也~", "No sessions yet"),
 } as const;

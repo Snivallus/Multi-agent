@@ -8,7 +8,7 @@ interface DirectInteractionHeaderProps {
   onBack: () => void;
   onGenerateDiagnosis: () => void;
   onUploadFile: () => void;
-  onResetDialogue: () => void;
+  onResetSession: () => void;
   onSaveSession: () => void;
   isWaiting: boolean;
   isSaving: boolean;
@@ -19,7 +19,7 @@ const DirectInteractionHeader: React.FC<DirectInteractionHeaderProps> = ({
   onBack,
   onGenerateDiagnosis,
   onUploadFile,
-  onResetDialogue,
+  onResetSession,
   onSaveSession,
   isWaiting,
   isSaving,
@@ -84,11 +84,11 @@ const DirectInteractionHeader: React.FC<DirectInteractionHeaderProps> = ({
             <span>{getText(translations.uploadFile, language)}</span>
           </button>
           
-          {/* Reset dialogue button */}
+          {/* Reset Session button */}
           <button
-            onClick={onResetDialogue}
+            onClick={onResetSession}
             className="p-2 px-4 rounded-full bg-gray-200 hover:bg-gray-300 text-gray-700 transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
-            aria-label="Reset Dialogue"
+            aria-label="Reset Session"
             disabled={isWaiting}
           >
             <Cpu className="h-5 w-5" />

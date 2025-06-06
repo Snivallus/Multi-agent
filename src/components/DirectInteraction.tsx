@@ -48,7 +48,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
   const [selectedDoctor, setSelectedDoctor] = useState("Qwen2.5-Max");
   const [showDoctorDropdown, setShowDoctorDropdown] = useState(false);
   const [isHistoryCollapsed, setIsHistoryCollapsed] = useState(false);
-  const [currentDialogueId, setCurrentDialogueId] = useState<number | undefined>();
+  const [currentSessionId, setCurrentSessionId] = useState<number | undefined>();
   const [isSaving, setIsSaving] = useState(false);
   
   const messagesEndRef = useRef<HTMLDivElement>(null);
@@ -268,7 +268,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       if (!(error instanceof DOMException && error.name === 'AbortError')) {
         toast({
           title: getText(translations.errorTitle, language),
-          description: getText(translations.networkError, language),
+          description: getText(translations.networkError, language), // '网络错误, 请稍后再试或使用 VPN' / 'Network error, please try again later or use a VPN'
           variant: "destructive"
         });
       }
@@ -287,8 +287,8 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     sendRequest("<生成诊断>", false, 30);
   };
 
-  // Reset the dialogue memory
-  const handleResetDialogue = async () => {
+  // Reset the session memory
+  const handleResetSession = async () => {
     try {
       const response = await fetch(`${config.apiBaseUrl_2}/reset`, {
         method: 'POST',
@@ -303,15 +303,15 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           variant: "default"
         });
         setMessages([]);
-        setCurrentDialogueId(undefined);
+        setCurrentSessionId(undefined);
       } else {
         throw new Error('Failed to reset memory');
       }
     } catch (error) {
-      console.error('Error resetting dialogue:', error);
+      console.error('Error resetting session:', error);
       toast({
         title: getText(translations.errorTitle, language),
-        description: getText(translations.apiError, language),
+        description: getText(translations.apiError, language), // '服务器错误, 请稍后再试' / 'Server error, please try again later'
         variant: "destructive"
       });
     }
@@ -388,7 +388,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       console.error('Upload failed:', error);
       toast({
         title: getText(translations.errorTitle, language),
-        description: getText(translations.uploadFailed, language),
+        description: getText(translations.uploadFailed, language), // '文件上传失败' / 'File upload failed'
         variant: 'destructive',
       });
     } finally {
@@ -419,7 +419,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     if (messages.length === 0) {
       toast({
         title: getText(translations.errorTitle, language),
-        description: "No messages to save",
+        description: getText(translations.noMessageToSave, language), // "空会话无法保存!" / "No messages to save!"
         variant: 'destructive',
       });
       return;
@@ -504,28 +504,31 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
 
       const saveData = {
         user_id: userId,
-        new_dialogue: !currentDialogueId,
-        dialogue_id: currentDialogueId || 0,
-        dialogue_name: currentDialogueId ? '' : `Dialogue ${Date.now()}`,
+        new_session: !currentSessionId,
+        session_id: currentSessionId || 0,
+        session_name: currentSessionId ? '' : `Session ${Date.now()}`,
         user_messages: userMessages,
         user_files: userFiles,
         agent_messages: agentMessages,
         reporter_files: reporterFiles
       };
 
-      const response = await fetch(`${config.apiBaseUrl_2}/interaction/save_dialogue`, {
+      const response = await fetch(`${config.apiBaseUrl_1}/interaction/save_session`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
         body: JSON.stringify(saveData)
       });
 
       if (response.ok) {
         const result = await response.json();
         if (result.success) {
-          setCurrentDialogueId(result.dialogue_id);
+          setCurrentSessionId(result.session_id);
           toast({
-            title: "Session Saved",
-            description: "Your session has been saved successfully",
+            // title: "Session Saved",
+            description: getText(translations.sessionSaved, language), // "会话已保存!" / "Your session has been saved successfully!"
             variant: "default"
           });
         } else {
@@ -538,7 +541,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
       console.error('Error saving session:', error);
       toast({
         title: getText(translations.errorTitle, language),
-        description: "Failed to save session",
+        description: getText(translations.saveSessionFailed, language), // "会话保存失败!" / "Failed to save session!"
         variant: "destructive"
       });
     } finally {
@@ -546,10 +549,10 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
     }
   };
 
-  const handleSelectDialogue = (dialogueId: number) => {
-    setCurrentDialogueId(dialogueId);
-    // TODO: Load the selected dialogue's messages
-    console.log('Selected dialogue:', dialogueId);
+  const handleSelectSession = (SessionId: number) => {
+    setCurrentSessionId(SessionId);
+    // TODO: Load the selected session's messages
+    console.log('Selected session:', SessionId);
   };
 
   return (
@@ -560,8 +563,8 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
         userId={userId}
         isCollapsed={isHistoryCollapsed}
         onToggleCollapse={() => setIsHistoryCollapsed(!isHistoryCollapsed)}
-        onSelectDialogue={handleSelectDialogue}
-        selectedDialogueId={currentDialogueId}
+        onSelectSession={handleSelectSession}
+        selectedSessionId={currentSessionId}
       />
 
       {/* Main Content */}
@@ -571,7 +574,7 @@ const DirectInteraction: React.FC<DirectInteractionProps> = ({ onBack, language 
           onBack={onBack}
           onGenerateDiagnosis={handleGenerateDiagnosis}
           onUploadFile={handleUploadFile}
-          onResetDialogue={handleResetDialogue}
+          onResetSession={handleResetSession}
           onSaveSession={handleSaveSession}
           isWaiting={isWaiting}
           isSaving={isSaving}

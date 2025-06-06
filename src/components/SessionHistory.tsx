@@ -7,9 +7,9 @@ import config from '@/config';
 import { useToast } from '@/hooks/use-toast';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-interface Dialogue {
-  dialogue_id: number;
-  dialogue_name: string;
+interface Session {
+  session_id: number;
+  session_name: string;
   total_lines: number;
   edit_time: string;
 }
@@ -19,8 +19,8 @@ interface SessionHistoryProps {
   userId?: number;
   isCollapsed: boolean;
   onToggleCollapse: () => void;
-  onSelectDialogue: (dialogueId: number) => void;
-  selectedDialogueId?: number;
+  onSelectSession: (sessionId: number) => void;
+  selectedSessionId?: number;
 }
 
 const SessionHistory: React.FC<SessionHistoryProps> = ({
@@ -28,32 +28,35 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({
   userId,
   isCollapsed,
   onToggleCollapse,
-  onSelectDialogue,
-  selectedDialogueId
+  onSelectSession,
+  selectedSessionId
 }) => {
-  const [dialogues, setDialogues] = useState<Dialogue[]>([]);
+  const [sessions, setSessions] = useState<Session[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const { toast } = useToast();
 
-  const fetchDialogues = async () => {
+  const fetchSessions = async () => {
     if (!userId) return;
     
     setIsLoading(true);
     try {
-      const response = await fetch(`${config.apiBaseUrl_2}/interaction/list_all_dialogues`, {
+      const response = await fetch(`${config.apiBaseUrl_1}/interaction/list_all_sessions`, {
         method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+        headers: { 
+          'Content-Type': 'application/json',
+          'Authorization': `Bearer ${localStorage.getItem('token')}`,
+        },
         body: JSON.stringify({ user_id: userId })
       });
 
       if (response.ok) {
         const data = await response.json();
         if (data.success) {
-          setDialogues(data.dialogues || []);
+          setSessions(data.sessions || []);
         }
       }
     } catch (error) {
-      console.error('Error fetching dialogues:', error);
+      console.error('Error fetching sessions:', error);
       toast({
         title: getText(translations.errorTitle, language),
         description: getText(translations.networkError, language),
@@ -65,7 +68,7 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({
   };
 
   useEffect(() => {
-    fetchDialogues();
+    fetchSessions();
   }, [userId]);
 
   const formatDate = (dateString: string) => {
@@ -97,6 +100,7 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({
       {/* Header */}
       <div className="flex items-center justify-between p-4 border-b border-gray-200">
         <h3 className="text-lg font-semibold text-gray-800">
+          {/* "会话历史" / "Session History" */}
           {getText(translations.sessionHistory, language)}
         </h3>
         <button
@@ -115,38 +119,47 @@ const SessionHistory: React.FC<SessionHistoryProps> = ({
             {isLoading ? (
               <div className="text-center py-8 text-gray-500">
                 <div className="animate-spin h-6 w-6 border-2 border-medical-blue border-t-transparent rounded-full mx-auto mb-2" />
-                <p className="text-sm">Loading sessions...</p>
+                <p className="text-sm">
+                  {/* Loading sessions... */}
+                  {getText(translations.loadingSession, language)}
+                </p>
               </div>
-            ) : dialogues.length === 0 ? (
+            ) : sessions.length === 0 ? (
               <div className="text-center py-8 text-gray-500">
                 <MessageSquare className="h-12 w-12 mx-auto mb-2 text-gray-300" />
-                <p className="text-sm">No sessions yet</p>
+                <p className="text-sm">
+                  {/* No sessions yet */}
+                  {getText(translations.noSessionsYet, language)}
+                </p>
               </div>
             ) : (
-              dialogues.map((dialogue) => (
+              sessions.map((session) => (
                 <div
-                  key={dialogue.dialogue_id}
-                  onClick={() => onSelectDialogue(dialogue.dialogue_id)}
+                  key={session.session_id}
+                  onClick={() => onSelectSession(session.session_id)}
                   className={`p-3 rounded-lg border cursor-pointer transition-all hover:shadow-sm ${
-                    selectedDialogueId === dialogue.dialogue_id
+                    selectedSessionId === session.session_id
                       ? 'border-medical-blue bg-blue-50'
                       : 'border-gray-200 hover:border-gray-300'
                   }`}
                 >
                   <div className="flex items-start justify-between mb-2">
                     <h4 className="font-medium text-gray-800 text-sm line-clamp-2">
-                      {dialogue.dialogue_name}
+                      {session.session_name}
                     </h4>
                   </div>
                   
                   <div className="flex items-center justify-between text-xs text-gray-500">
                     <div className="flex items-center gap-1">
                       <MessageSquare className="h-3 w-3" />
-                      <span>{dialogue.total_lines} messages</span>
+                      <span>
+                        {/* e.g. 2 条消息 / 2 messages */}
+                        {session.total_lines}{getText(translations.messages, language)}
+                      </span>
                     </div>
                     <div className="flex items-center gap-1">
                       <Clock className="h-3 w-3" />
-                      <span>{formatDate(dialogue.edit_time)}</span>
+                      <span>{formatDate(session.edit_time)}</span>
                     </div>
                   </div>
                 </div>
