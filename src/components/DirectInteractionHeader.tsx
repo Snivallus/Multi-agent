@@ -1,6 +1,6 @@
 
 import React from 'react';
-import { ArrowLeft, CheckSquare, Upload, Cpu } from 'lucide-react';
+import { ArrowLeft, CheckSquare, Upload, Cpu, Save } from 'lucide-react';
 import { Language, getText } from '@/types/language';
 import { translations } from '@/data/translations';
 
@@ -9,7 +9,9 @@ interface DirectInteractionHeaderProps {
   onGenerateDiagnosis: () => void;
   onUploadFile: () => void;
   onResetDialogue: () => void;
+  onSaveSession: () => void;
   isWaiting: boolean;
+  isSaving: boolean;
   language: Language;
 }
 
@@ -18,7 +20,9 @@ const DirectInteractionHeader: React.FC<DirectInteractionHeaderProps> = ({
   onGenerateDiagnosis,
   onUploadFile,
   onResetDialogue,
+  onSaveSession,
   isWaiting,
+  isSaving,
   language
 }) => {
   return (
@@ -38,6 +42,26 @@ const DirectInteractionHeader: React.FC<DirectInteractionHeaderProps> = ({
         </div>
         
         <div className="flex items-center gap-4">
+          {/* Save Session button */}
+          <button
+            onClick={onSaveSession}
+            className="p-2 px-4 rounded-full bg-purple-500 hover:bg-purple-600 text-white transition-colors duration-200 disabled:opacity-50 disabled:cursor-not-allowed flex items-center gap-2"
+            aria-label="Save Session"
+            disabled={isWaiting || isSaving}
+          >
+            {isSaving ? (
+              <>
+                <div className="animate-spin h-4 w-4 border-2 border-white border-t-transparent rounded-full" />
+                <span>Saving...</span>
+              </>
+            ) : (
+              <>
+                <Save className="h-5 w-5" />
+                <span>{getText(translations.saveSession, language)}</span>
+              </>
+            )}
+          </button>
+          
           {/* End Consultation button */}
           <button
             onClick={onGenerateDiagnosis}
@@ -48,6 +72,7 @@ const DirectInteractionHeader: React.FC<DirectInteractionHeaderProps> = ({
             <CheckSquare className="h-5 w-5" />
             <span>{getText(translations.generateDiagnosis, language)}</span>
           </button>
+          
           {/* Upload File button */}
           <button
             onClick={onUploadFile}
@@ -58,6 +83,7 @@ const DirectInteractionHeader: React.FC<DirectInteractionHeaderProps> = ({
             <Upload className="h-5 w-5" />
             <span>{getText(translations.uploadFile, language)}</span>
           </button>
+          
           {/* Reset dialogue button */}
           <button
             onClick={onResetDialogue}

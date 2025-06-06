@@ -308,4 +308,7 @@ export const translations = {
   inspectionResult: createMultilingualText('检查结果', 'Inspection Result'), 
   scanResult: createMultilingualText('检查结果', 'Scan Result'),
   medicalVolumeData: createMultilingualText('三维医学体数据', '3D Medical Volume Data'),
-};
+
+  sessionHistory: createMultilingualText("Session History", "会话历史"),
+  saveSession: createMultilingualText("Save Session", "保存会话"),
+} as const;
